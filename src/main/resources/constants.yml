@@ -1,0 +1,4 @@
+#Riot API Key
+riot:
+  #api-key: ${Generated-Riot-Api-Key}
+
