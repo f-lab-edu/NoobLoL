@@ -1,0 +1,21 @@
+#Setting DB
+spring:
+  datasource:
+    #driver-class-name: org.mariadb.jdbc.Driver
+    # More Detail Query Log
+    url: ${MariaDB-URL}
+    username: ${Database-UserName}
+    password: ${Database-Password}
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+  redis:   #redis
+    host: 127.0.0.1
+    port: 6379
+
+#Setting MyBatis
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  type-aliases-package: com.nooblol
+  mapper-locations: classpath*:mybatis/mapper/*.xml
+
+
