@@ -21,8 +21,10 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-log4j2'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis'
     implementation group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4.1', version: '1.16'
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
 //    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
