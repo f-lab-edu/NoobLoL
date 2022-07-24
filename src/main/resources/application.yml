@@ -3,12 +3,36 @@ spring:
   datasource:
     #driver-class-name: org.mariadb.jdbc.Driver
     # More Detail Query Log
-    url: ${MariaDB-URL}
-    username: ${Database-UserName}
-    password: ${Database-Password}
-    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-    tomcat:
-      validation-query: SELECT 1 FROM DUAL
+    #url: ${MariaDB-URL}
+    #username: ${Database-UserName}
+    #password: ${Database-Password}
+    #------------------------
+    #MariaDb
+    #url: jdbc:log4jdbc:mariadb://localhost:3306/nooblol?characterEncoding=UTF-8&serverTimezone=UTC
+    #username: nooblol
+    #password: nooblol_dba
+    #driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    #------------------------
+    #H2 Test Setting
+    url: jdbc:h2:tcp://localhost/~/h2/nooblol
+    #url: jdbc:h2:mem:/~/h2/nooblol
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+  sql:
+    init:
+      mode: always
+#  jpa:
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: create-drop
+
+  h2:
+    console:
+      enabled: true
+
+  tomcat:
+    validation-query: SELECT 1 FROM DUAL
   redis:   #redis
     host: 127.0.0.1
     port: 6379
@@ -17,6 +41,9 @@ spring:
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
+    jdbc-type-for-null: null
+    call-setters-on-nulls: true
+    multiple-result-sets-enabled: false
   type-aliases-package: com.nooblol.*.*
-  mapper-locations: classpath:mybatis/mapper/*.xml
+  mapper-locations: classpath:mybatis/mapper/*/*.xml
 
