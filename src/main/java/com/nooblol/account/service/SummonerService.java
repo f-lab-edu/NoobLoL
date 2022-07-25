@@ -1,7 +1,9 @@
 package com.nooblol.account.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nooblol.account.dto.SummonerDto;
+import com.nooblol.account.dto.SummonerHistoryDto;
 import com.nooblol.account.mapper.SummonerMapper;
 import com.nooblol.global.config.RiotConfiguration;
 import com.nooblol.global.dto.ResponseDto;
@@ -17,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -107,14 +111,17 @@ public class SummonerService {
     public SummonerDto selectAccount(SummonerDto accountDto) {
         return summonerMapper.selectAccount(accountDto);
     }
-    /**
-     * 계정조회-account의 id값으로 확인
-     * @param accountDto
-     * @return
-     */
     public SummonerDto selectAccount(ResponseDto accountDto) {
         if(accountDto.getResult() instanceof SummonerDto){
             return selectAccount((SummonerDto)accountDto.getResult());
+        }
+        return null;
+    }
+    public SummonerDto selectAccount(String id) {
+        if(!id.isBlank()){
+            SummonerDto dto = new SummonerDto();
+            dto.setId(id);
+            return selectAccount(dto);
         }
         return null;
     }
@@ -126,5 +133,115 @@ public class SummonerService {
         return serverDto.equals(dbDto);
     }
 
+    /**
+     * 계정조회-소환사의 랭크정보 Return
+     */
+    public ResponseDto getSummonerHistoryProcess(String summonerId, boolean sync) {
+        ResponseDto dto = null;
+        if(!summonerId.isBlank()) {
+            if(selectAccount(summonerId) != null) {
+                //DB데이터만 Return
+                if(sync) {
+                    List<SummonerHistoryDto> dbSummonerHistoryList = selectSummonerLeagueListBySummonerId(summonerId);
+                    if(dbSummonerHistoryList.isEmpty()) {
+                        sync = false;
+                    } else {
+                        dto = new ResponseDto(HttpStatus.OK.value(), dbSummonerHistoryList);
+                    }
+                }
+                //라이엇 서버와 동기화 코드
+                if(!sync) {
+                    dto = getSummonerHistoryRiotAPI(summonerId);
+                    if(dto.getResultCode() == HttpStatus.OK.value()) {
+                        ArrayList<SummonerHistoryDto> summonerHistoryDtoList = (ArrayList<SummonerHistoryDto>)dto.getResult();
+                        summonerHistoryDBProcess(summonerHistoryDtoList);
+                    }
+                }
+            } else {
+                dto = new ResponseDto(HttpStatus.NOT_FOUND.value(), "error");
+            }
+        }else {
+            dto = new ResponseDto(HttpStatus.NOT_FOUND.value(), "error");
+        }
+        return dto;
+    }
 
+    public ResponseDto getSummonerHistoryProcess(SummonerDto summoner, boolean sync) {
+        return getSummonerHistoryProcess(summoner.getId(), sync);
+    }
+
+    /**
+     * Riot에서 History데이터 받아오는 기능
+     * https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/#{account.id}
+     */
+    public ResponseDto getSummonerHistoryRiotAPI(String id) {
+        //Test Id : GqGH7NQcZ8b-e9jQPi7dtohw9de1NT81JK7NsIgRCSi24g
+        //변수 초기화
+        ResponseDto rtnDto = null;
+        String requestURL = "https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/"+ id;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayList<SummonerHistoryDto> dto = null;
+        try {
+            HttpClient client = HttpClientBuilder.create().build(); //HttpClient 생성
+            HttpGet getRequest = new HttpGet(requestURL);
+            getRequest.addHeader("X-Riot-Token", riotConfiguration.getApiKey());
+            HttpResponse response = client.execute(getRequest);
+
+            if(response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
+                ResponseHandler<String> handler = new BasicResponseHandler();
+                String body = handler.handleResponse(response);
+                dto = objectMapper.readValue(body, new TypeReference<ArrayList<SummonerHistoryDto>>() {});
+
+                rtnDto = new ResponseDto(response.getStatusLine().getStatusCode(), dto);
+            } else {
+                rtnDto = new ResponseDto(response.getStatusLine().getStatusCode(), "error");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            rtnDto = new ResponseDto(HttpStatus.NOT_FOUND.value(), "error");
+        } finally {
+            return rtnDto;
+        }
+    }
+
+    /**
+     * History Data DB처리 - 동기화를 희망하는 경우
+     */
+    public void summonerHistoryDBProcess(ArrayList<SummonerHistoryDto> summonerHistoryList) {
+        summonerHistoryList.forEach(
+            summonerHistoryDto -> {
+                summonerHistoryDBHandle(summonerHistoryDto);
+            }
+        );
+    }
+
+    /**
+     * Dto를 제공받아 insert, Update처리
+     */
+    public void summonerHistoryDBHandle(SummonerHistoryDto summonerHistoryDto) {
+        if(!summonerHistoryDto.getLeagueId().isBlank() &&
+                !summonerHistoryDto.getSummonerId().isBlank()) {
+            boolean existHistoryData = selectSummonerHistoryByLeagueIdAndSummonerId(summonerHistoryDto);
+            if(existHistoryData) {
+                summonerMapper.updateSummonerHistory(summonerHistoryDto);
+            } else {
+                summonerMapper.insertSummonerHistory(summonerHistoryDto);
+            }
+        }
+    }
+
+    /**
+     * LeagueId 조회, true인경우 데이터 존재
+     */
+    public boolean selectSummonerHistoryByLeagueIdAndSummonerId(SummonerHistoryDto summonerHistoryDto) {
+        return summonerMapper.selectSummonerHistoryByLeagueIdAndSummonerId(summonerHistoryDto) != null;
+    }
+
+    /**
+     * 랭크 정보 return
+     */
+    public List<SummonerHistoryDto> selectSummonerLeagueListBySummonerId(String summonerId) {
+        return summonerMapper.selectSummonerHistoryBySummonerId(summonerId);
+    }
 }

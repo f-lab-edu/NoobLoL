@@ -26,4 +26,32 @@
         INSERT INTO SUMMONER_ACCOUNT(id, account_id, puuid, name, profile_icon_id, revision_date, summoner_level)
         VALUES (#{id}, #{accountId}, #{puuid}, #{name}, #{profileIconId}, #{revisionDate}, #{summonerLevel})
     </insert>
+
+    <!--summoner_simple_history테이블에 해당 leagueId가 등록되어 있는지 여부 확인-->
+    <select id="selectSummonerHistoryByLeagueIdAndSummonerId" resultType="SummonerHistoryDto">
+        SELECT league_id FROM SUMMONER_SIMPLE_HISTORY
+        WHERE league_id = #{leagueId} AND summoner_id = #{summonerId}
+    </select>
+
+    <!--summonerId로 테이블의 모든 랭크정보를 가져온다-->
+    <select id="selectSummonerHistoryBySummonerId" resultType="SummonerHistoryDto">
+        SELECT summoner_id, queue_type, tier, rank, summoner_name, league_points, wins, losses, league_id FROM SUMMONER_SIMPLE_HISTORY
+        WHERE summoner_id = #{summonerId}
+    </select>
+
+    <!--테이블에 leagueId가 존재하기 떄문에 update만 진행함.-->
+    <update id="updateSummonerHistory" parameterType="SummonerHistoryDto">
+        UPDATE SUMMONER_SIMPLE_HISTORY
+        SET
+            queue_type=#{queueType}, tier=#{tier}, rank=#{rank}, summoner_name=#{summonerName},
+            league_points=#{leaguePoints}, wins=#{wins}, losses=#{losses}
+        WHERE league_id = #{leagueId} AND summoner_id = #{summonerId}
+    </update>
+
+    <!--테이블에 leagueId가 존재하지 않기에 Insert-->
+    <insert id="insertSummonerHistory" parameterType="SummonerHistoryDto">
+        INSERT INTO SUMMONER_SIMPLE_HISTORY(summoner_id, queue_type, tier, rank, summoner_name, league_points, wins, losses, league_id)
+        VALUES (#{summonerId}, #{queueType}, #{tier}, #{rank}, #{summonerName}, #{leaguePoints}, #{wins}, #{losses}, #{leagueId})
+    </insert>
+
 </mapper>
