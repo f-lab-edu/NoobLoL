@@ -35,6 +35,16 @@ configurations {
     }
 }
 
+//Build FileName Change app.jar
+bootJar {
+    archiveFileName = 'app.jar'
+}
+
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+//No-Create plain.jar
+jar {
+    enabled(false)
 }
