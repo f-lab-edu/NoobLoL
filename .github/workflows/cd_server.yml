@@ -101,7 +101,7 @@ jobs:
 
       - name: ProdServer CopyJar Run
         uses: appleboy/ssh-action@master
-        id: deploy-dev
+        id: deploy-main
         if: contains(github.ref, 'main')
         with:
           host: ${{ secrets.NCP_DEV_SERVER_IP }}
