@@ -81,9 +81,10 @@ jobs:
           username: ${{ secrets.NCP_DEV_SERVER_USER }}
           password: ${{ secrets.NCP_DEV_SERVER_PASSWORD }}
           port: ${{ secrets.NCP_DEV_SERVER_SSH_PORT }}
+          script_stop: true
           script: |
-            chmod +x /nooblol/build/libsapp.jar
-            java -jar -Dspring.profiles.active=prod /nooblol/build/libs/app.jar
+            cd /nooblol
+            ./dev-run.sh
 
 
       # 현재 운영서버 제작을 하지 않아 개발서버 정보로 일치화
@@ -107,6 +108,7 @@ jobs:
           username: ${{ secrets.NCP_DEV_SERVER_USER }}
           password: ${{ secrets.NCP_DEV_SERVER_PASSWORD }}
           port: ${{ secrets.NCP_DEV_SERVER_SSH_PORT }}
+          script_stop: true
           script: |
-            chmod +x /nooblol/build/libsapp.jar
-            java -jar -Dspring.profiles.active=prod /nooblol/build/libs/app.jar
+            cd /nooblol
+            ./dev-run.sh
