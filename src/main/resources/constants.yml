@@ -1,5 +1,4 @@
 #Riot API Key
 riot:
-  apiKey: sample
-  #apiKey: ${Generated-Riot-Api-Key}
+  apiKey: riot-api-key
 

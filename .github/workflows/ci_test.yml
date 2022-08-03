@@ -31,6 +31,15 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
+      ## Riot Api Key 수정
+      - name: Constants.yml Change Riot Api Key
+        run: |
+          cd ./src/main/resources
+          chmod 755 constants.yml
+          sed -i 's/riot-api-key/${{ secrets.RIOT_API_KEY }}/g' constants.yml 
+          cat constants.yml
+        shell: bash
+
       ## Gradle
       - name: Grant Execute permission for gradlew
         run: chmod +x gradlew
