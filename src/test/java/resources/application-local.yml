@@ -1,0 +1,23 @@
+#Setting DB
+spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/h2/nooblol
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+    tomcat:
+      validation-query: SELECT 1 FROM DUAL
+
+  sql:
+    init:
+      mode: always
+  h2:
+    console:
+      enabled: true
+
+  redis: #redis
+    host: 127.0.0.1
+    port: 6379
+
+server:
+  port: 8080
