@@ -18,4 +18,5 @@ public class RiotConfiguration {
 
   private String summonerNameSearchApiUrl;
 
+  private String summonerHistorySearchApiUrl;
 }
