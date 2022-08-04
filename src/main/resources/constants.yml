@@ -1,4 +1,4 @@
 #Riot API Key
 riot:
   apiKey: riot-api-key
-
+  summoner-name-search-api-url: https://kr.api.riotgames.com/lol/summoner/v4/summoners/
