@@ -6,10 +6,9 @@
     SELECT
     id, account_id, puuid, name, profile_icon_id, revision_Date, summoner_level
     FROM SUMMONER_ACCOUNT
-    WHERE 1=1
-    <if test='id != ""'>
-      AND id = #{id}
-    </if>
+    <where>
+      <if test="id != null and id != ''">AND id = #{id}</if>
+    </where>
   </select>
 
   <update id="updSummonerAccount" parameterType="SummonerDto">

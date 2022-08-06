@@ -4,24 +4,28 @@
 <mapper namespace="com.nooblol.account.mapper.SummonerHistoryMapper">
   <select id="selSummonerHistoryById" resultType="SummonerHistoryDto">
     SELECT summoner_id,
-           queue_type,
-           tier,
-           rank,
-           summoner_name,
-           league_points,
-           wins,
-           losses,
-           league_id
+    queue_type,
+    tier,
+    rank,
+    summoner_name,
+    league_points,
+    wins,
+    losses,
+    league_id
     FROM SUMMONER_SIMPLE_HISTORY
-    WHERE summoner_id = #{summonerId}
+    <where>
+      <if test="summonerId != null and summonerId != ''">summoner_id = #{summonerId}</if>
+    </where>
   </select>
 
   <!--summoner_simple_history테이블에 해당 leagueId가 등록되어 있는지 여부 확인-->
   <select id="selSummonerHistoryByLeagueAndId" resultType="SummonerHistoryDto">
     SELECT league_id
     FROM SUMMONER_SIMPLE_HISTORY
-    WHERE league_id = #{leagueId}
-      AND summoner_id = #{summonerId}
+    <where>
+      <if test="leagueId  != null and leagueId !=''">AND league_id = #{leagueId}</if>
+      <if test="summonerId != null and summonerId !=''">AND summoner_id = #{summonerId}</if>
+    </where>
   </select>
 
   <!--테이블에 leagueId가 존재하기 떄문에 update만 진행함.-->
