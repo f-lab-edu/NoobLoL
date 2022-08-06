@@ -1,5 +1,7 @@
 #Riot API Key
 riot:
   apiKey: riot-api-key
-  summoner-name-search-api-url: https://kr.api.riotgames.com/lol/summoner/v4/summoners/
-  summoner-history-search-api-url: https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/
+  domain: https://kr.api.riotgames.com/
+  summoner-name-search-by-id-api: lol/summoner/v4/summoners/
+  summoner-name-search-by-name-api: lol/summoner/v4/summoners/by-name/
+  summoner-history-search-by-summoner-id-api: lol/league/v4/entries/by-summoner/

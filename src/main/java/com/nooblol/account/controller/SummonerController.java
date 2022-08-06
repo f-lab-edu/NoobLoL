@@ -1,9 +1,9 @@
 package com.nooblol.account.controller;
 
+import com.nooblol.account.service.SummonerHistoryService;
 import com.nooblol.account.service.SummonerService;
-import com.nooblol.account.service.impl.SummonerHistoryServiceImpl;
 import com.nooblol.global.dto.ResponseDto;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,16 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Controller
-@RequestMapping("/summoner/*")
+@RequestMapping("/summoner")
+@RequiredArgsConstructor
 public class SummonerController {
 
-  @Autowired
-  SummonerService summonerService;
+  private final SummonerService summonerService;
+  private final SummonerHistoryService summonerHistoryService;
 
-  @Autowired
-  SummonerHistoryServiceImpl summonerHistoryService;
-
-  @GetMapping("search/name")
+  @GetMapping("/search/name")
   public ResponseDto searchSummonerByName(@RequestParam(value = "summonerName") String summonerName)
       throws IllegalArgumentException {
     return summonerService.getSummonerAccointInfo(summonerName);

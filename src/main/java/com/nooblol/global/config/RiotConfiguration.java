@@ -16,7 +16,11 @@ public class RiotConfiguration {
 
   private String apiKey;
 
-  private String summonerNameSearchApiUrl;
+  private String domain;
 
-  private String summonerHistorySearchApiUrl;
+  private String summonerNameSearchByIdApi;
+
+  private String summonerNameSearchByNameApi;
+
+  private String summonerHistorySearchBySummonerIdApi;
 }

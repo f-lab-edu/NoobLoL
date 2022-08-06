@@ -26,10 +26,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SummonerHistoryServiceImpl implements SummonerHistoryService {
 
-  @Autowired
   private final RiotConfiguration riotConfiguration;
-
-  @Autowired
   private final SummonerHistoryMapper summonerHistoryMapper;
 
   @Override
@@ -59,7 +56,7 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
 
   public ResponseDto selSummonerHistoryByRiot(String summonerId) {
     ResponseDto rtnDto = null;
-    String url = riotConfiguration.getSummonerHistorySearchApiUrl() + summonerId;
+    String url = riotConfiguration.getDomain() + riotConfiguration.getSummonerHistorySearchBySummonerIdApi() + summonerId;
 
     try {
       HttpResponse response = getApiResponseData(url);

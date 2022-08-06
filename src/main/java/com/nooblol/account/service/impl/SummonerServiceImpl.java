@@ -15,7 +15,6 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +24,7 @@ import static com.nooblol.global.utils.CommonUtils.*;
 @RequiredArgsConstructor
 public class SummonerServiceImpl implements SummonerService {
 
-  @Autowired
   private final RiotConfiguration riotConfiguration;
-
-  @Autowired
   private final SummonerMapper summonerMapper;
 
   @Override
@@ -72,7 +68,8 @@ public class SummonerServiceImpl implements SummonerService {
   @Override
   public ResponseDto selSummonerAccountByRiot(String summonerName) {
     summonerName = summonerNameWhiteSpaceReplace(summonerName);
-    String url = riotConfiguration.getSummonerNameSearchApiUrl() + "by-name/" + summonerName;
+    String url = riotConfiguration.getDomain() + riotConfiguration.getSummonerNameSearchByNameApi()
+        + summonerName;
     return responseResult(url, SummonerDto.class);
   }
 
