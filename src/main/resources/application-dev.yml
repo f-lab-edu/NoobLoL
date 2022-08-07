@@ -15,3 +15,12 @@ spring:
 
 server:
   port: 8081
+
+
+#log
+logging:
+  file:
+    path: /nooblol/app/log
+    name: nooblol.log
+  level:
+    root: debug

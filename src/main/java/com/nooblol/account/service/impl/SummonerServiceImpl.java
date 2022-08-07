@@ -15,6 +15,8 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,8 @@ import static com.nooblol.global.utils.CommonUtils.*;
 @Service
 @RequiredArgsConstructor
 public class SummonerServiceImpl implements SummonerService {
+
+  private final Logger log = LoggerFactory.getLogger(getClass());
 
   private final RiotConfiguration riotConfiguration;
   private final SummonerMapper summonerMapper;
