@@ -1,10 +1,11 @@
-package com.nooblol.account.service;
+package com.nooblol.account.service.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.nooblol.account.dto.SummonerDto;
 import com.nooblol.account.mapper.SummonerMapper;
+import com.nooblol.account.service.SummonerService;
 import com.nooblol.global.dto.ResponseDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -25,14 +26,14 @@ public class SummonerServiceTests {
   @Test
   @DisplayName("존재하는 소환사명 테스트")
   void getSummonerAccountInfo_IsOk() {
-    ResponseDto riotServerData = summonerService.selSummonerAccountByRiot("눕는게 일상");
+    ResponseDto riotServerData = summonerService.selectSummonerAccountByRiot("눕는게 일상");
     assertThat(riotServerData.getResultCode()).isEqualTo(HttpStatus.OK.value());
   }
 
   @Test
   @DisplayName("존재하지 않는 소환사명 - Not Found")
   void getSummonerAccountInfo_NotFound() {
-    ResponseDto data = summonerService.selSummonerAccountByRiot("테스트를 위해 생길수가 없는 아이디");
+    ResponseDto data = summonerService.selectSummonerAccountByRiot("테스트를 위해 생길수가 없는 아이디");
     assertThat(data.getResultCode()).isNotNull().isEqualTo(HttpStatus.NOT_FOUND.value());
   }
 

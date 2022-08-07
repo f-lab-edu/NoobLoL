@@ -23,7 +23,7 @@ class SummonerHistoryServiceImplTest {
   SummonerHistoryService summonerHistoryService;
 
   @Test
-  @DisplayName("Riot에서 바로 데이터가 받아지는지 확인")
+  @DisplayName("Riot에서 바로 사용자 랭크데이터가 받아지는지 확인")
   void 사용자랭크데이터_수신여부확인() {
     String summonerId = "deB6s71eX3jENhwvTGVzJwlBbE--Gjf8MIm74yZvJI7kMDE";
     ResponseDto dto = summonerHistoryService.getSummonerHistoryInfo(summonerId, false);
@@ -43,5 +43,5 @@ class SummonerHistoryServiceImplTest {
     assertThat((List<SummonerHistoryDto>) dto.getResult()).filteredOn(
         o -> o.getSummonerId().equals(summonerId));
   }
-  
+
 }

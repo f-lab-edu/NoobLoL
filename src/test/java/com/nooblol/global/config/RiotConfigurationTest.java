@@ -30,8 +30,8 @@ class RiotConfigurationTest {
   @Test
   @DisplayName("소환사명 링크의 주입여부 확인")
   void confirmSearchNameUrlInject(
-      @Value("${riot.summoner-name-search-api-url}") String searchNameUrl) {
-    String getSearchNameUrl = riotConfiguration.getSummonerNameSearchApiUrl();
+      @Value("${riot.summoner-name-search-by-name-api}") String searchNameUrl) {
+    String getSearchNameUrl = riotConfiguration.getSummonerNameSearchByNameApi();
 
     assertThat(getSearchNameUrl)
         .isNotEmpty()
