@@ -1,6 +1,7 @@
 package com.nooblol.account.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nooblol.account.dto.SummonerHistoryDto;
 import com.nooblol.account.mapper.SummonerHistoryMapper;
@@ -99,7 +100,8 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
   private ArrayList<SummonerHistoryDto> getResponseBodyToDto(HttpResponse response)
       throws IOException {
     ResponseHandler<String> handler = new BasicResponseHandler();
-    ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper = new ObjectMapper().configure(
+        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     String body = handler.handleResponse(response);
 
     return objectMapper.readValue(body, new TypeReference<ArrayList<SummonerHistoryDto>>() {
