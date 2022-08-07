@@ -34,6 +34,8 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
   private final RiotConfiguration riotConfiguration;
   private final SummonerHistoryMapper summonerHistoryMapper;
 
+  private final ObjectMapper objectMapper;
+
   @Override
   public ResponseDto getSummonerHistoryInfo(String summonerId, boolean sync) {
     if (StringUtils.isBlank(summonerId)) {
@@ -100,8 +102,6 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
   private ArrayList<SummonerHistoryDto> getResponseBodyToDto(HttpResponse response)
       throws IOException {
     ResponseHandler<String> handler = new BasicResponseHandler();
-    ObjectMapper objectMapper = new ObjectMapper().configure(
-        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     String body = handler.handleResponse(response);
 
     return objectMapper.readValue(body, new TypeReference<ArrayList<SummonerHistoryDto>>() {

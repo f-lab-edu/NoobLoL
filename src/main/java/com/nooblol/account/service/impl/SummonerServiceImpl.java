@@ -32,6 +32,8 @@ public class SummonerServiceImpl implements SummonerService {
   private final RiotConfiguration riotConfiguration;
   private final SummonerMapper summonerMapper;
 
+  private final ObjectMapper objectMapper;
+
   @Override
   public ResponseDto getSummonerAccointInfo(String summonerName) {
     if (StringUtils.isBlank(summonerName)) {
@@ -114,8 +116,6 @@ public class SummonerServiceImpl implements SummonerService {
 
   private <T> T getResponseBody(HttpResponse response, Class<T> dto) throws IOException {
     ResponseHandler<String> handler = new BasicResponseHandler();
-    ObjectMapper objectMapper = new ObjectMapper();
-
     String body = handler.handleResponse(response);
 
     return objectMapper.readValue(body, dto);
