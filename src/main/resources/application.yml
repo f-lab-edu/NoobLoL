@@ -26,7 +26,7 @@ mybatis:
 #log
 logging:
   file:
-    path: /nooblol/app/log
     name: nooblol.log
+    path: log/local
   level:
     root: info

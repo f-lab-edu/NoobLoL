@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="60 seconds">
   <springProperty scope="context" name="LOG_LEVEL" source="logging.level.root"/>
+  <!--log path-->
+  <springProperty scope="context" name="LOG_PATH" source="logging.file.path"/>
+
+  <springProperty scope="context" name="LOG_FILE_NAME" source="logging.file.name"/>
 
   <!-- err log file name -->
   <property name="ERR_LOG_FILE_NAME" value="err_log"/>
@@ -11,13 +15,6 @@
 
   <property name="LOG_PATTERN"
     value="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative] %-5level ${PID:-} --- [%15.15thread] %-40.40logger{36} : %msg%n"/>
-
-
-  <!--log path-->
-  <property name="LOG_PATH" value="${logging.file.path}"/>
-
-  <!--log file name-->
-  <property name="LOG_FILE_NAME" value="${logging.file.name}"/>
 
   <!-- Console Appender -->
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
