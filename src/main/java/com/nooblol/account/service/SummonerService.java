@@ -10,10 +10,10 @@ public interface SummonerService {
 
   ResponseDto summonerAccountProcess(String summonerName);
 
-  ResponseDto selSummonerAccountByRiot(String summonerName);
+  ResponseDto selectSummonerAccountByRiot(String summonerName);
 
   void summonerAccountDBProcess(ResponseDto responseDto);
 
-  SummonerDto selSummonerAccountByDB(SummonerDto summonerDto);
+  SummonerDto selectSummonerAccountByDB(SummonerDto summonerDto);
 
 }

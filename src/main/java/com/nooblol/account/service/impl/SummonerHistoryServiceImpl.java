@@ -44,7 +44,7 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
     ResponseDto responseDto = null;
     if (sync) {
       List<SummonerHistoryDto> dbSummonerHistoryList =
-          summonerHistoryMapper.selSummonerHistoryById(summonerId);
+          summonerHistoryMapper.selectSummonerHistoryById(summonerId);
       if (dbSummonerHistoryList.isEmpty()) {
         sync = false;
       } else {
@@ -59,7 +59,9 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
 
   public ResponseDto selSummonerHistoryByRiot(String summonerId) {
     ResponseDto rtnDto = null;
-    String url = riotConfiguration.getDomain() + riotConfiguration.getSummonerHistorySearchBySummonerIdApi() + summonerId;
+    String url =
+        riotConfiguration.getDomain() + riotConfiguration.getSummonerHistorySearchBySummonerIdApi()
+            + summonerId;
 
     try {
       HttpResponse response = getApiResponseData(url);
@@ -126,12 +128,12 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
       throw new NullPointerException("LeagueId or Summoner ID Is Null");
     }
     SummonerHistoryDto existDataByDB =
-        summonerHistoryMapper.selSummonerHistoryByLeagueAndId(summonerHistoryDto);
+        summonerHistoryMapper.selectSummonerHistoryByLeagueAndId(summonerHistoryDto);
 
     if (CommonUtils.objectIsNotNull(existDataByDB)) {
-      summonerHistoryMapper.updSummonerHistry(summonerHistoryDto);
+      summonerHistoryMapper.updateSummonerHistory(summonerHistoryDto);
     } else {
-      summonerHistoryMapper.insSummonerHistory(summonerHistoryDto);
+      summonerHistoryMapper.insertSummonerHistory(summonerHistoryDto);
     }
   }
 }

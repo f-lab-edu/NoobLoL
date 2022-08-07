@@ -6,10 +6,10 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface SummonerMapper {
 
-  SummonerDto selSummonerAccount(SummonerDto summonerDto);
+  SummonerDto selectSummonerAccount(SummonerDto summonerDto);
 
-  int updSummonerAccount(SummonerDto summonerDto);
+  int updateSummonerAccount(SummonerDto summonerDto);
 
-  int insSummonerAccount(SummonerDto summonerDto);
+  int insertSummonerAccount(SummonerDto summonerDto);
 
 }

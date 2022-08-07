@@ -7,11 +7,11 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface SummonerHistoryMapper {
 
-  List<SummonerHistoryDto> selSummonerHistoryById(String summonerId);
+  List<SummonerHistoryDto> selectSummonerHistoryById(String summonerId);
 
-  SummonerHistoryDto selSummonerHistoryByLeagueAndId(SummonerHistoryDto summonerHistoryDto);
+  SummonerHistoryDto selectSummonerHistoryByLeagueAndId(SummonerHistoryDto summonerHistoryDto);
 
-  int updSummonerHistry(SummonerHistoryDto summonerHistoryDto);
+  int updateSummonerHistory(SummonerHistoryDto summonerHistoryDto);
 
-  int insSummonerHistory(SummonerHistoryDto summonerHistoryDto);
+  int insertSummonerHistory(SummonerHistoryDto summonerHistoryDto);
 }

@@ -41,7 +41,7 @@ public class SummonerServiceImpl implements SummonerService {
 
   @Override
   public ResponseDto summonerAccountProcess(String summonerName) {
-    ResponseDto responseDto = selSummonerAccountByRiot(summonerName);
+    ResponseDto responseDto = selectSummonerAccountByRiot(summonerName);
     summonerAccountDBProcess(responseDto);
     return responseDto;
   }
@@ -50,15 +50,15 @@ public class SummonerServiceImpl implements SummonerService {
   public void summonerAccountDBProcess(ResponseDto responseDto) {
     if (responseDto.getResultCode() == HttpStatus.OK.value()) {
       SummonerDto riotSearchData = (SummonerDto) responseDto.getResult();
-      SummonerDto serviceDBData = selSummonerAccountByDB(riotSearchData);
+      SummonerDto serviceDBData = selectSummonerAccountByDB(riotSearchData);
 
       if (objectIsNotNull(serviceDBData)) {
         boolean isSame = riotSearchData.equals(serviceDBData);
         if (!isSame) {
-          summonerMapper.updSummonerAccount(riotSearchData);
+          summonerMapper.updateSummonerAccount(riotSearchData);
         }
       } else {
-        summonerMapper.insSummonerAccount(riotSearchData);
+        summonerMapper.insertSummonerAccount(riotSearchData);
       }
     }
   }
@@ -70,7 +70,7 @@ public class SummonerServiceImpl implements SummonerService {
    * @return
    */
   @Override
-  public ResponseDto selSummonerAccountByRiot(String summonerName) {
+  public ResponseDto selectSummonerAccountByRiot(String summonerName) {
     summonerName = summonerNameWhiteSpaceReplace(summonerName);
     String url = riotConfiguration.getDomain() + riotConfiguration.getSummonerNameSearchByNameApi()
         + summonerName;
@@ -78,8 +78,8 @@ public class SummonerServiceImpl implements SummonerService {
   }
 
   @Override
-  public SummonerDto selSummonerAccountByDB(SummonerDto summonerDto) {
-    return summonerMapper.selSummonerAccount(summonerDto);
+  public SummonerDto selectSummonerAccountByDB(SummonerDto summonerDto) {
+    return summonerMapper.selectSummonerAccount(summonerDto);
   }
 
   /**

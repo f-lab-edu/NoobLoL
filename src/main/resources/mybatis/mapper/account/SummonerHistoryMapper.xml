@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nooblol.account.mapper.SummonerHistoryMapper">
-  <select id="selSummonerHistoryById" resultType="SummonerHistoryDto">
+  <select id="selectSummonerHistoryById" resultType="SummonerHistoryDto">
     SELECT summoner_id,
     queue_type,
     tier,
@@ -19,7 +19,7 @@
   </select>
 
   <!--summoner_simple_history테이블에 해당 leagueId가 등록되어 있는지 여부 확인-->
-  <select id="selSummonerHistoryByLeagueAndId" resultType="SummonerHistoryDto">
+  <select id="selectSummonerHistoryByLeagueAndId" resultType="SummonerHistoryDto">
     SELECT league_id
     FROM SUMMONER_SIMPLE_HISTORY
     <where>
@@ -29,7 +29,7 @@
   </select>
 
   <!--테이블에 leagueId가 존재하기 떄문에 update만 진행함.-->
-  <update id="updSummonerHistry" parameterType="SummonerHistoryDto">
+  <update id="updateSummonerHistory" parameterType="SummonerHistoryDto">
     UPDATE SUMMONER_SIMPLE_HISTORY
     SET queue_type=#{queueType},
         tier=#{tier},
@@ -43,7 +43,7 @@
   </update>
 
   <!--테이블에 leagueId가 존재하지 않기에 Insert-->
-  <insert id="insSummonerHistory" parameterType="SummonerHistoryDto">
+  <insert id="insertSummonerHistory" parameterType="SummonerHistoryDto">
     INSERT INTO SUMMONER_SIMPLE_HISTORY(summoner_id, queue_type, tier, rank, summoner_name,
                                         league_points, wins, losses, league_id)
     VALUES (#{summonerId}, #{queueType}, #{tier}, #{rank}, #{summonerName}, #{leaguePoints},

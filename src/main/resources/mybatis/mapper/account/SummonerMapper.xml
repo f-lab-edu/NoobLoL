@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nooblol.account.mapper.SummonerMapper">
-  <select id="selSummonerAccount" resultType="SummonerDto">
+  <select id="selectSummonerAccount" resultType="SummonerDto">
     SELECT
     id, account_id, puuid, name, profile_icon_id, revision_Date, summoner_level
     FROM SUMMONER_ACCOUNT
@@ -11,7 +11,7 @@
     </where>
   </select>
 
-  <update id="updSummonerAccount" parameterType="SummonerDto">
+  <update id="updateSummonerAccount" parameterType="SummonerDto">
     UPDATE SUMMONER_ACCOUNT
     SET account_id=#{accountId},
         puuid=#{puuid},
@@ -22,7 +22,7 @@
     WHERE id = #{id}
   </update>
 
-  <insert id="insSummonerAccount" parameterType="SummonerDto">
+  <insert id="insertSummonerAccount" parameterType="SummonerDto">
     INSERT INTO SUMMONER_ACCOUNT(id, account_id, puuid, name, profile_icon_id, revision_date,
                                  summoner_level)
     VALUES (#{id}, #{accountId}, #{puuid}, #{name}, #{profileIconId}, #{revisionDate},
