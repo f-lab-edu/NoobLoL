@@ -9,6 +9,7 @@ import com.nooblol.global.config.RiotConfiguration;
 import com.nooblol.global.dto.ResponseDto;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
@@ -33,7 +34,7 @@ public class SummonerServiceImpl implements SummonerService {
 
   @Override
   public ResponseDto getSummonerAccointInfo(String summonerName) {
-    if (summonerName.isEmpty()) {
+    if (StringUtils.isBlank(summonerName)) {
       throw new IllegalArgumentException("소환사명이 입력되지 않았습니다");
     }
     return summonerAccountProcess(summonerName);
@@ -134,5 +135,4 @@ public class SummonerServiceImpl implements SummonerService {
     }
     return new ResponseDto(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND);
   }
-
 }

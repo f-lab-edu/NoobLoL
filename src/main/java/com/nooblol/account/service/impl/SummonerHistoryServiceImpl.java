@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
@@ -34,7 +35,7 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
 
   @Override
   public ResponseDto getSummonerHistoryInfo(String summonerId, boolean sync) {
-    if (summonerId.isBlank()) {
+    if (StringUtils.isBlank(summonerId)) {
       throw new IllegalArgumentException("summonerId가 입력되지 않았습니다.");
     }
     return summonerHistoryProcess(summonerId, sync);
@@ -45,9 +46,7 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
     if (sync) {
       List<SummonerHistoryDto> dbSummonerHistoryList =
           summonerHistoryMapper.selectSummonerHistoryById(summonerId);
-      if (dbSummonerHistoryList.isEmpty()) {
-        sync = false;
-      } else {
+      if (!dbSummonerHistoryList.isEmpty()) {
         return new ResponseDto(HttpStatus.OK.value(), dbSummonerHistoryList);
       }
     }
@@ -101,31 +100,29 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
       throws IOException {
     ResponseHandler<String> handler = new BasicResponseHandler();
     ObjectMapper objectMapper = new ObjectMapper();
-    ArrayList<SummonerHistoryDto> list = null;
-
     String body = handler.handleResponse(response);
 
-    list = objectMapper.readValue(body, new TypeReference<ArrayList<SummonerHistoryDto>>() {
+    return objectMapper.readValue(body, new TypeReference<ArrayList<SummonerHistoryDto>>() {
     });
-
-    return list;
   }
 
   private void summonerHistoryDBProcess(ResponseDto responseDto) {
     ArrayList<SummonerHistoryDto> summonerHistoryList =
         (ArrayList<SummonerHistoryDto>) responseDto.getResult();
 
-    summonerHistoryList.forEach(
-        summonerHistoryDto -> {
-          summonerHistoryDBHandle(summonerHistoryDto);
-        }
-    );
+    if (!summonerHistoryList.isEmpty()) {
+      summonerHistoryList.forEach(
+          summonerHistoryDto -> {
+            summonerHistoryDBHandle(summonerHistoryDto);
+          }
+      );
+    }
   }
 
   private void summonerHistoryDBHandle(SummonerHistoryDto summonerHistoryDto) {
-    if (summonerHistoryDto.getLeagueId().isEmpty() ||
-        summonerHistoryDto.getSummonerId().isEmpty()) {
-      throw new NullPointerException("LeagueId or Summoner ID Is Null");
+    if (StringUtils.isBlank(summonerHistoryDto.getSummonerId()) ||
+        StringUtils.isBlank(summonerHistoryDto.getSummonerId())) {
+      throw new IllegalArgumentException("LeagueId or Summoner ID Is Null");
     }
     SummonerHistoryDto existDataByDB =
         summonerHistoryMapper.selectSummonerHistoryByLeagueAndId(summonerHistoryDto);
