@@ -10,6 +10,8 @@ import org.springframework.web.client.RestTemplate;
 /**
  * 추가적인 설정 필요시 https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/client/HttpComponentsClientHttpRequestFactory.html
  * https://www.javadoc.io/doc/org.apache.httpcomponents/httpclient/4.4/org/apache/http/impl/client/HttpClientBuilder.html
+ * 
+ * HttpClient → RestTemplate 수정, Bean을 통한 관리, RestTemplate에서 사용하는 HttpClient에 대한 ConnectionPool 세팅
  */
 @Configuration
 public class RestTemplateConfig {
@@ -35,5 +37,5 @@ public class RestTemplateConfig {
   public RestTemplate restTemplate(HttpComponentsClientHttpRequestFactory requestFactory) {
     return new RestTemplate(requestFactory);
   }
-  
+
 }
