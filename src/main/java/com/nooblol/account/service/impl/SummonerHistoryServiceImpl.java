@@ -1,7 +1,6 @@
 package com.nooblol.account.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nooblol.account.dto.SummonerHistoryDto;
 import com.nooblol.account.mapper.SummonerHistoryMapper;
@@ -14,16 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +33,7 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
   private final SummonerHistoryMapper summonerHistoryMapper;
 
   private final ObjectMapper objectMapper;
+  private final RestTemplate restTemplate;
 
   @Override
   public ResponseDto getSummonerHistoryInfo(String summonerId, boolean sync) {
@@ -64,14 +63,13 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
     String url =
         riotConfiguration.getDomain() + riotConfiguration.getSummonerHistorySearchBySummonerIdApi()
             + summonerId;
-
     try {
-      HttpResponse response = getApiResponseData(url);
+      ResponseEntity response = getApiResponseData(url);
       rtnDto = makeResponseToDto(response);
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error(e.getMessage());
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error(e.getMessage());
     } finally {
       if (CommonUtils.objectIsNull(rtnDto)) {
         rtnDto = new ResponseDto(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND);
@@ -80,18 +78,18 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
     return rtnDto;
   }
 
-  private HttpResponse getApiResponseData(String url) throws IOException {
-    HttpClient client = HttpClientBuilder.create().build();
-    HttpGet getRequest = new HttpGet(url);
-    getRequest.addHeader("X-Riot-Token", riotConfiguration.getApiKey());
-    return client.execute(getRequest);
+  private ResponseEntity getApiResponseData(String url) throws IOException {
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.add("X-Riot-Token", riotConfiguration.getApiKey());
+
+    return restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(httpHeaders),
+        String.class);
   }
 
-  private ResponseDto makeResponseToDto(HttpResponse response) throws IOException {
-    HttpStatus sameStatus = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+  private ResponseDto makeResponseToDto(ResponseEntity response) throws IOException {
+    HttpStatus sameStatus = HttpStatus.valueOf(response.getStatusCode().value());
     if (sameStatus == HttpStatus.OK) {
-      return new ResponseDto(response.getStatusLine().getStatusCode(),
-          getResponseBodyToDto(response));
+      return new ResponseDto(sameStatus.value(), getResponseBodyToDto(response));
     }
     if (sameStatus != null) {
       return new ResponseDto(sameStatus.value(), sameStatus);
@@ -99,10 +97,9 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
     return new ResponseDto(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND);
   }
 
-  private ArrayList<SummonerHistoryDto> getResponseBodyToDto(HttpResponse response)
+  private ArrayList<SummonerHistoryDto> getResponseBodyToDto(ResponseEntity response)
       throws IOException {
-    ResponseHandler<String> handler = new BasicResponseHandler();
-    String body = handler.handleResponse(response);
+    String body = response.getBody().toString();
 
     return objectMapper.readValue(body, new TypeReference<ArrayList<SummonerHistoryDto>>() {
     });

@@ -6,7 +6,7 @@ public class CommonUtils {
     if (name == null) {
       return null;
     }
-    return name.replaceAll(" ", "%20");
+    return name.replaceAll(" ", "");
   }
 
   public static Boolean objectIsNull(Object obj) {

@@ -8,18 +8,18 @@ import com.nooblol.account.service.SummonerService;
 import com.nooblol.global.config.RiotConfiguration;
 import com.nooblol.global.dto.ResponseDto;
 import java.io.IOException;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import static com.nooblol.global.utils.CommonUtils.*;
 
@@ -33,6 +33,7 @@ public class SummonerServiceImpl implements SummonerService {
   private final SummonerMapper summonerMapper;
 
   private final ObjectMapper objectMapper;
+  private final RestTemplate restTemplate;
 
   @Override
   public ResponseDto getSummonerAccointInfo(String summonerName) {
@@ -99,13 +100,18 @@ public class SummonerServiceImpl implements SummonerService {
   private <T> ResponseDto responseResult(String url, Class<T> resultClass) {
     ResponseDto rtnData = null;
     try {
-      HttpClient client = HttpClientBuilder.create().build();
-      HttpGet getRequest = new HttpGet(url);
-      getRequest.addHeader("X-Riot-Token", riotConfiguration.getApiKey());
-      HttpResponse response = client.execute(getRequest);
+      HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.add("X-Riot-Token", riotConfiguration.getApiKey());
+
+      ResponseEntity<String> response =
+          restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(httpHeaders),
+              String.class);
+
       rtnData = makeResponseDto(response, resultClass);
-    } catch (IOException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      /* 최초 Exception을 생각할 시 ObjectMapper변환만 생각했으나
+      Riot과 통신과정의 Exception을 생각하여 추가함 */
+      log.error(e.getMessage());
     } finally {
       if (rtnData == null) {
         rtnData = new ResponseDto(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND);
@@ -114,19 +120,17 @@ public class SummonerServiceImpl implements SummonerService {
     }
   }
 
-  private <T> T getResponseBody(HttpResponse response, Class<T> dto) throws IOException {
-    ResponseHandler<String> handler = new BasicResponseHandler();
-    String body = handler.handleResponse(response);
-
+  private <T> T getResponseBody(ResponseEntity response, Class<T> dto) throws IOException {
+    String body = response.getBody().toString();
     return objectMapper.readValue(body, dto);
   }
 
-  private <T> ResponseDto makeResponseDto(HttpResponse response, Class<T> resultClass)
+  private <T> ResponseDto makeResponseDto(ResponseEntity response, Class<T> resultClass)
       throws IOException {
-    HttpStatus sameStatus = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
+    HttpStatus sameStatus = HttpStatus.valueOf(response.getStatusCode().value());
     if (sameStatus == HttpStatus.OK) {
       return new ResponseDto(
-          response.getStatusLine().getStatusCode(),
+          sameStatus.value(),
           getResponseBody(response, resultClass)
       );
     }
