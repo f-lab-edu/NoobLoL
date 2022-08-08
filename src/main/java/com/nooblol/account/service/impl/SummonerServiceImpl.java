@@ -8,7 +8,6 @@ import com.nooblol.account.service.SummonerService;
 import com.nooblol.global.config.RiotConfiguration;
 import com.nooblol.global.dto.ResponseDto;
 import java.io.IOException;
-import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -83,7 +82,7 @@ public class SummonerServiceImpl implements SummonerService {
 
   @Override
   public SummonerDto selectSummonerAccountByDB(SummonerDto summonerDto) {
-    return summonerMapper.selectSummonerAccount(summonerDto);
+    return summonerMapper.selectSummonerAccount(summonerDto.getId());
   }
 
   /**

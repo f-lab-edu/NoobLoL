@@ -119,12 +119,14 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
   }
 
   private void summonerHistoryDBHandle(SummonerHistoryDto summonerHistoryDto) {
-    if (StringUtils.isBlank(summonerHistoryDto.getSummonerId()) ||
-        StringUtils.isBlank(summonerHistoryDto.getSummonerId())) {
+    String leagueId = summonerHistoryDto.getLeagueId();
+    String summonerId = summonerHistoryDto.getSummonerId();
+
+    if (StringUtils.isBlank(leagueId) || StringUtils.isBlank(summonerId)) {
       throw new IllegalArgumentException("LeagueId or Summoner ID Is Null");
     }
     SummonerHistoryDto existDataByDB =
-        summonerHistoryMapper.selectSummonerHistoryByLeagueAndId(summonerHistoryDto);
+        summonerHistoryMapper.selectSummonerHistoryByLeagueAndId(leagueId, summonerId);
 
     if (CommonUtils.objectIsNotNull(existDataByDB)) {
       summonerHistoryMapper.updateSummonerHistory(summonerHistoryDto);

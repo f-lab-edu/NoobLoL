@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nooblol.account.mapper.SummonerMapper">
-  <select id="selectSummonerAccount" resultType="SummonerDto">
+  <select id="selectSummonerAccount" parameterType="String" resultType="SummonerDto">
     SELECT
     id, account_id, puuid, name, profile_icon_id, revision_Date, summoner_level
     FROM SUMMONER_ACCOUNT
