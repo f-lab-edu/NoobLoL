@@ -8,13 +8,9 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - 'feature/*'
   pull_request:
     branches:
       - 'develop'
-      - 'feature/*'
 
 jobs:
   CI:
