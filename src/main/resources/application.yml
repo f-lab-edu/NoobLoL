@@ -23,3 +23,10 @@ mybatis:
   type-aliases-package: com.nooblol.*.*
   mapper-locations: classpath:mybatis/mapper/*/*.xml
 
+#log
+logging:
+  file:
+    name: nooblol.log
+    path: log/local
+  level:
+    root: info

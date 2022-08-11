@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nooblol.account.mapper.SummonerMapper">
+  <select id="selectSummonerAccount" parameterType="String" resultType="SummonerDto">
+    SELECT
+    id, account_id, puuid, name, profile_icon_id, revision_Date, summoner_level
+    FROM SUMMONER_ACCOUNT
+    <where>
+      <if test="id != null and id != ''">AND id = #{id}</if>
+    </where>
+  </select>
+
+  <update id="updateSummonerAccount" parameterType="SummonerDto">
+    UPDATE SUMMONER_ACCOUNT
+    SET account_id=#{accountId},
+        puuid=#{puuid},
+        name=#{name},
+        profile_icon_id=#{profileIconId},
+        revision_date=#{revisionDate},
+        summoner_level=#{summonerLevel}
+    WHERE id = #{id}
+  </update>
+
+  <insert id="insertSummonerAccount" parameterType="SummonerDto">
+    INSERT INTO SUMMONER_ACCOUNT(id, account_id, puuid, name, profile_icon_id, revision_date,
+                                 summoner_level)
+    VALUES (#{id}, #{accountId}, #{puuid}, #{name}, #{profileIconId}, #{revisionDate},
+            #{summonerLevel})
+  </insert>
+
+</mapper>

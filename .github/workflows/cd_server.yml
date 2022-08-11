@@ -28,6 +28,15 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
+      ## Riot Api Key 수정
+      - name: Constants.yml Change Riot Api Key
+        run: |
+          cd ./src/main/resources
+          chmod 755 constants.yml
+          sed -i 's/riot-api-key/${{ secrets.RIOT_API_KEY }}/g' constants.yml 
+          cat constants.yml
+        shell: bash
+
       ## Main Branch Make yml
       ## 메인 브랜치는 파일을 Repository Setting에 넣을 예정이기에 만들고 시작해야함.
       - name: Main Branch Make application-prod.properties
