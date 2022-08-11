@@ -69,7 +69,8 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
   public ResponseDto selSummonerHistoryByRiot(String summonerId) {
     ResponseDto rtnDto = null;
     String url =
-        riotConfiguration.getDomain() + riotConfiguration.getSummonerHistorySearchBySummonerIdApi()
+        riotConfiguration.getSummonerDomain()
+            + riotConfiguration.getSummonerHistorySearchBySummonerIdApi()
             + summonerId;
     try {
       ResponseEntity response = getApiResponseData(url);

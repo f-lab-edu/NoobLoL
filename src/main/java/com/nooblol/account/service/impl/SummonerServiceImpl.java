@@ -82,8 +82,9 @@ public class SummonerServiceImpl implements SummonerService {
   @Override
   public ResponseDto selectSummonerAccountByRiot(String summonerName) {
     summonerName = summonerNameWhiteSpaceReplace(summonerName);
-    String url = riotConfiguration.getDomain() + riotConfiguration.getSummonerNameSearchByNameApi()
-        + summonerName;
+    String url =
+        riotConfiguration.getSummonerDomain() + riotConfiguration.getSummonerNameSearchByNameApi()
+            + summonerName;
     return responseResult(url, SummonerDto.class);
   }
 
