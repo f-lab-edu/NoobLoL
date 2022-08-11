@@ -6,6 +6,6 @@ riot:
   summoner-name-search-by-name-api: lol/summoner/v4/summoners/by-name/
   summoner-history-search-by-summoner-id-api: lol/league/v4/entries/by-summoner/
 
-  match-domian: https://asia.api.riotgames.com/
+  match-domain: https://asia.api.riotgames.com/
   match-list-search-by-puuid: lol/match/v5/matches/by-puuid/{puuid}/ids
   match-game-info-by-match-id: lol/match/v5/matches/{matchId}
