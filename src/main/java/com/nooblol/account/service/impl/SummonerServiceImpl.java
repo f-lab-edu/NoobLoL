@@ -33,6 +33,7 @@ public class SummonerServiceImpl implements SummonerService {
 
   private final ObjectMapper objectMapper;
   private final RestTemplate restTemplate;
+  private final HttpHeaders initRiotHeader;
 
   @Override
   public ResponseDto getSummonerAccointInfo(String summonerName) {
@@ -107,11 +108,8 @@ public class SummonerServiceImpl implements SummonerService {
   private <T> ResponseDto responseResult(String url, Class<T> resultClass) {
     ResponseDto rtnData = null;
     try {
-      HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.add("X-Riot-Token", riotConfiguration.getApiKey());
-
       ResponseEntity<String> response =
-          restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(httpHeaders),
+          restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(initRiotHeader),
               String.class);
 
       rtnData = makeResponseDto(response, resultClass);

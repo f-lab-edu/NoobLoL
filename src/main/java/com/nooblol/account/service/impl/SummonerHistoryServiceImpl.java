@@ -34,6 +34,7 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
 
   private final ObjectMapper objectMapper;
   private final RestTemplate restTemplate;
+  private final HttpHeaders initRiotHeader;
 
   @Override
   public ResponseDto getSummonerHistoryInfo(String summonerId, boolean sync) {
@@ -88,11 +89,9 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
   }
 
   private ResponseEntity getApiResponseData(String url) throws IOException {
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.add("X-Riot-Token", riotConfiguration.getApiKey());
-
-    return restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(httpHeaders),
-        String.class);
+    return restTemplate.exchange(
+        url, HttpMethod.GET, new HttpEntity<String>(initRiotHeader), String.class
+    );
   }
 
   private ResponseDto makeResponseToDto(ResponseEntity response) throws IOException {
