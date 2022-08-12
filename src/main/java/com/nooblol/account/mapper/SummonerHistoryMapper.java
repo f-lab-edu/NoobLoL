@@ -1,6 +1,6 @@
 package com.nooblol.account.mapper;
 
-import com.nooblol.account.dto.SummonerHistoryDto;
+import com.nooblol.account.dto.summoner.SummonerHistoryDto;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

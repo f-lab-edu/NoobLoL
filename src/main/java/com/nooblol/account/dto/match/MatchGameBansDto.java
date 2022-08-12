@@ -1,4 +1,4 @@
-package com.nooblol.account.dto;
+package com.nooblol.account.dto.match;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,4 +10,6 @@ import lombok.Setter;
 @Setter
 public class MatchGameBansDto {
 
+  private int championId;
+  private int pickTurn;
 }

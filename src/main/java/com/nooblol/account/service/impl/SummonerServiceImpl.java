@@ -2,7 +2,7 @@ package com.nooblol.account.service.impl;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nooblol.account.dto.SummonerDto;
+import com.nooblol.account.dto.summoner.SummonerDto;
 import com.nooblol.account.mapper.SummonerMapper;
 import com.nooblol.account.service.SummonerService;
 import com.nooblol.global.config.RiotConfiguration;

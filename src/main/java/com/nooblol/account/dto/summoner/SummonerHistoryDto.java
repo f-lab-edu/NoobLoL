@@ -1,4 +1,4 @@
-package com.nooblol.account.dto;
+package com.nooblol.account.dto.summoner;
 
 import lombok.Getter;
 import lombok.Setter;

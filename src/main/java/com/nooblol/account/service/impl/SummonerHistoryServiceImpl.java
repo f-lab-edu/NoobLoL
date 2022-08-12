@@ -2,7 +2,7 @@ package com.nooblol.account.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nooblol.account.dto.SummonerHistoryDto;
+import com.nooblol.account.dto.summoner.SummonerHistoryDto;
 import com.nooblol.account.mapper.SummonerHistoryMapper;
 import com.nooblol.account.service.SummonerHistoryService;
 import com.nooblol.global.config.RiotConfiguration;

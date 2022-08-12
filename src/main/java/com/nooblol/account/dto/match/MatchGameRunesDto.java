@@ -1,5 +1,6 @@
-package com.nooblol.account.dto;
+package com.nooblol.account.dto.match;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,4 +12,6 @@ import lombok.Setter;
 @Setter
 public class MatchGameRunesDto {
 
+  private RuneStatsDto statPerks;
+  private List<RuneStyleDto> styles;
 }
