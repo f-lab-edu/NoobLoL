@@ -2,6 +2,7 @@ package com.nooblol.account.dto.match;
 
 import java.util.List;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -9,6 +10,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 public class MatchGameInfoDto {
 
   private String dataVersion;
@@ -16,8 +18,8 @@ public class MatchGameInfoDto {
 
   private long gameCreation;
   private long gameDuration;
-  private long gameEndTimeStamp;
-  private long gameStartTimeStamp;
+  private long gameEndTimestamp;
+  private long gameStartTimestamp;
   private long gameId;
 
   private String gameMode;
@@ -28,5 +30,6 @@ public class MatchGameInfoDto {
   private int mapId;
   private int queueId;
 
-  private List<MatchGameParticipantsDto> participantsList;
+  private List<MatchGameParticipantsDto> participants;
+  private List<TeamDto> teams;
 }

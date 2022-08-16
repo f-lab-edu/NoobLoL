@@ -1,6 +1,7 @@
 package com.nooblol.account.dto.match;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -9,14 +10,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class MatchGameParticipantsDto {
 
-  private String matchId;
-
   private String puuid;
+
   private String summonerId;
   private String summonerLevel;
-
+  private String summonerName;
   private String championName;
   private int championId;
   private int championLevel;
@@ -44,5 +45,5 @@ public class MatchGameParticipantsDto {
   private int item5;
   private int item6;
 
-  private MatchGameRunesDto matchGameRunesDto;
+  private MatchGameRunesDto perks;
 }
