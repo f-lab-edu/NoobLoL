@@ -109,7 +109,7 @@ public class MatchGameListServiceImpl implements MatchGameListService {
     try {
       uri = new URIBuilder(strUri)
           .addParameter("start", String.valueOf(0))
-          .addParameter("count", String.valueOf(100))
+          .addParameter("count", String.valueOf(50))
           .build();
       return uri.toString();
     } catch (URISyntaxException e) {

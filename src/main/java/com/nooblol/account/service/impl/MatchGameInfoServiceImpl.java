@@ -180,15 +180,14 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
       return false;
     }
     matchGameInfoMapper.insertMatchGameInfo(infoDto);
-    matchGameInfoMapper.insertMatchGameInfo(infoDto);
-//    matchGameInfoMapper.insertMatchGameBans(infoDto.getTeams());
-    //  matchGameInfoMapper.insertMatchGameParticipants(infoDto);
-    //matchGameInfoMapper.insertMatchGameUseStatRunes(infoDto);
+    matchGameInfoMapper.insertMatchGameBans(infoDto.getTeams());
+    matchGameInfoMapper.insertMatchGameParticipants(infoDto);
+    matchGameInfoMapper.insertMatchGameUseStatRunes(infoDto);
 
     Map infoMap = new HashMap();
     infoMap.put("matchId", infoDto.getMatchId());
     infoMap.put("participants", infoDto.getParticipants());
-    //matchGameInfoMapper.insertMatchGameUseStyleRunes(infoMap);
+    matchGameInfoMapper.insertMatchGameUseStyleRunes(infoMap);
     return true;
   }
 }
