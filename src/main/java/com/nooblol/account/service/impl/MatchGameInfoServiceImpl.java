@@ -79,8 +79,7 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
       });
 
       int totalSize = inputMatchList.size();
-      AtomicInteger successCount = new AtomicInteger();
-      successCount.set(0);
+      int successCount = 0;
 
       /**
        * 한꺼번에 riot과 통신작업을 진행한 이후 받아온 데이터를 일괄적으로 Insert
@@ -89,10 +88,13 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
        */
       for (MatchDto dto : inputMatchList) {
         if (insertMatchDataByDB(dto)) {
-          successCount.getAndIncrement();
+          successCount++;
         }
       }
-      SyncResultDto rtnData = new SyncResultDto(totalSize, successCount.get());
+      log.info(
+          "DB Insert Success PuuId : " + puuid + ", totalCount : " + totalSize + ", successCount : "
+              + successCount);
+      SyncResultDto rtnData = new SyncResultDto(totalSize, successCount);
       return new ResponseDto(HttpStatus.OK.value(), rtnData);
     }
     return getMatchListData;
