@@ -59,6 +59,7 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
     return syncRiotToDbDataProcess(puuid);
   }
 
+  // TODO: 2022/08/17 현재는 동기화시에 고정적으로 최근 50경기로 지정하였으나, 최초 사용자들의 경우에는 모든데이터를 가져올 방법을 새롭게 마련해야 함.
   @Override
   public ResponseDto syncRiotToDbDataProcess(String puuid) throws Exception {
     ResponseDto getMatchListData = matchGameListService.getMatchListId(puuid);
@@ -84,7 +85,7 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
       /**
        * 한꺼번에 riot과 통신작업을 진행한 이후 받아온 데이터를 일괄적으로 Insert
        * Lambda를 사용하게 될 경우 익명 클래스에서 Exception을 처리하기 위해서 Try~Catch문을 사용해야 한다.
-       * Try~Catch문을 사용하면서 Exception이 증발하여 Rollback이 되지않는 이슈가 존재하여 for문으로 변경.
+       * Try~Catch문을 사용하면서 Exception이 증발하여 Rollback이 되지않는 이슈가 존재하여 for문으로 수정.
        */
       for (MatchDto dto : inputMatchList) {
         if (insertMatchDataByDB(dto)) {
