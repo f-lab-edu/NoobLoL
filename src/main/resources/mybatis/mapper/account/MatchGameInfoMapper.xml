@@ -18,7 +18,6 @@
     </choose>
   </select>
 
-
   <!--아래의 Insert들은 모두 삽입하는 경우만 존재 함-->
   <insert id="insertMatchGameInfo" parameterType="MatchGameInfoDto">
     INSERT INTO MATCH_GAMEINFO(data_version, match_id, game_creation, game_duration,
@@ -44,14 +43,15 @@
   </insert>
 
   <insert id="insertMatchGameParticipants" parameterType="MatchGameInfoDto">
-    INSERT INTO MATCH_PARTICIPANTS(puuid, match_id, champion_name, champion_level, summoner_id,
-    summoner_name, kills, deaths, assists, role, lane, team_id, team_position, win,
+    INSERT INTO MATCH_PARTICIPANTS(puuid, match_id, champion_name, champion_level, champion_id,
+    summoner_id, summoner_name, kills, deaths, assists, role, lane, team_id, team_position, win,
     summoner1_casts, summoner1_id, summoner2_casts, summoner2_id, item0, item1, item2, item3, item4,
     item5, item6)
     VALUES
     <foreach collection="participants" item="item" separator=",">
-      (#{item.puuid}, #{matchId}, #{item.championName}, #{item.championLevel}, #{item.summonerId},
-      #{item.summonerName}, #{item.kills}, #{item.deaths}, #{item.assists}, #{item.role},
+      (#{item.puuid}, #{matchId}, #{item.championName}, #{item.championLevel}, #{item.championId},
+      #{item.summonerId}, #{item.summonerName}, #{item.kills}, #{item.deaths}, #{item.assists},
+      #{item.role},
       #{item.lane}, #{item.teamId}, #{item.teamPosition} , #{item.win},
       #{item.summoner1Casts}, #{item.summoner1Id}, #{item.summoner2Casts}, #{item.summoner2Id},
       #{item.item0}, #{item.item1}, #{item.item2}, #{item.item3}, #{item.item4}, #{item.item5},
