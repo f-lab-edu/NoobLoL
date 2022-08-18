@@ -32,6 +32,7 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
    * @return
    */
   @Override
+  @Transactional(readOnly = true)
   public ResponseDto getMatchAllParticipantsList(String matchId) {
     if (StringUtils.isBlank(matchId)) {
       throw new IllegalArgumentException(
@@ -41,7 +42,6 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public List<MatchGameParticipantsDto> selectMatchAllParticipantsListByMatchId(String matchId) {
     return matchGameAddInfoMapper.selectMatchAllParticipantsListByMatchId(matchId);
   }
@@ -53,16 +53,16 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
    * @return
    */
   @Override
+  @Transactional(readOnly = true)
   public ResponseDto getMatchBanList(String matchId) {
     if (StringUtils.isBlank(matchId)) {
       throw new IllegalArgumentException("getMatchBanList(String) : MatchId가 입력되지 않았습니다.");
     }
 
-    return makeReturnValue(matchGameAddInfoMapper.selectMatchGameBanList(matchId));
+    return makeReturnValue(selectMatchBanListByMatchId(matchId));
   }
 
   @Override
-  @Transactional(readOnly = true)
   public List<MatchGameBansDto> selectMatchBanListByMatchId(String matchId) {
     return matchGameAddInfoMapper.selectMatchGameBanList(matchId);
   }
@@ -76,6 +76,7 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
    * @return
    */
   @Override
+  @Transactional(readOnly = true)
   public ResponseDto getMatchUseRunList(String matchId, String puuid) {
     if (StringUtils.isBlank(matchId)) {
       throw new IllegalArgumentException("getMatchUseRunList : MatchId가 입력되지 않았습니다.");
@@ -87,7 +88,6 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
   }
 
   @Override
-  @Transactional(readOnly = true)
   public List<MatchUseRuneDto> selectMatchUseRuneByMatchIdAndPuuid(String matchId, String puuid) {
     Map<String, String> paramMap = new HashMap<>();
     paramMap.put("matchId", matchId);
