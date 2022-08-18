@@ -1,5 +1,6 @@
 package com.nooblol.account.controller;
 
+import com.nooblol.account.service.MatchGameAddInfoService;
 import com.nooblol.account.service.MatchGameInfoService;
 import com.nooblol.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +23,11 @@ public class MatchGameController {
   private final Logger log = LoggerFactory.getLogger(getClass());
 
   private final MatchGameInfoService matchGameInfoService;
+  private final MatchGameAddInfoService matchGameAddInfoService;
 
   /**
-   * 전적항목을 간단하게 표현함에 있어서 필요한 정보만 Return 한다.
-   * PUUID사용자의 가장최근 진행한 게임순으로 순차가 이뤄지며, 같이 참여한
+   * 전적항목을 간단하게 표현함에 있어서 필요한 정보만 Return 한다. PUUID사용자의 가장최근 진행한 게임순으로 순차가 이뤄지며, 같이 참여한
+   *
    * @param puuid
    * @param sync
    * @param pageNum
@@ -33,7 +35,7 @@ public class MatchGameController {
    * @throws Exception
    */
   @GetMapping("/simplelist")
-  public ResponseDto selectMatchList(@RequestParam("puuid") String puuid,
+  public ResponseDto getMatchList(@RequestParam("puuid") String puuid,
       @RequestParam(value = "sync", required = false) boolean sync,
       @RequestParam(value = "page", defaultValue = "0") int pageNum) throws Exception {
     ResponseDto rtnData = null;
@@ -45,5 +47,11 @@ public class MatchGameController {
 
     return matchGameInfoService.syncRiotToDbByPuuidAfterGetMatchSimpleList(puuid, pageNum);
   }
+
+  @GetMapping("/participants")
+  public ResponseDto getMatchAllParticipants(@RequestParam("matchId") String matchId) {
+    return matchGameAddInfoService.getMatchAllParticipantsList(matchId);
+  }
+
 
 }
