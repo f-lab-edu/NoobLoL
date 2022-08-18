@@ -9,6 +9,7 @@ import com.nooblol.account.dto.match.MatchDto;
 import com.nooblol.account.dto.match.MatchGameInfoDto;
 import com.nooblol.account.dto.match.MatchGameParticipantsDto;
 import com.nooblol.account.dto.match.MatchGameRunesDto;
+import com.nooblol.account.dto.match.MatchGameSimpleDto;
 import com.nooblol.account.dto.match.MatchMetaDataDto;
 import com.nooblol.account.dto.match.RuneStatsDto;
 import com.nooblol.account.dto.match.RuneStyleDto;
@@ -64,7 +65,7 @@ class MatchGameInfoServiceImplTest {
   @DisplayName("getMatchInfoListByPuuid의 파라미터 Null전달시 Exception테스트")
   void confirm_getMatchInfoListByPuuid_IllegalArgumentExceptionTest() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      matchGameInfoService.getMatchInfoListByPuuid(null);
+      matchGameInfoService.getMatchInfoListByPuuid(null, 1);
     });
 
     assertEquals("PuuId가 입력되지 않았습니다.", exception.getMessage());
@@ -167,12 +168,34 @@ class MatchGameInfoServiceImplTest {
 
     ResponseDto resultResponse = null;
     try {
-      resultResponse = matchGameInfoService.getMatchInfoListByPuuid(responseNotFoundPuuid);
+      resultResponse = matchGameInfoService.getMatchInfoListByPuuid(responseNotFoundPuuid, 1);
     } catch (Exception e) {
       e.printStackTrace();
     }
 
     assertEquals(notFound.getResultCode(), resultResponse.getResultCode());
+  }
+
+  @Test
+  @DisplayName("DB에 게임 전적데이터가 존재하는 경우 List를 정상적으로 Return 받는지 여부 확인")
+  void getMatchSimpleListReturnByDBTest() throws Exception {
+    List<MatchGameSimpleDto> mockReturnList = new ArrayList<>();
+    MatchGameSimpleDto mockSample1 = new MatchGameSimpleDto();
+    mockSample1.setPuuid(responseOkPuuid);
+
+    MatchGameSimpleDto mockSample2 = new MatchGameSimpleDto();
+    mockSample2.setPuuid(responseOkPuuid);
+
+    mockReturnList.add(mockSample1);
+    mockReturnList.add(mockSample2);
+
+    when(matchGameInfoMapper.selectMatchSimpleList(responseOkPuuid)).thenReturn(
+        (ArrayList<MatchGameSimpleDto>) mockReturnList);
+
+    List<MatchGameSimpleDto> returnList = (List<MatchGameSimpleDto>) matchGameInfoService.getMatchInfoListByPuuid(
+        responseOkPuuid, 1).getResult();
+
+    assertEquals(returnList, mockReturnList);
   }
 
 }
