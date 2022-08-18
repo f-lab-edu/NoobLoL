@@ -39,4 +39,11 @@
     ORDER BY pick_turn
   </select>
 
+  <select id="selectMatchGameUseRunes" parameterType="java.util.Map" resultType="MatchUseRuneDto">
+    SELECT puuid, match_id, type, sort_no, perk
+    FROM match_game_runes
+    WHERE puuid = #{puuid}
+      AND MATCH_ID = #{matchId}
+    ORDER BY type, sort_no
+  </select>
 </mapper>

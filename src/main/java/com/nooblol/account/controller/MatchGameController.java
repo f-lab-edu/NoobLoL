@@ -24,7 +24,7 @@ public class MatchGameController {
 
   private final MatchGameInfoService matchGameInfoService;
   private final MatchGameAddInfoService matchGameAddInfoService;
-  
+
   /**
    * 전적항목을 간단하게 표현함에 있어서 필요한 정보만 Return 한다. PUUID사용자의 가장최근 진행한 게임순으로 순차가 이뤄지며, 같이 참여한
    *
@@ -56,6 +56,13 @@ public class MatchGameController {
   @GetMapping("/ban")
   public ResponseDto getMatchBan(@RequestParam("matchId") String matchId) {
     return matchGameAddInfoService.getMatchBanList(matchId);
+  }
+
+  @GetMapping("/rune")
+  public ResponseDto getMatchUseRun(
+      @RequestParam("matchId") String matchId, @RequestParam("puuid") String puuid
+  ) {
+    return matchGameAddInfoService.getMatchUseRunList(matchId, puuid);
   }
 
 

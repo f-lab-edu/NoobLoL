@@ -2,10 +2,13 @@ package com.nooblol.account.service.impl;
 
 import com.nooblol.account.dto.match.MatchGameBansDto;
 import com.nooblol.account.dto.match.MatchGameParticipantsDto;
+import com.nooblol.account.dto.match.MatchUseRuneDto;
 import com.nooblol.account.mapper.MatchGameAddInfoMapper;
 import com.nooblol.account.service.MatchGameAddInfoService;
 import com.nooblol.global.dto.ResponseDto;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -62,6 +65,34 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
   @Transactional(readOnly = true)
   public List<MatchGameBansDto> selectMatchBanListByMatchId(String matchId) {
     return matchGameAddInfoMapper.selectMatchGameBanList(matchId);
+  }
+
+
+  /**
+   * 사용자가 해당 경기에서 사용한 모든 룬정보 반환.
+   *
+   * @param matchId
+   * @param puuid
+   * @return
+   */
+  @Override
+  public ResponseDto getMatchUseRunList(String matchId, String puuid) {
+    if (StringUtils.isBlank(matchId)) {
+      throw new IllegalArgumentException("getMatchUseRunList : MatchId가 입력되지 않았습니다.");
+    }
+    if (StringUtils.isBlank(puuid)) {
+      throw new IllegalArgumentException("getMatchUseRunList : puuid가 입력되지 않았습니다.");
+    }
+    return makeReturnValue(selectMatchUseRuneByMatchIdAndPuuid(matchId, puuid));
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<MatchUseRuneDto> selectMatchUseRuneByMatchIdAndPuuid(String matchId, String puuid) {
+    Map<String, String> paramMap = new HashMap<>();
+    paramMap.put("matchId", matchId);
+    paramMap.put("puuid", puuid);
+    return matchGameAddInfoMapper.selectMatchGameUseRunes(paramMap);
   }
 
 
