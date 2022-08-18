@@ -1,7 +1,6 @@
 package com.nooblol.account.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.when;
 
 
@@ -15,11 +14,14 @@ import com.nooblol.account.dto.match.RuneStatsDto;
 import com.nooblol.account.dto.match.RuneStyleDto;
 import com.nooblol.account.dto.match.RuneStyleSelectionDto;
 import com.nooblol.account.mapper.MatchGameInfoMapper;
+import com.nooblol.account.mapper.MatchGameAddInfoMapper;
 import com.nooblol.account.service.MatchGameListService;
 import com.nooblol.global.config.RiotConfiguration;
 import com.nooblol.global.dto.ResponseDto;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +39,9 @@ class MatchGameInfoServiceImplTest {
 
   @Mock
   private MatchGameInfoMapper matchGameInfoMapper;
+
+  @Mock
+  private MatchGameAddInfoMapper matchGameAddInfoMapper;
 
   @Mock
   private RiotConfiguration riotConfiguration;
@@ -65,7 +70,7 @@ class MatchGameInfoServiceImplTest {
   @DisplayName("getMatchInfoListByPuuid의 파라미터 Null전달시 Exception테스트")
   void confirm_getMatchInfoListByPuuid_IllegalArgumentExceptionTest() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      matchGameInfoService.getMatchInfoListByPuuid(null, 1);
+      matchGameInfoService.getMatchInfoListByPuuid(null, 0);
     });
 
     assertEquals("PuuId가 입력되지 않았습니다.", exception.getMessage());
@@ -168,7 +173,7 @@ class MatchGameInfoServiceImplTest {
 
     ResponseDto resultResponse = null;
     try {
-      resultResponse = matchGameInfoService.getMatchInfoListByPuuid(responseNotFoundPuuid, 1);
+      resultResponse = matchGameInfoService.getMatchInfoListByPuuid(responseNotFoundPuuid, 0);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -189,11 +194,15 @@ class MatchGameInfoServiceImplTest {
     mockReturnList.add(mockSample1);
     mockReturnList.add(mockSample2);
 
-    when(matchGameInfoMapper.selectMatchSimpleList(responseOkPuuid)).thenReturn(
+    Map<String, Object> searchParam = new HashMap<>();
+    searchParam.put("puuid", responseOkPuuid);
+    searchParam.put("pageNum", 0);
+
+    when(matchGameAddInfoMapper.selectMatchSimpleList(searchParam)).thenReturn(
         (ArrayList<MatchGameSimpleDto>) mockReturnList);
 
     List<MatchGameSimpleDto> returnList = (List<MatchGameSimpleDto>) matchGameInfoService.getMatchInfoListByPuuid(
-        responseOkPuuid, 1).getResult();
+        responseOkPuuid, 0).getResult();
 
     assertEquals(returnList, mockReturnList);
   }
