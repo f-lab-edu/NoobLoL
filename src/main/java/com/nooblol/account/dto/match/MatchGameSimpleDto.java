@@ -1,5 +1,6 @@
 package com.nooblol.account.dto.match;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,9 +8,11 @@ import lombok.Setter;
 //간단한 전적 반환
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MatchGameSimpleDto {
 
   private String puuid;
+  private String matchId;
 
   private String summonerId;
   private String summonerName;
@@ -43,5 +46,5 @@ public class MatchGameSimpleDto {
 
   private int queueId;
   private String gameMode;
-  private List<MatchGameParticipantsDto> participants;
+  private List<MatchGameSimpleDto> participants;
 }
