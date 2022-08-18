@@ -32,4 +32,11 @@
   </select>
 
 
+  <select id="selectMatchGameBanList" parameterType="String" resultType="MatchGameBansDto">
+    SELECT champion_id, pick_turn
+    FROM match_game_bans
+    WHERE match_id = #{match_id}
+    ORDER BY pick_turn
+  </select>
+
 </mapper>

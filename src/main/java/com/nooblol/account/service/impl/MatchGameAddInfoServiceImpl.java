@@ -1,5 +1,6 @@
 package com.nooblol.account.service.impl;
 
+import com.nooblol.account.dto.match.MatchGameBansDto;
 import com.nooblol.account.dto.match.MatchGameParticipantsDto;
 import com.nooblol.account.mapper.MatchGameAddInfoMapper;
 import com.nooblol.account.service.MatchGameAddInfoService;
@@ -40,6 +41,27 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
   @Transactional(readOnly = true)
   public List<MatchGameParticipantsDto> selectMatchAllParticipantsListByMatchId(String matchId) {
     return matchGameAddInfoMapper.selectMatchAllParticipantsListByMatchId(matchId);
+  }
+
+  /**
+   * 해당경기에서 벤이된 챔피언을 리스트로 전달하며, 어느팀에서 벤을 하였는지는 구분 되어있지 않다.
+   *
+   * @param matchId
+   * @return
+   */
+  @Override
+  public ResponseDto getMatchBanList(String matchId) {
+    if (StringUtils.isBlank(matchId)) {
+      throw new IllegalArgumentException("getMatchBanList(String) : MatchId가 입력되지 않았습니다.");
+    }
+
+    return makeReturnValue(matchGameAddInfoMapper.selectMatchGameBanList(matchId));
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<MatchGameBansDto> selectMatchBanListByMatchId(String matchId) {
+    return matchGameAddInfoMapper.selectMatchGameBanList(matchId);
   }
 
 

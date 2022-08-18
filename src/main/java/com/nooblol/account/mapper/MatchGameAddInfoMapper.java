@@ -1,5 +1,6 @@
 package com.nooblol.account.mapper;
 
+import com.nooblol.account.dto.match.MatchGameBansDto;
 import com.nooblol.account.dto.match.MatchGameParticipantsDto;
 import com.nooblol.account.dto.match.MatchGameSimpleDto;
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ public interface MatchGameAddInfoMapper {
   ArrayList<MatchGameSimpleDto> selectMatchSimpleParticipantsList(String matchId);
 
   ArrayList<MatchGameParticipantsDto> selectMatchAllParticipantsListByMatchId(String matchId);
+
+  ArrayList<MatchGameBansDto> selectMatchGameBanList(String matchId);
 
 
 }
