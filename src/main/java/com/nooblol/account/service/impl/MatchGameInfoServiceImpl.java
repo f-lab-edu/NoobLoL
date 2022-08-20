@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -81,9 +81,11 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
 
     //MatchId를 기반으로 Riot에서 서버에서 상세 데이터를 받아 List에 추가
     notExistsMatchList.stream().forEach(matchId -> {
-      MatchDto riotData = getMatchDataByRiot(matchId);
-      setMatchIdInData(riotData);
-      inputMatchList.add(riotData);
+      Optional riotData = Optional.ofNullable(getMatchDataByRiot(matchId));
+      riotData.ifPresent(matchDto -> {
+        setMatchIdInData((MatchDto) matchDto);
+        inputMatchList.add((MatchDto) matchDto);
+      });
     });
 
     int totalSize = inputMatchList.size();
