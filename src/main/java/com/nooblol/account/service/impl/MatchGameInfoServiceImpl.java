@@ -64,40 +64,46 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
   public ResponseDto syncRiotToDbDataProcess(String puuid) throws Exception {
     ResponseDto getMatchListData = matchGameListService.getMatchListId(puuid);
 
-    if (getMatchListData.getResultCode() == HttpStatus.OK.value()) {
-      List<String> riotMatchIdList = (ArrayList<String>) getMatchListData.getResult();
+    if (getMatchListData.getResultCode() != HttpStatus.OK.value()) {
+      return getMatchListData;
+    }
 
-      //존재하지 않는 매치ID리스트 획득
-      List<String> notExistsMatchList = getNotExistMatchList(riotMatchIdList);
-      List<MatchDto> inputMatchList = new ArrayList<>();
+    List<String> riotMatchIdList = (ArrayList<String>) getMatchListData.getResult();
 
-      //MatchId를 기반으로 Riot에서 서버에서 상세 데이터를 받아 List에 추가
-      notExistsMatchList.stream().forEach(matchId -> {
-        MatchDto riotData = getMatchDataByRiot(matchId);
-        setMatchIdInData(riotData);
-        inputMatchList.add(riotData);
-      });
+    //존재하지 않는 매치ID리스트 획득
+    List<String> notExistsMatchList = getNotExistMatchList(riotMatchIdList);
+    List<MatchDto> inputMatchList = new ArrayList<>();
 
-      int totalSize = inputMatchList.size();
-      int successCount = 0;
-
-      /**
-       * 한꺼번에 riot과 통신작업을 진행한 이후 받아온 데이터를 일괄적으로 Insert
-       * Lambda를 사용하게 될 경우 익명 클래스에서 Exception을 처리하기 위해서 Try~Catch문을 사용해야 한다.
-       * Try~Catch문을 사용하면서 Exception이 증발하여 Rollback이 되지않는 이슈가 존재하여 for문으로 수정.
-       */
-      for (MatchDto dto : inputMatchList) {
-        if (insertMatchDataByDB(dto)) {
-          successCount++;
-        }
-      }
-      log.info(
-          "DB Insert Success PuuId : " + puuid + ", totalCount : " + totalSize + ", successCount : "
-              + successCount);
-      SyncResultDto rtnData = new SyncResultDto(totalSize, successCount);
+    if (notExistsMatchList == null || notExistsMatchList.size() <= 0) {
+      SyncResultDto rtnData = new SyncResultDto(0, 0);
       return new ResponseDto(HttpStatus.OK.value(), rtnData);
     }
-    return getMatchListData;
+
+    //MatchId를 기반으로 Riot에서 서버에서 상세 데이터를 받아 List에 추가
+    notExistsMatchList.stream().forEach(matchId -> {
+      MatchDto riotData = getMatchDataByRiot(matchId);
+      setMatchIdInData(riotData);
+      inputMatchList.add(riotData);
+    });
+
+    int totalSize = inputMatchList.size();
+    int successCount = 0;
+
+    /**
+     * 한꺼번에 riot과 통신작업을 진행한 이후 받아온 데이터를 일괄적으로 Insert
+     * Lambda를 사용하게 될 경우 익명 클래스에서 Exception을 처리하기 위해서 Try~Catch문을 사용해야 한다.
+     * Try~Catch문을 사용하면서 Exception이 증발하여 Rollback이 되지않는 이슈가 존재하여 for문으로 수정.
+     */
+    for (MatchDto dto : inputMatchList) {
+      if (insertMatchDataByDB(dto)) {
+        successCount++;
+      }
+    }
+    log.info(
+        "DB Insert Success PuuId : " + puuid + ", totalCount : " + totalSize + ", successCount : "
+            + successCount);
+    SyncResultDto rtnData = new SyncResultDto(totalSize, successCount);
+    return new ResponseDto(HttpStatus.OK.value(), rtnData);
   }
 
   /**
