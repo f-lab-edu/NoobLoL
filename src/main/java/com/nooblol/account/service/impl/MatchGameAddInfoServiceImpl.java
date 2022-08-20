@@ -108,9 +108,9 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
    * @return
    */
   private <T> ResponseDto makeReturnValue(List<T> list) {
-    if (list.size() > 0) {
-      return new ResponseDto(HttpStatus.OK.value(), list);
+    if (list == null || list.size() <= 0) {
+      return new ResponseDto(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND);
     }
-    return new ResponseDto(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND);
+    return new ResponseDto(HttpStatus.OK.value(), list);
   }
 }
