@@ -18,7 +18,7 @@ public interface MatchGameInfoMapper {
 
   int insertMatchGameParticipants(MatchGameInfoDto info);
 
-  int insertMatchGameUseStatRunes(MatchGameInfoDto info);
+  int insertMatchGameUseStatRunes(Map info);
 
   void insertMatchGameUseStyleRunes(Map infoMap);
 }

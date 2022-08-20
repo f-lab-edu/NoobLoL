@@ -55,14 +55,15 @@
     </foreach>
   </insert>
 
-  <insert id="insertMatchGameUseStatRunes" parameterType="MatchGameInfoDto">
+  <insert id="insertMatchGameUseStatRunes" parameterType="java.util.Map">
     INSERT INTO MATCH_GAME_RUNES(puuid, match_id, type, sort_no, perk)
     VALUES
-    <foreach collection="participants" item="participants" separator=",">
-      (#{participants.puuid}, #{matchId}, 'stat_offense', 1,
+    <foreach collection="list.participants" item="participants" separator=",">
+      (#{participants.puuid}, #{list.matchId}, #{offenseType}, #{offenseSortNo},
       #{participants.perks.statPerks.offense}),
-      (#{participants.puuid}, #{matchId}, 'stat_flex', 2, #{participants.perks.statPerks.flex}),
-      (#{participants.puuid}, #{matchId}, 'stat_defense', 3,
+      (#{participants.puuid}, #{list.matchId}, #{flexType}, #{flexSortNo},
+      #{participants.perks.statPerks.flex}),
+      (#{participants.puuid}, #{list.matchId}, #{defenseType}, #{defenseSortNo},
       #{participants.perks.statPerks.defense})
     </foreach>
   </insert>

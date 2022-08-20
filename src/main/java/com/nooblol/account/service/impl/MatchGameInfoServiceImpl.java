@@ -84,7 +84,6 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
 
     //MatchId를 기반으로 Riot에서 서버에서 상세 데이터를 받아 List에 추가
     notExistsMatchList.stream().forEach(matchId -> {
-      log.error("matchId : " + matchId);
       Optional riotData = Optional.ofNullable(getMatchDataByRiot(matchId));
       riotData.ifPresent(matchDto -> {
         setMatchIdInData((MatchDto) matchDto);
@@ -199,26 +198,58 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
   @Override
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public boolean insertMatchDataByDB(MatchDto matchDto) throws Exception {
-    MatchGameInfoDto infoDto = matchDto.getInfo();
-    if (infoDto == null) {
+    if (matchDto.getInfo() == null) {
       log.error("[InsertMatchData Fail] : MatchDto Is Null");
       return false;
     }
+    MatchGameInfoDto infoDto = matchDto.getInfo();
+
     matchGameInfoMapper.insertMatchGameInfo(infoDto);
     matchGameInfoMapper.insertMatchGameBans(infoDto.getTeams());
     matchGameInfoMapper.insertMatchGameParticipants(infoDto);
-    matchGameInfoMapper.insertMatchGameUseStatRunes(infoDto);
+    matchGameInfoMapper.insertMatchGameUseStatRunes(getStatRunseMap(infoDto));
 
-    Map infoMap = new HashMap();
-    infoMap.put("matchId", infoDto.getMatchId());
-    infoMap.put("participants", infoDto.getParticipants());
-    matchGameInfoMapper.insertMatchGameUseStyleRunes(infoMap);
+    matchGameInfoMapper.insertMatchGameUseStyleRunes(getStyleRunesMap(infoDto));
     return true;
   }
-
-
+  
   private ResponseDto haveNoSyncDataReturnOk() {
     SyncResultDto rtnData = new SyncResultDto(0, 0);
     return new ResponseDto(HttpStatus.OK.value(), rtnData);
+  }
+
+  /**
+   * MATCH_GAME_RUNES테이블로 사용한 스탯 룬을 Insert를 하기 위하여 필요한 ParameterMap Return
+   *
+   * @param infoDto
+   * @return
+   */
+  private Map<String, Object> getStatRunseMap(MatchGameInfoDto infoDto) {
+    Map<String, Object> runesMap = new HashMap<>();
+    runesMap.put("offenseType", "stat_offense");
+    runesMap.put("offenseSortNo", 1);
+
+    runesMap.put("flexType", "stat_flex");
+    runesMap.put("flexSortNo", 2);
+
+    runesMap.put("defenseType", "stat_defense");
+    runesMap.put("defenseSortNo", 3);
+
+    runesMap.put("list", infoDto);
+    return runesMap;
+  }
+
+  /**
+   * MATCH_GAME_RUNES테이블로 사용한 스타일룬을 Insert를 하기 위하여 필요한 ParameterMap Return
+   *
+   * @param infoDto
+   * @return
+   */
+  private Map<String, Object> getStyleRunesMap(MatchGameInfoDto infoDto) {
+    Map<String, Object> styleRunesMap = new HashMap();
+    styleRunesMap.put("matchId", infoDto.getMatchId());
+    styleRunesMap.put("participants", infoDto.getParticipants());
+
+    return styleRunesMap;
   }
 }
