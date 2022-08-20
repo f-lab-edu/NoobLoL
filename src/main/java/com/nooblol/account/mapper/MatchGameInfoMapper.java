@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface MatchGameInfoMapper {
 
-  ArrayList<String> existsMatchIdListByMatch(List<String> matchIdList);
+  ArrayList<String> existsMatchIdListByMatch(String matchIdList);
 
   int insertMatchGameInfo(MatchGameInfoDto info);
 

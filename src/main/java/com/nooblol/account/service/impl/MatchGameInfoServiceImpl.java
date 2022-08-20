@@ -29,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -69,18 +70,21 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
     }
 
     List<String> riotMatchIdList = (ArrayList<String>) getMatchListData.getResult();
+    if (ObjectUtils.isEmpty(riotMatchIdList)) {
+      return haveNoSyncDataReturnOk();
+    }
 
     //존재하지 않는 매치ID리스트 획득
     List<String> notExistsMatchList = getNotExistMatchList(riotMatchIdList);
     List<MatchDto> inputMatchList = new ArrayList<>();
 
-    if (notExistsMatchList == null || notExistsMatchList.size() <= 0) {
-      SyncResultDto rtnData = new SyncResultDto(0, 0);
-      return new ResponseDto(HttpStatus.OK.value(), rtnData);
+    if (ObjectUtils.isEmpty(notExistsMatchList)) {
+      return haveNoSyncDataReturnOk();
     }
 
     //MatchId를 기반으로 Riot에서 서버에서 상세 데이터를 받아 List에 추가
     notExistsMatchList.stream().forEach(matchId -> {
+      log.error("matchId : " + matchId);
       Optional riotData = Optional.ofNullable(getMatchDataByRiot(matchId));
       riotData.ifPresent(matchDto -> {
         setMatchIdInData((MatchDto) matchDto);
@@ -127,10 +131,20 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
   @Override
   @Transactional(readOnly = true)
   public List<String> getNotExistMatchList(List<String> matchIdList) {
-    List<String> existsMatchIdList = matchGameInfoMapper.existsMatchIdListByMatch(matchIdList);
+    StringBuilder matchIdListBuilder = new StringBuilder();
+
+    //matchIdList가 존재하지 않는 경우에는 이미 Return처리가 되기 때문에 실행되는 경우 무조건 element가 존재한다
+    matchIdList.stream().forEach(matchId -> {
+      matchIdListBuilder.append("'" + matchId + "',");
+    });
+    matchIdListBuilder.deleteCharAt(matchIdListBuilder.length() - 1);
+
+    List<String> existsMatchIdList =
+        matchGameInfoMapper.existsMatchIdListByMatch(matchIdListBuilder.toString());
 
     return matchIdList.stream()
-        .filter(matchId -> !existsMatchIdList.contains(matchId)).collect(Collectors.toList());
+        .filter(matchId -> !existsMatchIdList.contains(matchId))
+        .collect(Collectors.toList());
   }
 
   /**
@@ -200,5 +214,11 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
     infoMap.put("participants", infoDto.getParticipants());
     matchGameInfoMapper.insertMatchGameUseStyleRunes(infoMap);
     return true;
+  }
+
+
+  private ResponseDto haveNoSyncDataReturnOk() {
+    SyncResultDto rtnData = new SyncResultDto(0, 0);
+    return new ResponseDto(HttpStatus.OK.value(), rtnData);
   }
 }

@@ -150,7 +150,15 @@ class MatchGameInfoServiceImplTest {
     mockReturnMatchIdList.add("KR_5807537888");
     mockReturnMatchIdList.add("KR_5807702658");
 
-    when(matchGameInfoMapper.existsMatchIdListByMatch(mockRiotMatchIdList))
+    StringBuilder matchIdListBuilder = new StringBuilder();
+
+    mockRiotMatchIdList.stream().forEach(matchId -> {
+      matchIdListBuilder.append("'" + matchId + "',");
+    });
+
+    matchIdListBuilder.deleteCharAt(matchIdListBuilder.length() - 1);
+
+    when(matchGameInfoMapper.existsMatchIdListByMatch(matchIdListBuilder.toString()))
         .thenReturn(mockReturnMatchIdList);
 
     List<String> notExistsList = matchGameInfoService.getNotExistMatchList(mockRiotMatchIdList);
