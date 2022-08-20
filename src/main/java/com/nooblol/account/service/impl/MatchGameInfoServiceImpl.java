@@ -96,7 +96,7 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
 
     /**
      * 한꺼번에 riot과 통신작업을 진행한 이후 받아온 데이터를 일괄적으로 Insert
-     * Lambda를 사용하게 될 경우 익명 클래스에서 Exception을 처리하기 위해서 Try~Catch문을 사용해야 한다.
+     * inputMatchList를 Lambda로 사용하게 될 경우 익명 클래스에서 Exception을 처리하기 위해서 Try~Catch문을 사용해야 한다.
      * Try~Catch문을 사용하면서 Exception이 증발하여 Rollback이 되지않는 이슈가 존재하여 for문으로 수정.
      */
     for (MatchDto dto : inputMatchList) {
@@ -195,6 +195,13 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
     return riotConfiguration.getMatchGameInfoByMatchId().replaceAll("\\{matchId\\}", matchId);
   }
 
+  /**
+   * 해당 트랜잭션은 모두 같이 처리되거나, 혹은 한개라도 실패할 경우 모두 Rollback이 되고 다음으로 Match를 Insert하는 것으로 넘어가게 된다.
+   *
+   * @param matchDto
+   * @return
+   * @throws Exception
+   */
   @Override
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public boolean insertMatchDataByDB(MatchDto matchDto) throws Exception {
@@ -204,15 +211,19 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
     }
     MatchGameInfoDto infoDto = matchDto.getInfo();
 
-    matchGameInfoMapper.insertMatchGameInfo(infoDto);
-    matchGameInfoMapper.insertMatchGameBans(infoDto.getTeams());
-    matchGameInfoMapper.insertMatchGameParticipants(infoDto);
-    matchGameInfoMapper.insertMatchGameUseStatRunes(getStatRunseMap(infoDto));
+    try {
+      matchGameInfoMapper.insertMatchGameInfo(infoDto);
+      matchGameInfoMapper.insertMatchGameBans(infoDto.getTeams());
+      matchGameInfoMapper.insertMatchGameParticipants(infoDto);
+      matchGameInfoMapper.insertMatchGameUseStatRunes(getStatRunseMap(infoDto));
 
-    matchGameInfoMapper.insertMatchGameUseStyleRunes(getStyleRunesMap(infoDto));
+      matchGameInfoMapper.insertMatchGameUseStyleRunes(getStyleRunesMap(infoDto));
+    } catch (Exception e) {
+      return false;
+    }
     return true;
   }
-  
+
   private ResponseDto haveNoSyncDataReturnOk() {
     SyncResultDto rtnData = new SyncResultDto(0, 0);
     return new ResponseDto(HttpStatus.OK.value(), rtnData);
