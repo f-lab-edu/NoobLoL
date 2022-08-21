@@ -12,6 +12,17 @@ spring:
   redis: #redis
     host: 127.0.0.1
     port: 6379
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${mail-id}
+    password: ${mail-Password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            eable: true
 
 #Setting MyBatis
 mybatis:
