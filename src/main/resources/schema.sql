@@ -1,5 +1,5 @@
 drop
-all objects;
+    all objects;
 --account_id varchar변경
 CREATE TABLE summoner_account
 (
@@ -93,7 +93,7 @@ COMMIT;
 
 CREATE TABLE `users`
 (
-    `user_id`            int PRIMARY KEY AUTO_INCREMENT,
+    `user_id`            varchar(255) primary key not null,
     `user_email`         varchar(255),
     `user_name`          varchar(255),
     `user_password_hash` varchar(255),
