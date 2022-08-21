@@ -24,8 +24,8 @@ public class MatchGameController {
   private final MatchGameInfoService matchGameInfoService;
 
   /**
-   * 전적항목을 간단하게 표현함에 있어서 필요한 정보만 Return 한다.
-   * PUUID사용자의 가장최근 진행한 게임순으로 순차가 이뤄지며, 같이 참여한
+   * 전적항목을 간단하게 표현함에 있어서 필요한 정보만 Return 한다. PUUID사용자의 가장최근 진행한 게임순으로 순차가 이뤄지며, 같이 참여한
+   *
    * @param puuid
    * @param sync
    * @param pageNum
@@ -36,9 +36,7 @@ public class MatchGameController {
   public ResponseDto selectMatchList(@RequestParam("puuid") String puuid,
       @RequestParam(value = "sync", required = false) boolean sync,
       @RequestParam(value = "page", defaultValue = "0") int pageNum) throws Exception {
-    ResponseDto rtnData = null;
     pageNum = pageNum * 30;
-
     if (sync) {
       return matchGameInfoService.getMatchInfoListByPuuid(puuid, pageNum);
     }
