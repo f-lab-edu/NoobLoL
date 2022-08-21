@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nooblol.account.mapper.MatchGameInfoMapper">
+  <select id="existsMatchIdListByMatch" parameterType="String" resultType="arrayList">
+    <if test="matchIdList != null and !matchIdList.equals('')">
+      select match_id
+      from match_gameinfo main
+      where exists(
+      select 1 from match_gameinfo sub
+      where main.match_id = sub.match_id
+      and match_id in
+      (#{matchIdList})
+      )
+    </if>
+  </select>
+
+  <!--아래의 Insert들은 모두 삽입하는 경우만 존재 함-->
+  <insert id="insertMatchGameInfo" parameterType="MatchGameInfoDto">
+    INSERT INTO MATCH_GAMEINFO(data_version, match_id, game_creation, game_duration,
+                               game_end_time_stamp, game_start_time_stamp, game_id, game_mode,
+                               game_name, game_version, map_id, platform_id, queue_id)
+    VALUES (#{dataVersion}, #{matchId}, #{gameCreation}, #{gameDuration}, #{gameEndTimestamp},
+            #{gameStartTimestamp}, #{gameId}, #{gameMode}, #{gameName}, #{gameVersion}, #{mapId},
+            #{platformId}, #{queueId})
+  </insert>
+
+
+  <insert id="insertMatchGameBans" parameterType="java.util.List">
+    <foreach collection="list" item="team" separator=";">
+      <choose>
+        <when test="team.bans.size != 0">
+          INSERT INTO MATCH_GAME_BANS (match_id, champion_id, pick_turn) VALUES
+          <foreach collection="team.bans" item="bans" separator=",">
+            (#{team.matchId}, #{bans.championId}, #{bans.pickTurn})
+          </foreach>
+        </when>
+      </choose>
+    </foreach>
+  </insert>
+
+  <insert id="insertMatchGameParticipants" parameterType="MatchGameInfoDto">
+    INSERT INTO MATCH_PARTICIPANTS(puuid, match_id, champion_name, champion_level, summoner_id,
+    summoner_name, kills, deaths, assists, role, lane, team_id, team_position, win,
+    summoner1_casts, summoner1_id, summoner2_casts, summoner2_id, item0, item1, item2, item3, item4,
+    item5, item6)
+    VALUES
+    <foreach collection="participants" item="item" separator=",">
+      (#{item.puuid}, #{matchId}, #{item.championName}, #{item.championLevel}, #{item.summonerId},
+      #{item.summonerName}, #{item.kills}, #{item.deaths}, #{item.assists}, #{item.role},
+      #{item.lane}, #{item.teamId}, #{item.teamPosition} , #{item.win},
+      #{item.summoner1Casts}, #{item.summoner1Id}, #{item.summoner2Casts}, #{item.summoner2Id},
+      #{item.item0}, #{item.item1}, #{item.item2}, #{item.item3}, #{item.item4}, #{item.item5},
+      #{item.item6})
+    </foreach>
+  </insert>
+
+  <insert id="insertMatchGameUseStatRunes" parameterType="java.util.Map">
+    INSERT INTO MATCH_GAME_RUNES(puuid, match_id, type, sort_no, perk)
+    VALUES
+    <foreach collection="list.participants" item="participants" separator=",">
+      (#{participants.puuid}, #{list.matchId}, #{offenseType}, #{offenseSortNo},
+      #{participants.perks.statPerks.offense}),
+      (#{participants.puuid}, #{list.matchId}, #{flexType}, #{flexSortNo},
+      #{participants.perks.statPerks.flex}),
+      (#{participants.puuid}, #{list.matchId}, #{defenseType}, #{defenseSortNo},
+      #{participants.perks.statPerks.defense})
+    </foreach>
+  </insert>
+
+  <insert id="insertMatchGameUseStyleRunes" parameterType="java.util.Map">
+    INSERT INTO MATCH_GAME_RUNES(puuid, match_id, type, sort_no, perk)
+    VALUES
+    <foreach collection="participants" item="participants" separator=",">
+      <foreach collection="participants.perks.styles" item="styles" separator=",">
+        <foreach collection="styles.selections" item="selection" separator="," index="index">
+          (#{participants.puuid}, #{matchId},
+          CONCAT(#{styles.description},'_',#{styles.style}),
+          #{index}, #{selection.perk})
+        </foreach>
+      </foreach>
+    </foreach>
+  </insert>
+
+</mapper>
