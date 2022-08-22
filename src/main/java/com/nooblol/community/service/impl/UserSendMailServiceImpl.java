@@ -1,8 +1,6 @@
 package com.nooblol.community.service.impl;
 
 import com.nooblol.community.service.UserSendMailService;
-import com.nooblol.community.service.UserSingUpService;
-import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
