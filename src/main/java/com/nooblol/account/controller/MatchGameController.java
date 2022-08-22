@@ -24,11 +24,13 @@ public class MatchGameController {
   private final MatchGameInfoService matchGameInfoService;
 
   /**
-   * 전적항목을 간단하게 표현함에 있어서 필요한 정보만 Return 한다. PUUID사용자의 가장최근 진행한 게임순으로 순차가 이뤄지며, 같이 참여한
+   * Puuid를 요청한 사용자의
    *
-   * @param puuid
-   * @param sync
-   * @param pageNum
+   * @param puuid    Summoner_Account의 puuid컬럼값으로, 해당 파라미터를 통해 해당 유저의 최근 전적데이터를 Return한다
+   * @param sync     해당값은 Default로 false를 Riot과 통신하여 최근 전적 데이터를 DB로 삽입한 이후 전적 데이터를 Return하며, True인
+   *                 경우 Riot서버와 추가적인 통신 없이, DB데이터를 바로 RETURN하며,
+   * @param pageNum  Default Value는 0으로, 0은 최근전적 Row 0~29경기, 1은 Row 30~59경기까지를 Return하게 된다.
+   * @param limitNum Default Value는 30으로 한번 조회에 몇건의 전적을 가져갈지를 설정하는 Parameter
    * @return
    * @throws Exception
    */
