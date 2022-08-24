@@ -11,9 +11,7 @@ import com.nooblol.account.mapper.MatchGameAddInfoMapper;
 import com.nooblol.account.service.MatchGameAddInfoService;
 import com.nooblol.global.dto.ResponseDto;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -31,7 +29,7 @@ class MatchGameAddInfoServiceImplTest {
     matchGameAddInfoMapper = Mockito.mock(MatchGameAddInfoMapper.class);
     this.matchGameAddInfoService = new MatchGameAddInfoServiceImpl(matchGameAddInfoMapper);
   }
-  
+
   @Test
   @DisplayName("모든 참가자 정보 조회시 DB에 존재하는 MatchId인 경우 OK상태값을 획득 한다.")
   void matchAllParticipantsList_ListReturnOkTest() {
@@ -147,10 +145,7 @@ class MatchGameAddInfoServiceImplTest {
     mockReturnList.add(rune4);
     mockReturnList.add(rune5);
 
-    Map<String, String> paramMap = new HashMap<>();
-    paramMap.put("matchId", matchId);
-    paramMap.put("puuid", puuid);
-    given(matchGameAddInfoMapper.selectMatchGameUseRunes(paramMap))
+    given(matchGameAddInfoMapper.selectMatchGameUseRunes(puuid, matchId))
         .willReturn(mockReturnList);
 
     ResponseDto result = matchGameAddInfoService.getMatchUseRunList(matchId, puuid);

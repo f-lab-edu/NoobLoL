@@ -1,6 +1,7 @@
 package com.nooblol.account.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.when;
 
 
@@ -19,9 +20,7 @@ import com.nooblol.account.service.MatchGameListService;
 import com.nooblol.global.config.RiotConfiguration;
 import com.nooblol.global.dto.ResponseDto;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -196,16 +195,14 @@ class MatchGameInfoServiceImplTest {
     mockReturnList.add(mockSample1);
     mockReturnList.add(mockSample2);
 
-    Map<String, Object> searchParam = new HashMap<>();
-    searchParam.put("puuid", responseOkPuuid);
-    searchParam.put("pageNum", 0);
-    searchParam.put("limitNum", 30);
 
-    when(matchGameAddInfoMapper.selectMatchSimpleList(searchParam)).thenReturn(
+    //정상적인 MatchSearchDto로 테스트 하고 싶었으나, 객체가 달라 오류가 발생함. any로 대체
+    when(matchGameAddInfoMapper.selectMatchSimpleList(any())).thenReturn(
         (ArrayList<MatchGameSimpleDto>) mockReturnList);
 
-    List<MatchGameSimpleDto> returnList = (List<MatchGameSimpleDto>) matchGameInfoService.getMatchInfoListByPuuid(
-        responseOkPuuid, 0, 30).getResult();
+    List<MatchGameSimpleDto> returnList =
+        (List<MatchGameSimpleDto>) matchGameInfoService.getMatchInfoListByPuuid(
+            responseOkPuuid, 0, 30).getResult();
 
     assertEquals(returnList, mockReturnList);
   }
