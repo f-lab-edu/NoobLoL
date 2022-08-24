@@ -2,9 +2,11 @@ package com.nooblol.account.controller;
 
 import com.nooblol.account.service.MatchGameInfoService;
 import com.nooblol.global.dto.ResponseDto;
+import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/match")
 @RequiredArgsConstructor
+@Validated
 public class MatchGameController {
 
   private final Logger log = LoggerFactory.getLogger(getClass());
@@ -38,13 +41,16 @@ public class MatchGameController {
   public ResponseDto selectMatchList(
       @RequestParam(value = "puuid", required = false) @NotBlank String puuid,
       @RequestParam(value = "sync", required = false) boolean sync,
-      @RequestParam(value = "page", defaultValue = "0") int pageNum) throws Exception {
+      @RequestParam(value = "page", defaultValue = "0") int pageNum,
+      @RequestParam(value = "limit", defaultValue = "30") int limitNum
+  ) throws Exception {
     pageNum = pageNum * 30;
     if (sync) {
-      return matchGameInfoService.getMatchInfoListByPuuid(puuid, pageNum);
+      return matchGameInfoService.getMatchInfoListByPuuid(puuid, pageNum, limitNum);
     }
 
-    return matchGameInfoService.syncRiotToDbByPuuidAfterGetMatchSimpleList(puuid, pageNum);
+    return matchGameInfoService.syncRiotToDbByPuuidAfterGetMatchSimpleList(puuid, pageNum,
+        limitNum);
   }
 
 }

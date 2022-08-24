@@ -18,7 +18,7 @@
       main.match_id = info.match_id
       AND main.puuid = #{puuid}
       ORDER BY info.game_creation DESC
-      limit #{pageNum} , 30
+      limit #{pageNum} , #{limitNum}
     </if>
   </select>
 

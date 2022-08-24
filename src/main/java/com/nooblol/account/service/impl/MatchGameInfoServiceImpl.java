@@ -60,52 +60,52 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
    */
 
   @Override
-  public ResponseDto getMatchInfoListByPuuid(String puuid, int pageNum) throws Exception {
-    if (StringUtils.isBlank(puuid)) {
-      throw new IllegalArgumentException("PuuId가 입력되지 않았습니다.");
-    }
-    List<MatchGameSimpleDto> matchResult = selectMatchSimpleListByPuuidInDB(puuid, pageNum);
+  public ResponseDto getMatchInfoListByPuuid(String puuid, int pageNum, int limitNum)
+      throws Exception {
+    List<MatchGameSimpleDto> matchResult = selectMatchSimpleListByPuuidInDB(puuid, pageNum,
+        limitNum);
 
     if (!ObjectUtils.isEmpty(matchResult)) {
       return new ResponseDto(HttpStatus.OK.value(), matchResult);
     }
 
-    return syncRiotToDbByPuuidAfterGetMatchSimpleList(puuid, pageNum);
+    return syncRiotToDbByPuuidAfterGetMatchSimpleList(puuid, pageNum, limitNum);
   }
 
   @Override
   @Transactional(readOnly = true)
-  public List<MatchGameSimpleDto> selectMatchSimpleListByPuuidInDB(String puuid, int pageNum) {
+  public List<MatchGameSimpleDto> selectMatchSimpleListByPuuidInDB(String puuid, int pageNum,
+      int limitNum) {
     Map<String, Object> searchParam = new HashMap<>();
     searchParam.put("puuid", puuid);
     searchParam.put("pageNum", pageNum);
+    searchParam.put("limitNum", limitNum);
 
     List<MatchGameSimpleDto> selectMatchSimpleList =
         matchGameAddInfoMapper.selectMatchSimpleList(searchParam);
 
-    if (!ObjectUtils.isEmpty(selectMatchSimpleList)) {
-      selectMatchSimpleList.stream().forEach(matchGameSimpleDto -> {
-        String matchId = matchGameSimpleDto.getMatchId();
-        List<MatchGameSimpleDto> participantsList =
-            matchGameAddInfoMapper.selectMatchSimpleParticipantsList(matchId);
-        matchGameSimpleDto.setParticipants(participantsList);
-      });
+    if (ObjectUtils.isEmpty(selectMatchSimpleList)) {
+      return selectMatchSimpleList;
     }
+
+    selectMatchSimpleList.stream().forEach(matchGameSimpleDto -> {
+      String matchId = matchGameSimpleDto.getMatchId();
+      List<MatchGameSimpleDto> participantsList =
+          matchGameAddInfoMapper.selectMatchSimpleParticipantsList(matchId);
+      matchGameSimpleDto.setParticipants(participantsList);
+    });
+
     return selectMatchSimpleList;
   }
 
   // Sync를 진행한 이후 게임 결과에 대한 Return
   @Override
-  public ResponseDto syncRiotToDbByPuuidAfterGetMatchSimpleList(String puuid, int pageNum)
-      throws Exception {
-    if (StringUtils.isBlank(puuid)) {
-      throw new IllegalArgumentException("PuuId가 입력되지 않았습니다.");
-    }
-
+  public ResponseDto syncRiotToDbByPuuidAfterGetMatchSimpleList(String puuid, int pageNum,
+      int limitNum) throws Exception {
     ResponseDto syncResult = syncRiotToDbDataProcess(puuid);
     if (syncResult.getResultCode() == HttpStatus.OK.value()) {
       return new ResponseDto(HttpStatus.OK.value(),
-          selectMatchSimpleListByPuuidInDB(puuid, pageNum));
+          selectMatchSimpleListByPuuidInDB(puuid, pageNum, limitNum));
     }
     return syncResult;
   }
