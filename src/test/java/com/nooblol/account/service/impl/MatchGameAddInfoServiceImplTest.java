@@ -31,20 +31,7 @@ class MatchGameAddInfoServiceImplTest {
     matchGameAddInfoMapper = Mockito.mock(MatchGameAddInfoMapper.class);
     this.matchGameAddInfoService = new MatchGameAddInfoServiceImpl(matchGameAddInfoMapper);
   }
-
-
-  @Test
-  @DisplayName("모든 참가자 정보 조회시 MatchId를 Null로 조회할 경우 Exception을 획득 한다.")
-  void matchAllParticipantsList_ExceptionTest() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      String matchId = null;
-      matchGameAddInfoService.getMatchAllParticipantsList(matchId);
-    });
-
-    assertEquals("getMatchAllParticipantsList(String) : MatchId가 입력되지 않았습니다.",
-        exception.getMessage());
-  }
-
+  
   @Test
   @DisplayName("모든 참가자 정보 조회시 DB에 존재하는 MatchId인 경우 OK상태값을 획득 한다.")
   void matchAllParticipantsList_ListReturnOkTest() {
@@ -90,18 +77,6 @@ class MatchGameAddInfoServiceImplTest {
     assertThat(result.getResultCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
   }
 
-
-  @Test
-  @DisplayName("게임의 벤이된 챔피언리스트 조회시 MatchId를 Null로 조회할 경우 Exception을 획득 한다.")
-  void matchBanList_ExceptionTest() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      String matchId = null;
-      matchGameAddInfoService.getMatchBanList(matchId);
-    });
-
-    assertEquals("getMatchBanList(String) : MatchId가 입력되지 않았습니다.", exception.getMessage());
-  }
-
   @Test
   @DisplayName("게임의 벤이된 챔피언리스트 조회시 DB에 존재하는 MatchId인 경우 OK상태값을 획득 한다.")
   void matchBanList_ListReturnOkTest() {
@@ -145,43 +120,6 @@ class MatchGameAddInfoServiceImplTest {
 
     ResponseDto result = matchGameAddInfoService.getMatchBanList(matchId);
     assertThat(result.getResultCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
-  }
-
-
-  @Test
-  @DisplayName("게임에서 사용한 특정 유저의 룬정보 조회시 MatchId가 Null로 조회할 경우 Exception을 획득 한다.")
-  void getMatchUseRuneList_MatchIdNullExceptionTest() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      String matchId = null;
-      String puuid = "a";
-      matchGameAddInfoService.getMatchUseRunList(matchId, puuid);
-    });
-
-    assertEquals("getMatchUseRunList : MatchId가 입력되지 않았습니다.", exception.getMessage());
-  }
-
-  @Test
-  @DisplayName("게임에서 사용한 특정 유저의 룬정보 조회시 MatchId와 Puuid를 Null로 조회할 경우 MatchId Exception을 획득 한다.")
-  void getMatchUseRuneList_MatchIdNullExceptionTest2() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      String matchId = null;
-      String puuid = null;
-      matchGameAddInfoService.getMatchUseRunList(matchId, puuid);
-    });
-
-    assertEquals("getMatchUseRunList : MatchId가 입력되지 않았습니다.", exception.getMessage());
-  }
-
-  @Test
-  @DisplayName("게임에서 사용한 특정 유저의 룬정보 조회시 Puuid가 Null로 조회할 경우 Puuid의 Exception을 획득 한다.")
-  void getMatchUseRuneList_PuuIdNullExceptionTest() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      String matchId = "sample";
-      String puuid = null;
-      matchGameAddInfoService.getMatchUseRunList(matchId, puuid);
-    });
-
-    assertEquals("getMatchUseRunList : puuid가 입력되지 않았습니다.", exception.getMessage());
   }
 
   @Test
