@@ -3,6 +3,7 @@ package com.nooblol.account.service.impl;
 import com.nooblol.account.dto.match.MatchDto;
 import com.nooblol.account.dto.match.MatchGameInfoDto;
 import com.nooblol.account.dto.match.MatchGameSimpleDto;
+import com.nooblol.account.dto.match.MatchSearchDto;
 import com.nooblol.account.dto.match.SyncResultDto;
 import com.nooblol.account.mapper.MatchGameInfoMapper;
 import com.nooblol.account.mapper.MatchGameAddInfoMapper;
@@ -76,13 +77,13 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
   @Transactional(readOnly = true)
   public List<MatchGameSimpleDto> selectMatchSimpleListByPuuidInDB(String puuid, int pageNum,
       int limitNum) {
-    Map<String, Object> searchParam = new HashMap<>();
-    searchParam.put("puuid", puuid);
-    searchParam.put("pageNum", pageNum);
-    searchParam.put("limitNum", limitNum);
+    MatchSearchDto searchDto = new MatchSearchDto();
+    searchDto.setPuuid(puuid);
+    searchDto.setPageNum(pageNum);
+    searchDto.setLimitNum(limitNum);
 
     List<MatchGameSimpleDto> selectMatchSimpleList =
-        matchGameAddInfoMapper.selectMatchSimpleList(searchParam);
+        matchGameAddInfoMapper.selectMatchSimpleList(searchDto);
 
     if (ObjectUtils.isEmpty(selectMatchSimpleList)) {
       return selectMatchSimpleList;
@@ -144,7 +145,7 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
     int totalSize = inputMatchList.size();
     int successCount = 0;
 
-    /**
+    /*
      * 한꺼번에 riot과 통신작업을 진행한 이후 받아온 데이터를 일괄적으로 Insert
      * inputMatchList를 Lambda로 사용하게 될 경우 익명 클래스에서 Exception을 처리하기 위해서 Try~Catch문을 사용해야 한다.
      * Try~Catch문을 사용하면서 Exception이 증발하여 Rollback이 되지않는 이슈가 존재하여 for문으로 수정.

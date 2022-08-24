@@ -75,10 +75,7 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
 
   @Override
   public List<MatchUseRuneDto> selectMatchUseRuneByMatchIdAndPuuid(String matchId, String puuid) {
-    Map<String, String> paramMap = new HashMap<>();
-    paramMap.put("matchId", matchId);
-    paramMap.put("puuid", puuid);
-    return matchGameAddInfoMapper.selectMatchGameUseRunes(paramMap);
+    return matchGameAddInfoMapper.selectMatchGameUseRunes(puuid, matchId);
   }
 
 
