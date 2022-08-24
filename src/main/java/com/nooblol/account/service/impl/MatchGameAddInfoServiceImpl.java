@@ -6,11 +6,11 @@ import com.nooblol.account.dto.match.MatchUseRuneDto;
 import com.nooblol.account.mapper.MatchGameAddInfoMapper;
 import com.nooblol.account.service.MatchGameAddInfoService;
 import com.nooblol.global.dto.ResponseDto;
+import com.nooblol.global.utils.ResponseEnum;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -34,10 +34,6 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
   @Override
   @Transactional(readOnly = true)
   public ResponseDto getMatchAllParticipantsList(String matchId) {
-    if (StringUtils.isBlank(matchId)) {
-      throw new IllegalArgumentException(
-          "getMatchAllParticipantsList(String) : MatchId가 입력되지 않았습니다.");
-    }
     return makeReturnValue(selectMatchAllParticipantsListByMatchId(matchId));
   }
 
@@ -55,10 +51,6 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
   @Override
   @Transactional(readOnly = true)
   public ResponseDto getMatchBanList(String matchId) {
-    if (StringUtils.isBlank(matchId)) {
-      throw new IllegalArgumentException("getMatchBanList(String) : MatchId가 입력되지 않았습니다.");
-    }
-
     return makeReturnValue(selectMatchBanListByMatchId(matchId));
   }
 
@@ -78,12 +70,6 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
   @Override
   @Transactional(readOnly = true)
   public ResponseDto getMatchUseRunList(String matchId, String puuid) {
-    if (StringUtils.isBlank(matchId)) {
-      throw new IllegalArgumentException("getMatchUseRunList : MatchId가 입력되지 않았습니다.");
-    }
-    if (StringUtils.isBlank(puuid)) {
-      throw new IllegalArgumentException("getMatchUseRunList : puuid가 입력되지 않았습니다.");
-    }
     return makeReturnValue(selectMatchUseRuneByMatchIdAndPuuid(matchId, puuid));
   }
 
@@ -109,7 +95,7 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
    */
   private <T> ResponseDto makeReturnValue(List<T> list) {
     if (list == null || list.size() <= 0) {
-      return new ResponseDto(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND);
+      return ResponseEnum.NOT_FOUND.getResponse();
     }
     return new ResponseDto(HttpStatus.OK.value(), list);
   }

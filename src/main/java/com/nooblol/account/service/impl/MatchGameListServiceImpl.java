@@ -39,9 +39,6 @@ public class MatchGameListServiceImpl implements MatchGameListService {
 
   @Override
   public ResponseDto getMatchListId(String puuid) {
-    if (StringUtils.isBlank(puuid)) {
-      throw new IllegalArgumentException("PuuId가 입력되지 않았습니다.");
-    }
     return getMatchListIdProcessByRiot(puuid);
   }
 

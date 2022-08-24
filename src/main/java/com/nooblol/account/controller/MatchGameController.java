@@ -62,7 +62,9 @@ public class MatchGameController {
    * @return
    */
   @GetMapping("/participants")
-  public ResponseDto getMatchAllParticipants(@RequestParam("matchId") String matchId) {
+  public ResponseDto getMatchAllParticipants(
+      @RequestParam(value = "matchId", required = false) @NotBlank String matchId
+  ) {
     return matchGameAddInfoService.getMatchAllParticipantsList(matchId);
   }
 
@@ -73,7 +75,9 @@ public class MatchGameController {
    * @return
    */
   @GetMapping("/ban")
-  public ResponseDto getMatchBan(@RequestParam("matchId") String matchId) {
+  public ResponseDto getMatchBan(
+      @RequestParam(value = "matchId", required = false) @NotBlank String matchId
+  ) {
     return matchGameAddInfoService.getMatchBanList(matchId);
   }
 
@@ -86,10 +90,9 @@ public class MatchGameController {
    */
   @GetMapping("/rune")
   public ResponseDto getMatchUseRun(
-      @RequestParam("matchId") String matchId, @RequestParam("puuid") String puuid
+      @RequestParam(value = "matchId", required = false) @NotBlank String matchId,
+      @RequestParam(value = "puuid", required = false) @NotBlank String puuid
   ) {
     return matchGameAddInfoService.getMatchUseRunList(matchId, puuid);
   }
-
-
 }
