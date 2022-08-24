@@ -29,10 +29,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+
 
 @ExtendWith(MockitoExtension.class)
 class MatchGameInfoServiceImplTest {
+
+  private final Logger log = LoggerFactory.getLogger(getClass());
 
   @InjectMocks
   private MatchGameInfoServiceImpl matchGameInfoService;
@@ -54,7 +59,7 @@ class MatchGameInfoServiceImplTest {
   String responseOkMatchId = "KR_6077331700";
 
   @Test
-  @DisplayName("matchId 전달시 RIOT API의 {matchId}가 정상 치환이 되고 URI주소가 정상적으로 Return되는지 확인")
+  @DisplayName("matchId 전달시 RIOT API의 {matchId}가 정상 치환이 되고 URI주소의 획득이 가능하다")
   void confirm_getMakeUri() {
     String equalString =
         "https://asia.api.riotgames.com/" + "lol/match/v5/matches/" + responseOkMatchId;
@@ -67,29 +72,18 @@ class MatchGameInfoServiceImplTest {
   }
 
   @Test
-  @DisplayName("getMatchInfoListByPuuid의 파라미터 Null전달시 Exception테스트")
-  void confirm_getMatchInfoListByPuuid_IllegalArgumentExceptionTest() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      matchGameInfoService.getMatchInfoListByPuuid(null, 0);
-    });
-
-    assertEquals("PuuId가 입력되지 않았습니다.", exception.getMessage());
-  }
-
-
-  @Test
-  @DisplayName("insertMatchDataByDb 파라미터 Null전달시 return값 false확인")
+  @DisplayName("insertMatchDataByDb메소드의 파라미터를 Null로 전달시 Return값이 false임을 확인한다")
   void confirm_InsertMatchDataByDB_ReturnFalseTest() {
     MatchDto dto = null;
     try {
       assertEquals(matchGameInfoService.insertMatchDataByDB(dto), false);
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error(e.getMessage());
     }
   }
 
   @Test
-  @DisplayName("insertMatchDataByDb MatchDto 전달시 return값 true확인")
+  @DisplayName("insertMatchDataByDb메소드에 MatchDto 파라미터 전달시 return값이 true임을 확인한다")
   void confirm_InsertMatchDataByDB_ReturnTrueTest() {
     MatchDto dto = new MatchDto();
     dto.setMetadata(new MatchMetaDataDto());
@@ -135,7 +129,7 @@ class MatchGameInfoServiceImplTest {
     try {
       assertEquals(matchGameInfoService.insertMatchDataByDB(dto), true);
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error(e.getMessage());
     }
   }
 
@@ -156,7 +150,15 @@ class MatchGameInfoServiceImplTest {
     mockReturnMatchIdList.add("KR_5807537888");
     mockReturnMatchIdList.add("KR_5807702658");
 
-    when(matchGameInfoMapper.existsMatchIdListByMatch(mockRiotMatchIdList))
+    StringBuilder matchIdListBuilder = new StringBuilder();
+
+    mockRiotMatchIdList.stream().forEach(matchId -> {
+      matchIdListBuilder.append("'" + matchId + "',");
+    });
+
+    matchIdListBuilder.deleteCharAt(matchIdListBuilder.length() - 1);
+
+    when(matchGameInfoMapper.existsMatchIdListByMatch(matchIdListBuilder.toString()))
         .thenReturn(mockReturnMatchIdList);
 
     List<String> notExistsList = matchGameInfoService.getNotExistMatchList(mockRiotMatchIdList);
@@ -166,23 +168,23 @@ class MatchGameInfoServiceImplTest {
   }
 
   @Test
-  @DisplayName("Riot 서버에 존재하지 않는 puuid를 발송하는 경우 NotFound Return 테스트")
+  @DisplayName("Riot 서버에 존재하지 않는 puuid를 발송하는 경우 NotFound를 반환 받는다.")
   void getReturn_ResponseNotFound() {
     ResponseDto notFound = new ResponseDto(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND);
     when(matchGameListService.getMatchListId(responseNotFoundPuuid)).thenReturn(notFound);
 
     ResponseDto resultResponse = null;
     try {
-      resultResponse = matchGameInfoService.getMatchInfoListByPuuid(responseNotFoundPuuid, 0);
+      resultResponse = matchGameInfoService.getMatchInfoListByPuuid(responseNotFoundPuuid, 0, 30);
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error(e.getMessage());
     }
 
     assertEquals(notFound.getResultCode(), resultResponse.getResultCode());
   }
 
   @Test
-  @DisplayName("DB에 게임 전적데이터가 존재하는 경우 List를 정상적으로 Return 받는지 여부 확인")
+  @DisplayName("DB에 게임 전적데이터가 존재하는 상황에서 puuid 기대값으로 전적데이터가 List로 나온다")
   void getMatchSimpleListReturnByDBTest() throws Exception {
     List<MatchGameSimpleDto> mockReturnList = new ArrayList<>();
     MatchGameSimpleDto mockSample1 = new MatchGameSimpleDto();
@@ -197,12 +199,13 @@ class MatchGameInfoServiceImplTest {
     Map<String, Object> searchParam = new HashMap<>();
     searchParam.put("puuid", responseOkPuuid);
     searchParam.put("pageNum", 0);
+    searchParam.put("limitNum", 30);
 
     when(matchGameAddInfoMapper.selectMatchSimpleList(searchParam)).thenReturn(
         (ArrayList<MatchGameSimpleDto>) mockReturnList);
 
     List<MatchGameSimpleDto> returnList = (List<MatchGameSimpleDto>) matchGameInfoService.getMatchInfoListByPuuid(
-        responseOkPuuid, 0).getResult();
+        responseOkPuuid, 0, 30).getResult();
 
     assertEquals(returnList, mockReturnList);
   }

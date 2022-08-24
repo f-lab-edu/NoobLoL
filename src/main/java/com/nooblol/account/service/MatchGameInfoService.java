@@ -7,11 +7,12 @@ import java.util.List;
 
 public interface MatchGameInfoService {
 
-  ResponseDto getMatchInfoListByPuuid(String puuid, int pageNum) throws Exception;
+  ResponseDto getMatchInfoListByPuuid(String puuid, int pageNum, int limitNum) throws Exception;
 
-  List<MatchGameSimpleDto> selectMatchSimpleListByPuuidInDB(String puuid, int pageNum);
+  List<MatchGameSimpleDto> selectMatchSimpleListByPuuidInDB(String puuid, int pageNum,
+      int limitNum);
 
-  ResponseDto syncRiotToDbByPuuidAfterGetMatchSimpleList(String puuid, int pageNum)
+  ResponseDto syncRiotToDbByPuuidAfterGetMatchSimpleList(String puuid, int pageNum, int limitNum)
       throws Exception;
 
   ResponseDto syncRiotToDbDataProcess(String puuid) throws Exception;
