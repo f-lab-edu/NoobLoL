@@ -179,7 +179,7 @@ class MatchGameInfoServiceImplTest {
   }
 
   @Test
-  @DisplayName("Riot 서버에 존재하지 않는 puuid를 발송하는 경우 NotFound를 반환 받는 테스트")
+  @DisplayName("Riot 서버에 존재하지 않는 puuid를 발송하는 경우 NotFound를 반환 받는다.")
   void getReturn_ResponseNotFound() {
     ResponseDto notFound = new ResponseDto(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND);
     when(matchGameListService.getMatchListId(responseNotFoundPuuid)).thenReturn(notFound);
@@ -195,7 +195,7 @@ class MatchGameInfoServiceImplTest {
   }
 
   @Test
-  @DisplayName("DB에 게임 전적데이터가 존재하는 경우 List를 정상적으로 Return 받는지 여부 확인")
+  @DisplayName("DB에 게임 전적데이터가 존재하는 상황에서 puuid 기대값으로 전적데이터가 List로 나온다")
   void getMatchSimpleListReturnByDBTest() throws Exception {
     List<MatchGameSimpleDto> mockReturnList = new ArrayList<>();
     MatchGameSimpleDto mockSample1 = new MatchGameSimpleDto();
