@@ -2,8 +2,10 @@ package com.nooblol.account.service.impl;
 
 import com.nooblol.account.dto.match.MatchDto;
 import com.nooblol.account.dto.match.MatchGameInfoDto;
+import com.nooblol.account.dto.match.MatchGameSimpleDto;
 import com.nooblol.account.dto.match.SyncResultDto;
 import com.nooblol.account.mapper.MatchGameInfoMapper;
+import com.nooblol.account.mapper.MatchGameAddInfoMapper;
 import com.nooblol.account.service.MatchGameInfoService;
 import com.nooblol.account.service.MatchGameListService;
 import com.nooblol.global.config.RiotConfiguration;
@@ -33,7 +35,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * Puuid를 기반으로 Riot서버에서 최근 100게임의 MatchId List를 받아와서
+ * Puuid를 기반으로 Riot서버에서 최근 50게임의 MatchId List를 받아와서
  * <p>
  * DB에 존재하지 않는 게임만 데이터를 다시 받아와 DB에 삽입한다.
  * <p>
@@ -51,13 +53,61 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
   private final HttpHeaders initRiotHeader;
 
   private final MatchGameInfoMapper matchGameInfoMapper;
+  private final MatchGameAddInfoMapper matchGameAddInfoMapper;
+
+  /**
+   * DB의 게임 전적에 대하여 바로 Return 을 진행 하나, 데이터가 존재하지 않는 경우에는 동기화를 한 이후에 조회를 진행함)
+   */
 
   @Override
-  public ResponseDto getMatchInfoListByPuuid(String puuid) throws Exception {
-    if (StringUtils.isBlank(puuid)) {
-      throw new IllegalArgumentException("PuuId가 입력되지 않았습니다.");
+  public ResponseDto getMatchInfoListByPuuid(String puuid, int pageNum, int limitNum)
+      throws Exception {
+    List<MatchGameSimpleDto> matchResult = selectMatchSimpleListByPuuidInDB(puuid, pageNum,
+        limitNum);
+
+    if (!ObjectUtils.isEmpty(matchResult)) {
+      return new ResponseDto(HttpStatus.OK.value(), matchResult);
     }
-    return syncRiotToDbDataProcess(puuid);
+
+    return syncRiotToDbByPuuidAfterGetMatchSimpleList(puuid, pageNum, limitNum);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<MatchGameSimpleDto> selectMatchSimpleListByPuuidInDB(String puuid, int pageNum,
+      int limitNum) {
+    Map<String, Object> searchParam = new HashMap<>();
+    searchParam.put("puuid", puuid);
+    searchParam.put("pageNum", pageNum);
+    searchParam.put("limitNum", limitNum);
+
+    List<MatchGameSimpleDto> selectMatchSimpleList =
+        matchGameAddInfoMapper.selectMatchSimpleList(searchParam);
+
+    if (ObjectUtils.isEmpty(selectMatchSimpleList)) {
+      return selectMatchSimpleList;
+    }
+
+    selectMatchSimpleList.stream().forEach(matchGameSimpleDto -> {
+      String matchId = matchGameSimpleDto.getMatchId();
+      List<MatchGameSimpleDto> participantsList =
+          matchGameAddInfoMapper.selectMatchSimpleParticipantsList(matchId);
+      matchGameSimpleDto.setParticipants(participantsList);
+    });
+
+    return selectMatchSimpleList;
+  }
+
+  // Sync를 진행한 이후 게임 결과에 대한 Return
+  @Override
+  public ResponseDto syncRiotToDbByPuuidAfterGetMatchSimpleList(String puuid, int pageNum,
+      int limitNum) throws Exception {
+    ResponseDto syncResult = syncRiotToDbDataProcess(puuid);
+    if (syncResult.getResultCode() == HttpStatus.OK.value()) {
+      return new ResponseDto(HttpStatus.OK.value(),
+          selectMatchSimpleListByPuuidInDB(puuid, pageNum, limitNum));
+    }
+    return syncResult;
   }
 
   // TODO: 2022/08/17 현재는 동기화시에 고정적으로 최근 50경기로 지정하였으나, 최초 사용자들의 경우에는 모든데이터를 가져올 방법을 새롭게 마련해야 함.

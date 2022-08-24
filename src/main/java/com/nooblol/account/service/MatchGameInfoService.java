@@ -1,13 +1,19 @@
 package com.nooblol.account.service;
 
 import com.nooblol.account.dto.match.MatchDto;
+import com.nooblol.account.dto.match.MatchGameSimpleDto;
 import com.nooblol.global.dto.ResponseDto;
 import java.util.List;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface MatchGameInfoService {
 
-  ResponseDto getMatchInfoListByPuuid(String puuid) throws Exception;
+  ResponseDto getMatchInfoListByPuuid(String puuid, int pageNum, int limitNum) throws Exception;
+
+  List<MatchGameSimpleDto> selectMatchSimpleListByPuuidInDB(String puuid, int pageNum,
+      int limitNum);
+
+  ResponseDto syncRiotToDbByPuuidAfterGetMatchSimpleList(String puuid, int pageNum, int limitNum)
+      throws Exception;
 
   ResponseDto syncRiotToDbDataProcess(String puuid) throws Exception;
 

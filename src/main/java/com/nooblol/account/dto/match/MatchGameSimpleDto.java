@@ -1,28 +1,23 @@
 package com.nooblol.account.dto.match;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * 매치에 대한 참가자 정보 DTO
- */
-
+//간단한 전적 반환
 @Getter
 @Setter
-@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MatchGameParticipantsDto {
+public class MatchGameSimpleDto {
 
   private String puuid;
+  private String matchId;
 
   private String summonerId;
-  private String summonerLevel;
   private String summonerName;
   private String championName;
   private int championId;
-  private int championLevel;
 
   private String role;
   private String lane;
@@ -35,9 +30,7 @@ public class MatchGameParticipantsDto {
   private int assists;
 
   private int summoner1Id;
-  private int summoner1Casts;
   private int summoner2Id;
-  private int summoner2Casts;
 
   private int item0;
   private int item1;
@@ -47,5 +40,11 @@ public class MatchGameParticipantsDto {
   private int item5;
   private int item6;
 
-  private MatchGameRunesDto perks;
+  private long gameCreation;
+  private long gameDuration;
+
+
+  private int queueId;
+  private String gameMode;
+  private List<MatchGameSimpleDto> participants;
 }
