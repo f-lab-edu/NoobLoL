@@ -24,7 +24,7 @@ public class MatchGameController {
   private final MatchGameInfoService matchGameInfoService;
 
   /**
-   * Puuid를 요청한 사용자의
+   * Puuid를 요청한 사용자의 최근 전적 조회
    *
    * @param puuid    Summoner_Account의 puuid컬럼값으로, 해당 파라미터를 통해 해당 유저의 최근 전적데이터를 Return한다
    * @param sync     해당값은 Default로 false를 Riot과 통신하여 최근 전적 데이터를 DB로 삽입한 이후 전적 데이터를 Return하며, True인
@@ -34,8 +34,9 @@ public class MatchGameController {
    * @return
    * @throws Exception
    */
-  @GetMapping("/simplelist")
-  public ResponseDto selectMatchList(@RequestParam("puuid") String puuid,
+  @GetMapping("/list")
+  public ResponseDto selectMatchList(
+      @RequestParam(value = "puuid", required = false) @NotBlank String puuid,
       @RequestParam(value = "sync", required = false) boolean sync,
       @RequestParam(value = "page", defaultValue = "0") int pageNum) throws Exception {
     pageNum = pageNum * 30;
