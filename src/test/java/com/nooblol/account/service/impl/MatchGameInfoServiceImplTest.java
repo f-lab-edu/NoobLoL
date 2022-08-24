@@ -75,7 +75,7 @@ class MatchGameInfoServiceImplTest {
   @DisplayName("getMatchInfoListByPuuid의 파라미터를 Null로 전달시 Exception이 발생한다")
   void confirm_getMatchInfoListByPuuid_IllegalArgumentExceptionTest() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      matchGameInfoService.getMatchInfoListByPuuid(null, 0);
+      matchGameInfoService.getMatchInfoListByPuuid(null, 0, 30);
     });
 
     assertEquals("PuuId가 입력되지 않았습니다.", exception.getMessage());
@@ -186,7 +186,7 @@ class MatchGameInfoServiceImplTest {
 
     ResponseDto resultResponse = null;
     try {
-      resultResponse = matchGameInfoService.getMatchInfoListByPuuid(responseNotFoundPuuid, 0);
+      resultResponse = matchGameInfoService.getMatchInfoListByPuuid(responseNotFoundPuuid, 0, 30);
     } catch (Exception e) {
       log.error(e.getMessage());
     }
@@ -215,7 +215,7 @@ class MatchGameInfoServiceImplTest {
         (ArrayList<MatchGameSimpleDto>) mockReturnList);
 
     List<MatchGameSimpleDto> returnList = (List<MatchGameSimpleDto>) matchGameInfoService.getMatchInfoListByPuuid(
-        responseOkPuuid, 0).getResult();
+        responseOkPuuid, 0, 30).getResult();
 
     assertEquals(returnList, mockReturnList);
   }
