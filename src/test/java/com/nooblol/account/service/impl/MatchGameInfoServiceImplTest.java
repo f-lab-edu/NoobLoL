@@ -72,17 +72,6 @@ class MatchGameInfoServiceImplTest {
   }
 
   @Test
-  @DisplayName("getMatchInfoListByPuuid의 파라미터를 Null로 전달시 Exception이 발생한다")
-  void confirm_getMatchInfoListByPuuid_IllegalArgumentExceptionTest() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      matchGameInfoService.getMatchInfoListByPuuid(null, 0, 30);
-    });
-
-    assertEquals("PuuId가 입력되지 않았습니다.", exception.getMessage());
-  }
-
-
-  @Test
   @DisplayName("insertMatchDataByDb메소드의 파라미터를 Null로 전달시 Return값이 false임을 확인한다")
   void confirm_InsertMatchDataByDB_ReturnFalseTest() {
     MatchDto dto = null;
@@ -210,6 +199,7 @@ class MatchGameInfoServiceImplTest {
     Map<String, Object> searchParam = new HashMap<>();
     searchParam.put("puuid", responseOkPuuid);
     searchParam.put("pageNum", 0);
+    searchParam.put("limitNum", 30);
 
     when(matchGameAddInfoMapper.selectMatchSimpleList(searchParam)).thenReturn(
         (ArrayList<MatchGameSimpleDto>) mockReturnList);
