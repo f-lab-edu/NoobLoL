@@ -55,16 +55,35 @@ public class MatchGameController {
         limitNum);
   }
 
+  /**
+   * Match Id를 통하여 해당 게임에 참가한 모든 사용자에 대하여 DB에서 조회한다.
+   *
+   * @param matchId `/list` 에서 제공하는 항목중 MatchId값
+   * @return
+   */
   @GetMapping("/participants")
   public ResponseDto getMatchAllParticipants(@RequestParam("matchId") String matchId) {
     return matchGameAddInfoService.getMatchAllParticipantsList(matchId);
   }
 
+  /**
+   * Match Id를 통하여 해당 게임에서 금지된 챔피언의 목록을 조회한다.
+   *
+   * @param matchId `/list` 에서 제공하는 항목중 MatchId값
+   * @return
+   */
   @GetMapping("/ban")
   public ResponseDto getMatchBan(@RequestParam("matchId") String matchId) {
     return matchGameAddInfoService.getMatchBanList(matchId);
   }
 
+  /**
+   * MatchId와 Puuid를 통하여 해당 게임에서 특정유저(puuid)의 사용한 룬정보를 조회한다.
+   *
+   * @param matchId `/list` 에서 제공하는 항목중 MatchId값
+   * @param puuid   `/list`, `/participants` 에서 제공이된 사용자들의 puuid값
+   * @return
+   */
   @GetMapping("/rune")
   public ResponseDto getMatchUseRun(
       @RequestParam("matchId") String matchId, @RequestParam("puuid") String puuid
