@@ -17,6 +17,13 @@
     WHERE user_email = #{email}
   </select>
 
+  <!--UserId를 통하여 User정보 획득-->
+  <select id="selectUserInfoByUserId" parameterType="String" resultType="UserSignUpRequestDto">
+    SELECT user_id, user_email, user_name, user_role
+    FROM USERS
+    WHERE user_id = #{userId}
+  </select>
+
   <!--UserRole 변경-->
   <update id="updateUserRole" parameterType="UserSignUpRequestDto">
     UPDATE USERS

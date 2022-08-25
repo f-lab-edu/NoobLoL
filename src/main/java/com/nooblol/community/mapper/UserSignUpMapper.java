@@ -10,5 +10,7 @@ public interface UserSignUpMapper {
 
   UserSignUpRequestDto selectUserInfoByEmail(String userEmail);
 
+  UserSignUpRequestDto selectUserInfoByUserId(String userId);
+
   int updateUserRole(UserSignUpRequestDto userDto);
 }

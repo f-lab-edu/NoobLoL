@@ -6,6 +6,7 @@ import com.nooblol.community.service.UserSendMailService;
 import com.nooblol.community.service.UserSignUpService;
 import com.nooblol.community.utils.UserRoleStatus;
 import com.nooblol.global.dto.ResponseDto;
+import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.ResponseEnum;
 import com.nooblol.global.utils.UserUtils;
 import java.net.InetAddress;
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -31,15 +33,14 @@ public class UserSignUpServiceImpl implements UserSignUpService {
   @Override
   public ResponseDto signUpUser(UserSignUpRequestDto userDto) {
     try {
-      String encodePassword = UserUtils.stringChangeToSha512(userDto.getUserPassword());
-      userDto.setUserPassword(encodePassword);
+      String encodePassword = UserUtils.stringChangeToSha512(userDto.getPassword());
+      userDto.setPassword(encodePassword);
 
       if (userSignUpMapper.insertSignUpUser(userDto) <= 0) {
-        return ResponseEnum.BAD_REQUEST.getResponse();
+        throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
       }
     } catch (Exception e) {
-      log.error("SignUpUser Db Insert Error");
-      return ResponseEnum.BAD_REQUEST.getResponse();
+      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
 
     boolean result = sendSignUpUserMail(userDto);
@@ -60,6 +61,19 @@ public class UserSignUpServiceImpl implements UserSignUpService {
   @Override
   public ResponseDto reSendSignUpUserMail(String userEmail) {
     UserSignUpRequestDto userDto = userSignUpMapper.selectUserInfoByEmail(userEmail);
+
+    if (ObjectUtils.isEmpty(userDto)) {
+      throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
+    }
+
+    if (
+        userDto.getUserRole() != UserRoleStatus.UNAUTH_USER.getRoleValue()
+    ) {
+      throw new IllegalArgumentException(
+          userDto.getUserName() + "님의 계정은 활성화가 필요한 상태가 아닙니다."
+      );
+    }
+
     boolean result = sendSignUpUserMail(userDto);
 
     ResponseDto response = ResponseEnum.OK.getResponse();
@@ -69,6 +83,17 @@ public class UserSignUpServiceImpl implements UserSignUpService {
 
   @Override
   public ResponseDto changeRoleAuthUser(String userId) {
+    UserSignUpRequestDto dbUserData = userSignUpMapper.selectUserInfoByUserId(userId);
+    if (ObjectUtils.isEmpty(dbUserData)) {
+      throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
+    }
+
+    if (dbUserData.getUserRole() != UserRoleStatus.UNAUTH_USER.getRoleValue()) {
+      throw new IllegalArgumentException(
+          dbUserData.getUserName() + "님의 계정은 활성화가 필요한 상태가 아닙니다."
+      );
+    }
+
     UserSignUpRequestDto userDto = new UserSignUpRequestDto();
     userDto.setUserId(userId);
     userDto.setUserRole(UserRoleStatus.AUTH_USER.getRoleValue());
@@ -86,7 +111,7 @@ public class UserSignUpServiceImpl implements UserSignUpService {
       return response;
     } catch (Exception e) {
       log.error("User Role Update Error!!" + userId);
-      return ResponseEnum.INTERNAL_SERVER_ERROR.getResponse();
+      throw new IllegalArgumentException(ExceptionMessage.SERVER_ERROR);
     }
   }
 
@@ -113,7 +138,7 @@ public class UserSignUpServiceImpl implements UserSignUpService {
 
     String[] activeProfilesAry = environment.getActiveProfiles();
     String portNum = environment.getProperty("local.server.port");
-    String contentStr = "<a href='http://" + domain;
+    String contentStr = "<a href=\"http://" + domain;
     for (String activeProfile : activeProfilesAry) {
       if ("local".equals(activeProfile) || "dev".equals(activeProfile)) {
         contentStr += ":" + portNum + "";
@@ -123,7 +148,7 @@ public class UserSignUpServiceImpl implements UserSignUpService {
         break;
       }
     }
-    contentStr += "/user/auth/" + userDto.getUserId() + "'>NoobLoL 회원인증 링크 입니다</a>";
+    contentStr += "/user/auth/" + userDto.getUserId() + "\"> NoobLoL 회원인증 링크 입니다 </a>";
 
     return contentStr;
   }

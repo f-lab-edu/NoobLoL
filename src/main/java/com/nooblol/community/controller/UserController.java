@@ -3,18 +3,16 @@ package com.nooblol.community.controller;
 import com.nooblol.community.dto.UserSignUpRequestDto;
 import com.nooblol.community.service.UserSignUpService;
 import com.nooblol.global.dto.ResponseDto;
-import com.nooblol.global.utils.ResponseEnum;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.Errors;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,20 +26,15 @@ public class UserController {
   private final UserSignUpService userSignUpService;
 
   @PostMapping("/singup")
-  public ResponseDto singUpSubmit(@Validated UserSignUpRequestDto userSignUpDto, Errors erros) {
-    if (erros.hasErrors()) {
-      return new ResponseDto(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST);
-    }
-
+  public ResponseDto singUpSubmit(@Valid @RequestBody UserSignUpRequestDto userSignUpDto) {
     return userSignUpService.signUpUser(userSignUpDto);
   }
 
   @GetMapping("/resend-authmail/{email:.+}")
-  public ResponseDto resendAuthMail(@PathVariable @NotBlank String email) {
-    if (StringUtils.isBlank(email)) {
-      return ResponseEnum.NOT_FOUND.getResponse();
-    }
-
+  public ResponseDto resendAuthMail(
+      @PathVariable @NotBlank @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$", message = "이메일 형식에 맞지 않습니다.")
+          String email
+  ) {
     return userSignUpService.reSendSignUpUserMail(email.trim());
   }
 
@@ -52,10 +45,6 @@ public class UserController {
    */
   @GetMapping("/auth/{userId}")
   public ResponseDto authUserByMail(@PathVariable @NotBlank String userId) {
-    if (StringUtils.isBlank(userId)) {
-      return ResponseEnum.NOT_FOUND.getResponse();
-    }
-
     return userSignUpService.changeRoleAuthUser(userId.trim());
   }
 
