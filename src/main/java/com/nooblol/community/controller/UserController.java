@@ -30,6 +30,12 @@ public class UserController {
     return userSignUpService.signUpUser(userSignUpDto);
   }
 
+  /**
+   * E-mail파라미터를 받아, 해당 메일주소를
+   *
+   * @param email
+   * @return
+   */
   @GetMapping("/resend-authmail/{email:.+}")
   public ResponseDto resendAuthMail(
       @PathVariable @NotBlank @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$", message = "이메일 형식에 맞지 않습니다.")
@@ -39,6 +45,7 @@ public class UserController {
   }
 
   /**
+   * UserId를 받아 비활성화가 진행된 사용자의 UserRole을 활성상태인 `UserRoleStatus.AUTH_USER`로 변경함
    * @param userId users테이블의 userId Value
    * @return 404 : userId의 정상적인 입력이 아님, 500 : DB처리 도중 문제 발생, OK true: 정상적인 변경, OK false : Update
    * Fail

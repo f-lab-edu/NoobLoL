@@ -133,6 +133,9 @@ public class UserSignUpServiceImpl implements UserSignUpService {
     }
   }
 
+  /*
+    TODO : [22. 08. 25] 메일을 확인해보니 a태그가 활성화가 되어있질 않음. html로 만들어서 제작하는 방법을 알아보는게 필요하다 판단됨.
+   */
   private String getContent(UserSignUpRequestDto userDto) throws UnknownHostException {
     String domain = InetAddress.getLocalHost().getHostName();
 
