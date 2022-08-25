@@ -26,11 +26,11 @@ public class UserSignUpRequestDto {
   private String userName;
 
   @NotBlank(message = "패스워드가 입력되지 않았습니다.")
-  private String userPassword;
+  private String password;
 
   private int userRole = UserRoleStatus.UNAUTH_USER.getRoleValue();
 
-  private Timestamp createAt = new Timestamp(System.currentTimeMillis());
+  private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
   private Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
 
   public void setAdminUserRole() {

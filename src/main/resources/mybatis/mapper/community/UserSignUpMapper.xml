@@ -6,8 +6,8 @@
   <insert id="insertSignUpUser" parameterType="UserSignUpRequestDto">
     INSERT INTO USERS(user_id, user_email, user_name, user_password_hash, user_role, created_at,
                       updated_at)
-    VALUES (#{userId}, #{userEmail}, #{userName}, #{userPassword}, #{userRole}, #{createAt},
-            #{updateAt})
+    VALUES (#{userId}, #{userEmail}, #{userName}, #{password}, #{userRole}, #{createdAt},
+            #{updatedAt})
   </insert>
 
   <!--Email을 통하여 User정보 획득-->
@@ -20,8 +20,8 @@
   <!--UserRole 변경-->
   <update id="updateUserRole" parameterType="UserSignUpRequestDto">
     UPDATE USERS
-    SET user_role = #{userRole},
-        update_at = now()
+    SET user_role  = #{userRole},
+        updated_at = now()
     WHERE user_id = #{userId}
   </update>
 
