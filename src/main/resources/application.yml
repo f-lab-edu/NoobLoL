@@ -15,15 +15,17 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${mail-id}
-    password: ${mail-Password}
+    #username: ${mail-id}
+    username: dev.jong1@gmail.com
+    #password: ${mail-Password}
+    password: chzkafdnzupzmbcx
     properties:
       mail:
         smtp:
           auth: true
           starttls:
-            eable: true
-
+            enable: true
+            
 #Setting MyBatis
 mybatis:
   configuration:

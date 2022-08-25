@@ -12,7 +12,8 @@ public enum ResponseEnum {
   BAD_REQUEST(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST),
   NOT_FOUND(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND),
   INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR),
-  OK(HttpStatus.OK.value(), null);
+  OK(HttpStatus.OK.value(), null),
+  CONFLICT(HttpStatus.CONFLICT.value(), null);
 
   ResponseDto response;
 

@@ -11,12 +11,14 @@ import com.nooblol.global.utils.ResponseEnum;
 import com.nooblol.global.utils.UserUtils;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -36,10 +38,15 @@ public class UserSignUpServiceImpl implements UserSignUpService {
       String encodePassword = UserUtils.stringChangeToSha512(userDto.getPassword());
       userDto.setPassword(encodePassword);
 
-      if (userSignUpMapper.insertSignUpUser(userDto) <= 0) {
-        throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
-      }
+      userSignUpMapper.insertSignUpUser(userDto);
+
     } catch (Exception e) {
+      if (e instanceof DuplicateKeyException) {
+        SQLException se = (SQLException) e.getCause();
+        if (se.getErrorCode() == 23505) {
+          throw new IllegalArgumentException(ExceptionMessage.HAVE_DATA);
+        }
+      }
       throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
 
@@ -66,9 +73,7 @@ public class UserSignUpServiceImpl implements UserSignUpService {
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
-    if (
-        userDto.getUserRole() != UserRoleStatus.UNAUTH_USER.getRoleValue()
-    ) {
+    if (userDto.getUserRole() != UserRoleStatus.UNAUTH_USER.getRoleValue()) {
       throw new IllegalArgumentException(
           userDto.getUserName() + "님의 계정은 활성화가 필요한 상태가 아닙니다."
       );
@@ -142,13 +147,13 @@ public class UserSignUpServiceImpl implements UserSignUpService {
     String[] activeProfilesAry = environment.getActiveProfiles();
     String portNum = environment.getProperty("local.server.port");
     String contentStr = "<a href=\"http://" + domain;
-    for (String activeProfile : activeProfilesAry) {
-      if ("local".equals(activeProfile) || "dev".equals(activeProfile)) {
-        contentStr += ":" + portNum + "";
-        break;
-      }
-      if ("prod".equals(activeProfile)) {
-        break;
+
+    if (!ObjectUtils.isEmpty(activeProfilesAry)) {
+      for (String activeProfile : activeProfilesAry) {
+        if ("local".equals(activeProfile) || "dev".equals(activeProfile)) {
+          contentStr += ":" + portNum + "";
+          break;
+        }
       }
     }
     contentStr += "/user/auth/" + userDto.getUserId() + "\"> NoobLoL 회원인증 링크 입니다 </a>";

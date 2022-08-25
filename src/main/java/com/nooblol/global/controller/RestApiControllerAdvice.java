@@ -54,12 +54,18 @@ public class RestApiControllerAdvice {
               + ", Error Message : " + e.getMessage()
       );
     }
-
     switch (e.getMessage()) {
       case ExceptionMessage.NO_DATA:
         return ResponseEnum.NOT_FOUND.getResponse();
+
       case ExceptionMessage.SERVER_ERROR:
         return ResponseEnum.INTERNAL_SERVER_ERROR.getResponse();
+
+      case ExceptionMessage.HAVE_DATA:
+        ResponseDto rtn = ResponseEnum.CONFLICT.getResponse();
+        rtn.setResult("이미 존재하는 데이터 입니다");
+        return rtn;
+
       default:
         return ResponseEnum.BAD_REQUEST.getResponse();
     }
