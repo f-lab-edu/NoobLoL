@@ -31,7 +31,7 @@ public class UserInfoServiceImpl implements UserInfoService {
   @Override
   public ResponseDto updateUserInfo(UserInfoUpdateDto userUpdateInfoDto) {
     //두개가 모두 공백인 경우는 Update를 진행할 정보가 없기 떄문에 BadRequest를 반환한다.
-    if (StringUtils.isBlank(userUpdateInfoDto.getNewUserName()) ||
+    if (StringUtils.isBlank(userUpdateInfoDto.getNewUserName()) &&
         StringUtils.isBlank(userUpdateInfoDto.getNewPassword())
     ) {
       throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
