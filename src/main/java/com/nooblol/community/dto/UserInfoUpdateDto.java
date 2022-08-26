@@ -4,6 +4,7 @@ package com.nooblol.community.dto;
 import com.nooblol.community.utils.UserRoleStatus;
 import java.sql.Timestamp;
 import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import lombok.Getter;
@@ -35,17 +36,18 @@ public class UserInfoUpdateDto {
 
   private String newPassword;
 
-  @NotBlank
+  //회원에 대해서 최소 1부터 시작함. 0은 GUEST라 상관이 없슴
+  @Min(value = 1, message = "게스트는 수정가능한 정보가 없습니다.")
   private int userRole;
 
   private Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
 
   @AssertTrue(message = "정보 수정이 불가능한 계정입니다")
   public boolean isReqUserInfoUpdateRoleValidation() {
-    if (getUserRole() != UserRoleStatus.AUTH_USER.getRoleValue() ||
-        getUserRole() != UserRoleStatus.ADMIN.getRoleValue()) {
-      return false;
+    if (getUserRole() == UserRoleStatus.AUTH_USER.getRoleValue() ||
+        getUserRole() == UserRoleStatus.ADMIN.getRoleValue()) {
+      return true;
     }
-    return true;
+    return false;
   }
 }
