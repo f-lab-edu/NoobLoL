@@ -1,5 +1,7 @@
 package com.nooblol.community.controller;
 
+import com.nooblol.community.dto.AdminDeleteUserDto;
+import com.nooblol.community.dto.AdminUserDto;
 import com.nooblol.community.dto.UserSignOutDto;
 import com.nooblol.community.dto.UserSignUpRequestDto;
 import com.nooblol.community.service.AdminService;
@@ -32,5 +34,16 @@ public class AdminController {
   @PostMapping("/signout")
   public ResponseDto signOutAdminMember(@Valid @RequestBody UserSignOutDto userSignOutDto) {
     return adminService.deleteAdminMember(userSignOutDto);
+  }
+
+  @PostMapping("/forceDeleteUser")
+  public ResponseDto adminForcedDeleteuser(
+      @Valid @RequestBody AdminDeleteUserDto adminDeleteUserDto) {
+    return adminService.forceDeleteUser(adminDeleteUserDto);
+  }
+
+  @PostMapping("/userList")
+  public ResponseDto getAllUserList(@Valid @RequestBody AdminUserDto adminUserDto) {
+    return adminService.getAllUserList(adminUserDto);
   }
 }
