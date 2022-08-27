@@ -19,7 +19,7 @@ public class UserDto {
   private int userRole;
   private int level;
   private int exp;
-  private Timestamp createAt;
+  private Timestamp createdAt;
   private Timestamp updatedAt;
 
 }
