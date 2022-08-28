@@ -104,11 +104,8 @@ public class AdminServiceImpl implements AdminService {
 
       UserDto adminDbData = adminMapper.selectAdminDto(adminUserDto);
 
-      if (ObjectUtils.isEmpty(adminDbData)) {
-        throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
-      }
-
-      if (adminDbData.getUserRole() != UserRoleStatus.ADMIN.getRoleValue()) {
+      if (ObjectUtils.isEmpty(adminDbData) ||
+          adminDbData.getUserRole() != UserRoleStatus.ADMIN.getRoleValue()) {
         throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
       }
 
