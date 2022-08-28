@@ -1,6 +1,7 @@
 package com.nooblol.community.controller;
 
 import com.nooblol.community.dto.AdminDeleteUserDto;
+import com.nooblol.community.dto.AdminUpdateUserDto;
 import com.nooblol.community.dto.AdminUserDto;
 import com.nooblol.community.dto.UserSignOutDto;
 import com.nooblol.community.dto.UserSignUpRequestDto;
@@ -45,5 +46,16 @@ public class AdminController {
   @PostMapping("/userList")
   public ResponseDto getAllUserList(@Valid @RequestBody AdminUserDto adminUserDto) {
     return adminService.getAllUserList(adminUserDto);
+  }
+
+  @PostMapping("/userChangeActive")
+  public ResponseDto changeToActiveUser(@Valid @RequestBody AdminUpdateUserDto adminUpdateUserDto) {
+    return adminService.changeToActiveUser(adminUpdateUserDto);
+  }
+
+  @PostMapping("/userChangeToSuspension")
+  public ResponseDto changeToSuspensionUser(
+      @Valid @RequestBody AdminUpdateUserDto adminUpdateUserDto) {
+    return adminService.changeToSuspensionUser(adminUpdateUserDto);
   }
 }

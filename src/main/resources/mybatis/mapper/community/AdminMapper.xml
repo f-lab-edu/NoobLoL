@@ -34,4 +34,11 @@
     FROM users
     WHERE user_id = #{deleteUserId}
   </delete>
+
+  <update id="changeUserRole" parameterType="UserDto">
+    UPDATE USERS
+    SET user_role  = #{userRole},
+        updated_at = now()
+    WHERE user_id = #{userId}
+  </update>
 </mapper>

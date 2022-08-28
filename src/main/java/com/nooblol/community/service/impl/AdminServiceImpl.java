@@ -1,6 +1,7 @@
 package com.nooblol.community.service.impl;
 
 import com.nooblol.community.dto.AdminDeleteUserDto;
+import com.nooblol.community.dto.AdminUpdateUserDto;
 import com.nooblol.community.dto.AdminUserDto;
 import com.nooblol.community.dto.UserDto;
 import com.nooblol.community.dto.UserSignOutDto;
@@ -120,6 +121,51 @@ public class AdminServiceImpl implements AdminService {
       resultDto.setResult(userList);
 
       return resultDto;
+    } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+      throw new IllegalArgumentException(ExceptionMessage.SERVER_ERROR);
+    } catch (Exception e) {
+      if (e.getMessage().equals(ExceptionMessage.FORBIDDEN)) {
+        throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
+      }
+      e.printStackTrace();
+      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
+    }
+  }
+
+  @Override
+  public ResponseDto changeToActiveUser(AdminUpdateUserDto adminUpdateUserDto) {
+    return updateUser(adminUpdateUserDto, UserRoleStatus.AUTH_USER.getRoleValue());
+  }
+
+  @Override
+  public ResponseDto changeToSuspensionUser(AdminUpdateUserDto adminUpdateUserDto) {
+    return updateUser(adminUpdateUserDto, UserRoleStatus.SUSPENSION_USER.getRoleValue());
+  }
+
+  private ResponseDto updateUser(AdminUpdateUserDto adminUpdateUserDto, int roleStatus) {
+    try {
+      String password = UserUtils.stringChangeToSha512(adminUpdateUserDto.getAdminUserPassword());
+      adminUpdateUserDto.setAdminUserPassword(password);
+
+      UserDto adminDbData = adminMapper.selectAdminDto(adminUpdateUserDto);
+
+      if (ObjectUtils.isEmpty(adminDbData) ||
+          adminDbData.getUserRole() != UserRoleStatus.ADMIN.getRoleValue()) {
+        throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
+      }
+
+      UserDto changeUser = new UserDto();
+      changeUser.setUserId(adminUpdateUserDto.getUpdateUserId());
+      changeUser.setUserRole(roleStatus);
+
+      ResponseDto result = ResponseEnum.OK.getResponse();
+
+      if (adminMapper.changeUserRole(changeUser) == 0) {
+        result.setResult(false); //수정할 데이터가 없는 경우 (이미 활동정지가 된 유저)
+      } else {
+        result.setResult(true);
+      }
+      return result;
     } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
       throw new IllegalArgumentException(ExceptionMessage.SERVER_ERROR);
     } catch (Exception e) {

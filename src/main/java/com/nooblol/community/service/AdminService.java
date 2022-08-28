@@ -1,6 +1,7 @@
 package com.nooblol.community.service;
 
 import com.nooblol.community.dto.AdminDeleteUserDto;
+import com.nooblol.community.dto.AdminUpdateUserDto;
 import com.nooblol.community.dto.AdminUserDto;
 import com.nooblol.community.dto.UserSignOutDto;
 import com.nooblol.community.dto.UserSignUpRequestDto;
@@ -15,4 +16,8 @@ public interface AdminService {
   ResponseDto forceDeleteUser(AdminDeleteUserDto adminDeleteUserDto);
 
   ResponseDto getAllUserList(AdminUserDto adminUserDto);
+
+  ResponseDto changeToActiveUser(AdminUpdateUserDto adminUpdateUserDto);
+
+  ResponseDto changeToSuspensionUser(AdminUpdateUserDto adminUpdateUserDto);
 }

@@ -13,4 +13,6 @@ public interface AdminMapper {
   List<UserDto> getAllUserList();
 
   int forcedDeleteUser(String deleteUserId);
+
+  int changeUserRole(UserDto userDto);
 }
