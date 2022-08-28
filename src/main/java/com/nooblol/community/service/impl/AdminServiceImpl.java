@@ -93,6 +93,11 @@ public class AdminServiceImpl implements AdminService {
       return resultDto;
     } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
       throw new IllegalArgumentException(ExceptionMessage.SERVER_ERROR);
+    } catch (Exception e) {
+      if (e.getMessage().equals(ExceptionMessage.FORBIDDEN)) {
+        throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
+      }
+      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
   }
 
@@ -118,9 +123,10 @@ public class AdminServiceImpl implements AdminService {
     } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
       throw new IllegalArgumentException(ExceptionMessage.SERVER_ERROR);
     } catch (Exception e) {
+      if (e.getMessage().equals(ExceptionMessage.FORBIDDEN)) {
+        throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
+      }
       throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
   }
-
-
 }
