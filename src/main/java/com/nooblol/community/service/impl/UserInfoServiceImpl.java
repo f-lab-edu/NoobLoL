@@ -1,18 +1,27 @@
 package com.nooblol.community.service.impl;
 
+import com.nooblol.community.dto.UserDto;
 import com.nooblol.community.dto.UserInfoUpdateDto;
+import com.nooblol.community.dto.UserLoginDto;
 import com.nooblol.community.mapper.UserInfoMapper;
 import com.nooblol.community.service.UserInfoService;
+import com.nooblol.community.utils.UserRoleStatus;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.ResponseEnum;
+import com.nooblol.global.utils.SessionEnum;
 import com.nooblol.global.utils.UserUtils;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +71,46 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
   }
 
+  @Override
+  public ResponseDto userLogin(UserLoginDto userLoginDto, HttpServletRequest request) {
+    try {
+      String password = UserUtils.stringChangeToSha512(userLoginDto.getUserPassword());
+      userLoginDto.setUserPassword(password);
+    } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+      throw new IllegalArgumentException(ExceptionMessage.SERVER_ERROR);
+    }
+
+    UserDto loginUser = userInfoMapper.selectUser(userLoginDto);
+
+    if (ObjectUtils.isEmpty(loginUser)) {
+      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
+    }
+
+    ResponseDto result = ResponseEnum.OK.getResponse();
+    if (loginUser.getUserRole() == UserRoleStatus.SUSPENSION_USER.getRoleValue()) {
+      result.setResult("SUSPENSION_USER");
+      return result;
+    }
+
+    if (loginUser.getUserRole() == UserRoleStatus.UNAUTH_USER.getRoleValue()) {
+      result.setResult("UNAUTH_USER");
+      return result;
+    }
+
+    HttpSession session = request.getSession();
+    session.setAttribute(SessionEnum.USER_LOGIN.getValue(), loginUser);
+    result.setResult(loginUser);
+    return result;
+  }
+
+  @Override
+  public ResponseDto userLogout(HttpServletRequest request) {
+    HttpSession session = request.getSession();
+    if (session != null) {
+      session.invalidate();
+    }
+    return ResponseEnum.OK.getResponse();
+  }
 
 }
 

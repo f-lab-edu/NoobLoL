@@ -1,5 +1,6 @@
 package com.nooblol.community.controller;
 
+import com.nooblol.community.dto.UserLoginDto;
 import com.nooblol.community.dto.UserSignOutDto;
 import com.nooblol.community.dto.UserSignUpRequestDto;
 import com.nooblol.community.service.UserSignOutService;
@@ -7,6 +8,7 @@ import com.nooblol.community.dto.UserInfoUpdateDto;
 import com.nooblol.community.service.UserInfoService;
 import com.nooblol.community.service.UserSignUpService;
 import com.nooblol.global.dto.ResponseDto;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -61,6 +63,17 @@ public class UserController {
     return userSignOutService.signOutUser(userSignOutDto);
   }
 
+  @PostMapping("/login")
+  public ResponseDto userLogin(
+      @Valid @RequestBody UserLoginDto userLoginDto, HttpServletRequest request
+  ) {
+    return userInfoService.userLogin(userLoginDto, request);
+  }
+
+  @PostMapping("/logout")
+  public ResponseDto userLogout(HttpServletRequest request) {
+    return userInfoService.userLogout(request);
+  }
 
   /**
    * E-mail파라미터를 받아, 해당 메일주소를
