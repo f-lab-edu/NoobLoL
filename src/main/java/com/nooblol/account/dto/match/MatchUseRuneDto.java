@@ -13,6 +13,6 @@ public class MatchUseRuneDto {
   private String puuid;
   private String matchId;
   private String type;
-  private String sortNo;
-  private String perk;
+  private int sortNo;
+  private int perk;
 }
