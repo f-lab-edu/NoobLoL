@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nooblol.account.mapper.MatchGameAddInfoMapper">
+  <select id="selectMatchSimpleList" parameterType="java.util.Map" resultType="MatchGameSimpleDto">
+    <if test="puuid != null and !puuid.equals('')">
+      SELECT
+      main.puuid, main.summoner_id, main.summoner_name, main.champion_id, main.champion_name,
+      main.role, main.lane, main.team_id,
+      main.team_position, main.kills, main.deaths, main.assists, main.summoner1_id,
+      main.summoner2_id, main.win,
+      main.item0, main.item1, main.item2, main.item3, main.item4, main.item5, main.item6,
+      info.match_id, info.game_creation, info.game_duration, info.queue_id, info.game_mode,
+      FROM
+      match_participants main,
+      match_gameinfo info
+      WHERE
+      main.match_id = info.match_id
+      AND main.puuid = #{puuid}
+      ORDER BY info.game_creation DESC
+      limit #{pageNum} , #{limitNum}
+    </if>
+  </select>
+
+  <select id="selectMatchSimpleParticipantsList" parameterType="String"
+    resultType="MatchGameSimpleDto">
+    <if test="matchId != null and !matchId.equals('')">
+      SELECT puuid,summoner_id, match_id, summoner_name, champion_id, champion_name, team_id, win
+      FROM match_participants
+      WHERE match_id = #{match_id}
+      ORDER BY team_id
+    </if>
+  </select>
+</mapper>

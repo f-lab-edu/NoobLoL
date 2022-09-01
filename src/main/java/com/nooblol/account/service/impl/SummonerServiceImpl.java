@@ -2,7 +2,7 @@ package com.nooblol.account.service.impl;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nooblol.account.dto.SummonerDto;
+import com.nooblol.account.dto.summoner.SummonerDto;
 import com.nooblol.account.mapper.SummonerMapper;
 import com.nooblol.account.service.SummonerService;
 import com.nooblol.global.config.RiotConfiguration;
@@ -33,6 +33,7 @@ public class SummonerServiceImpl implements SummonerService {
 
   private final ObjectMapper objectMapper;
   private final RestTemplate restTemplate;
+  private final HttpHeaders initRiotHeader;
 
   @Override
   public ResponseDto getSummonerAccointInfo(String summonerName) {
@@ -82,8 +83,9 @@ public class SummonerServiceImpl implements SummonerService {
   @Override
   public ResponseDto selectSummonerAccountByRiot(String summonerName) {
     summonerName = summonerNameWhiteSpaceReplace(summonerName);
-    String url = riotConfiguration.getDomain() + riotConfiguration.getSummonerNameSearchByNameApi()
-        + summonerName;
+    String url =
+        riotConfiguration.getSummonerDomain() + riotConfiguration.getSummonerNameSearchByNameApi()
+            + summonerName;
     return responseResult(url, SummonerDto.class);
   }
 
@@ -106,11 +108,8 @@ public class SummonerServiceImpl implements SummonerService {
   private <T> ResponseDto responseResult(String url, Class<T> resultClass) {
     ResponseDto rtnData = null;
     try {
-      HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.add("X-Riot-Token", riotConfiguration.getApiKey());
-
       ResponseEntity<String> response =
-          restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(httpHeaders),
+          restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(initRiotHeader),
               String.class);
 
       rtnData = makeResponseDto(response, resultClass);
