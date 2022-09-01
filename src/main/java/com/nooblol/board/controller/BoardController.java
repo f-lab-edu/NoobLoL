@@ -21,7 +21,9 @@ public class BoardController {
   private final CategoryService categoryService;
 
   /**
-   * @param status
+   * 파라미터로 받은 status와 일치하는 모든 category를 반환한다.
+   *
+   * @param status Category의 상태값
    * @return
    */
   @GetMapping("/categoryList")
