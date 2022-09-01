@@ -18,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
 import static com.nooblol.global.utils.CommonUtils.*;
@@ -56,7 +57,7 @@ public class SummonerServiceImpl implements SummonerService {
       SummonerDto riotSearchData = (SummonerDto) responseDto.getResult();
       SummonerDto serviceDBData = selectSummonerAccountByDB(riotSearchData);
 
-      if (objectIsNotNull(serviceDBData)) {
+      if (ObjectUtils.isEmpty(serviceDBData)) {
         boolean isSame = riotSearchData.equals(serviceDBData);
         if (!isSame) {
           summonerMapper.updateSummonerAccount(riotSearchData);
