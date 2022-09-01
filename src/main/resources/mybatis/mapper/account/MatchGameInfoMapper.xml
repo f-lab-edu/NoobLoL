@@ -3,16 +3,15 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nooblol.account.mapper.MatchGameInfoMapper">
   <select id="existsMatchIdListByMatch" parameterType="String" resultType="arrayList">
-    <if test="matchIdList != null and !matchIdList.equals('')">
-      select match_id
-      from match_gameinfo main
-      where exists(
-      select 1 from match_gameinfo sub
-      where main.match_id = sub.match_id
-      and match_id in
-      (#{matchIdList})
-      )
-    </if>
+    select match_id
+    from match_gameinfo main
+    where exists(
+            select 1
+            from match_gameinfo sub
+            where main.match_id = sub.match_id
+              and match_id in
+                  (#{matchIdList})
+            )
   </select>
 
   <!--아래의 Insert들은 모두 삽입하는 경우만 존재 함-->

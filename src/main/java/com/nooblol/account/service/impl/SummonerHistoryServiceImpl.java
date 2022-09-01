@@ -44,14 +44,6 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
     return summonerHistoryProcess(summonerId, sync);
   }
 
-  /**
-   * sync가 true인경우에만 DB의 값을 조회하며, 데이터가 존재하지 않거나 또는 false로 넘긴 경우 RiotAPI를 조회하여 정보를 취득한 이후 DB처리를 하고
-   * 반환한다.
-   *
-   * @param summonerId
-   * @param sync
-   * @return
-   */
   ResponseDto summonerHistoryProcess(String summonerId, boolean sync) {
     ResponseDto responseDto = null;
     if (sync) {
