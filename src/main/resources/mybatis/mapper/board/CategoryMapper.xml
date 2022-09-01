@@ -28,5 +28,4 @@
     WHERE category_id = #{categoryId}
       AND status = #{status}
   </select>
-
 </mapper>
