@@ -109,8 +109,8 @@ CREATE TABLE `users_letter`
     `letter_id`      int PRIMARY KEY AUTO_INCREMENT,
     `letter_title`   varchar(255) NOT NULL,
     `letter_content` text,
-    `to_user_id`     int          NOT NULL,
-    `from_user_id`   int          NOT NULL,
+    `to_user_id`     varchar(255) NOT NULL,
+    `from_user_id`   varchar(255) NOT NULL,
     `created_at`     datetime DEFAULT (now())
 );
 
@@ -119,9 +119,9 @@ CREATE TABLE `bbs_category`
     `category_id`     int PRIMARY KEY AUTO_INCREMENT,
     `category_name`   varchar(255),
     `status`          int,
-    `created_user_id` int,
+    `created_user_id` varchar(255),
     `created_at`      datetime DEFAULT (now()),
-    `updated_user_id` int,
+    `updated_user_id` varchar(255),
     `updated_at`      datetime
 );
 
@@ -131,9 +131,9 @@ CREATE TABLE `bbs`
     `category_id`     int,
     `bbs_name`        varchar(255),
     `status`          int,
-    `created_user_id` int,
+    `created_user_id` varchar(255),
     `created_at`      datetime DEFAULT (now()),
-    `updated_user_id` int,
+    `updated_user_id` varchar(255),
     `updated_at`      datetime
 );
 
@@ -145,7 +145,7 @@ CREATE TABLE `bbs_articles`
     `article_read_count` int,
     `article_content`    text,
     `status`             int,
-    `created_user_id`    int,
+    `created_user_id`    varchar(255),
     `created_at`         datetime DEFAULT (now()),
     `updated_at`         datetime
 );
@@ -153,8 +153,8 @@ CREATE TABLE `bbs_articles`
 CREATE TABLE `bbs_articles_status`
 (
     `article_id` int,
-    `bbs_id`     int,
-    `user_id`    int,
+    `bbs_id`     varchar(255),
+    `user_id`    varchar(255),
     `type`       tinyint,
     `created_at` datetime DEFAULT (now())
 );
@@ -167,7 +167,7 @@ CREATE TABLE `bbs_article_reply`
     `reply_content`   text,
     `status`          int,
     `sort_no`         int,
-    `created_user_id` int,
+    `created_user_id` varchar(255),
     `created_at`      datetime DEFAULT (now())
 );
 
