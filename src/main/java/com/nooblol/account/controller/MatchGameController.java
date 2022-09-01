@@ -5,8 +5,7 @@ import com.nooblol.account.service.MatchGameInfoService;
 import com.nooblol.global.dto.ResponseDto;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,13 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
  * 게임 매치정보에 대한 컨트롤러
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/match")
 @RequiredArgsConstructor
 @Validated
 public class MatchGameController {
-
-  private final Logger log = LoggerFactory.getLogger(getClass());
 
   private final MatchGameInfoService matchGameInfoService;
   private final MatchGameAddInfoService matchGameAddInfoService;

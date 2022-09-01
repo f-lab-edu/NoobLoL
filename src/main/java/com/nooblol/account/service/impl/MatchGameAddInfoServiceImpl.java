@@ -9,17 +9,15 @@ import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.utils.ResponseEnum;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
-
-  private final Logger log = LoggerFactory.getLogger(getClass());
 
   private final MatchGameAddInfoMapper matchGameAddInfoMapper;
 
@@ -71,7 +69,7 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
    * @return
    */
   private <T> ResponseDto makeReturnValue(List<T> list) {
-    if (list == null || list.size() <= 0) {
+    if (list == null || list.size() == 0) {
       return ResponseEnum.NOT_FOUND.getResponse();
     }
     return new ResponseDto(HttpStatus.OK.value(), list);
