@@ -14,10 +14,7 @@ public interface MatchGameAddInfoService {
    * @param matchId
    * @return
    */
-  ResponseDto getMatchAllParticipantsList(String matchId);
-
-
-  List<MatchGameParticipantsDto> selectMatchAllParticipantsListByMatchId(String matchId);
+  List<MatchGameParticipantsDto> getMatchAllParticipantsList(String matchId);
 
   /**
    * 해당 Match Id 에서 벤이된 챔피언을 리스트로 전달하며, 어느팀에서 벤을 하였는지는 구분 되어있지 않다.
@@ -25,9 +22,7 @@ public interface MatchGameAddInfoService {
    * @param matchId
    * @return
    */
-  ResponseDto getMatchBanList(String matchId);
-
-  List<MatchGameBansDto> selectMatchBanListByMatchId(String matchId);
+  List<MatchGameBansDto> getMatchBanList(String matchId);
 
   /**
    * 사용자가 해당 경기에서 사용한 모든 룬정보 반환.
@@ -36,7 +31,6 @@ public interface MatchGameAddInfoService {
    * @param puuid
    * @return
    */
-  ResponseDto getMatchUseRunList(String matchId, String puuid);
+  List<MatchUseRuneDto> getMatchUseRunList(String matchId, String puuid);
 
-  List<MatchUseRuneDto> selectMatchUseRuneByMatchIdAndPuuid(String matchId, String puuid);
 }
