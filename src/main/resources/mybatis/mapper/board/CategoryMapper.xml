@@ -3,7 +3,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nooblol.board.mapper.CategoryMapper">
 
-  <select id="selectCategory" parameterType="int">
+  <select id="selectCategory" parameterType="int" resultType="CategoryDto">
     SELECT category_id,
            category_name,
            status,
@@ -15,7 +15,7 @@
     WHERE status = #{status}
   </select>
 
-  <select id="selectBbsList" parameterType="SearchBbsListDto">
+  <select id="selectBbsList" parameterType="SearchBbsListDto" resultType="BbsDto">
     SELECT bbs_id,
            category_id,
            bbs_name,
