@@ -26,6 +26,6 @@ public interface UserSignUpService {
 
   ResponseDto changeRoleAuthUser(String userId);
 
-  Map<String, String> getAuthMailTitle(UserSignUpRequestDto userDto);
+  Map<String, String> getAuthMailContent(UserSignUpRequestDto userDto);
 
 }

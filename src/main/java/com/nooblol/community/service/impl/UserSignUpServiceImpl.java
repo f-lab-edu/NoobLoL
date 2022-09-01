@@ -61,7 +61,7 @@ public class UserSignUpServiceImpl implements UserSignUpService {
   public boolean sendSignUpUserMail(UserSignUpRequestDto userDto) {
     return userSendMailService.sendMail(
         userDto.getUserEmail(),
-        getAuthMailTitle(userDto)
+        getAuthMailContent(userDto)
     );
   }
 
@@ -121,7 +121,7 @@ public class UserSignUpServiceImpl implements UserSignUpService {
   }
 
   @Override
-  public Map<String, String> getAuthMailTitle(UserSignUpRequestDto userDto) {
+  public Map<String, String> getAuthMailContent(UserSignUpRequestDto userDto) {
     Map<String, String> mailContent = new HashMap<>();
 
     String titleStr = "[NoobLoL]" + userDto.getUserName() + "님 회원가입 인증 메일입니다";
