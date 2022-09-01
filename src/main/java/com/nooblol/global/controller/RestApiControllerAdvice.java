@@ -21,12 +21,13 @@ public class RestApiControllerAdvice {
   public ResponseDto constraintViolationException(ConstraintViolationException e) {
     if (!ObjectUtils.isEmpty(e)) {
       e.getConstraintViolations().forEach(error -> {
-        log.error("[" + error.getRootBeanClass() + "] :"
+        log.warn("[" + error.getRootBeanClass() + "] :"
             + " ErrorTemplate : " + error.getMessageTemplate()
             + ", PropertyPath : " + error.getPropertyPath()
             + ", ErrorContent : " + error.getMessage()
         );
       });
+      log.warn("Exception Trace : ", e);
     }
     return ResponseEnum.BAD_REQUEST.getResponse();
   }
