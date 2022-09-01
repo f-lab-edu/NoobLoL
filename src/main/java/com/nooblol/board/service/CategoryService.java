@@ -1,5 +1,6 @@
 package com.nooblol.board.service;
 
+import com.nooblol.board.dto.BbsDto;
 import com.nooblol.board.dto.CategoryDto;
 import java.util.List;
 
@@ -15,5 +16,14 @@ public interface CategoryService {
    * @return
    */
   List<CategoryDto> getCategoryList(int status);
+
+  /**
+   * parameter로 받은CategoryId의 하위 리스트중 status가 일치하는 데이터를 BBS테이블에서 조회하여 List로 반환한다
+   *
+   * @param categoryId 카테고리ID
+   * @param status     현재 해당 게시판의 상태값
+   * @return
+   */
+  List<BbsDto> getBbsList(int categoryId, int status);
 
 }

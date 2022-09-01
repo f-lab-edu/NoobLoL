@@ -1,6 +1,8 @@
 package com.nooblol.board.service.impl;
 
+import com.nooblol.board.dto.BbsDto;
 import com.nooblol.board.dto.CategoryDto;
+import com.nooblol.board.dto.SearchBbsListDto;
 import com.nooblol.board.mapper.CategoryMapper;
 import com.nooblol.board.service.CategoryService;
 import com.nooblol.board.utils.BoardStatusEnum;
@@ -25,6 +27,23 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.selectCategory(enumObj.getStatus());
       }
     }
+    return null;
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<BbsDto> getBbsList(int categoryId, int status) {
+    for (BoardStatusEnum enumObj : BoardStatusEnum.values()) {
+      if (enumObj.getStatus() == status) {
+        SearchBbsListDto searchParamDto =
+            new SearchBbsListDto().builder()
+                .categoryId(categoryId)
+                .status(status)
+                .build();
+        return categoryMapper.selectBbsList(searchParamDto);
+      }
+    }
+
     return null;
   }
 }
