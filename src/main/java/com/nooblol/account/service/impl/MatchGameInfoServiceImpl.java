@@ -35,13 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * Puuid를 기반으로 Riot서버에서 최근 50게임의 MatchId List를 받아와서
- * <p>
- * DB에 존재하지 않는 게임만 데이터를 다시 받아와 DB에 삽입한다.
- * <p>
- */
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -55,10 +48,6 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
 
   private final MatchGameInfoMapper matchGameInfoMapper;
   private final MatchGameAddInfoMapper matchGameAddInfoMapper;
-
-  /**
-   * DB의 게임 전적에 대하여 바로 Return 을 진행 하나, 데이터가 존재하지 않는 경우에는 동기화를 한 이후에 조회를 진행함)
-   */
 
   @Override
   public ResponseDto getMatchInfoListByPuuid(String puuid, int pageNum, int limitNum)
@@ -99,7 +88,6 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
     return selectMatchSimpleList;
   }
 
-  // Sync를 진행한 이후 게임 결과에 대한 Return
   @Override
   public ResponseDto syncRiotToDbByPuuidAfterGetMatchSimpleList(String puuid, int pageNum,
       int limitNum) throws Exception {
@@ -162,22 +150,6 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
     return new ResponseDto(HttpStatus.OK.value(), rtnData);
   }
 
-  /**
-   * Riot에서 받아온 Data를 DB에 Insert하기 전에 필요한 하위 Dto의 value 세팅
-   *
-   * @param riotData
-   */
-  private void setMatchIdInData(MatchDto riotData) {
-    String dataMatchId = riotData.getMetadata().getMatchId();
-    String dataVersion = riotData.getMetadata().getDataVersion();
-
-    riotData.getInfo().setMatchId(dataMatchId);
-    riotData.getInfo().setDataVersion(dataVersion);
-    riotData.getInfo().getTeams().stream().forEach(teamDto -> {
-      teamDto.setMatchId(dataMatchId);
-    });
-  }
-
   @Override
   @Transactional(readOnly = true)
   public List<String> getNotExistMatchList(List<String> matchIdList) {
@@ -197,12 +169,6 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
         .collect(Collectors.toList());
   }
 
-  /**
-   * MatchId를 기반으로 Riot과 통신, 받아온 데이터를 MatchDto르 변환
-   *
-   * @param matchId
-   * @return
-   */
   @Override
   public MatchDto getMatchDataByRiot(String matchId) {
     String uri = getMakeUri(matchId);
@@ -219,7 +185,7 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
       return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<String>(initRiotHeader),
           MatchDto.class);
     } catch (Exception e) {
-      log.error("Riot Connect Error : " + e.getMessage());
+      log.warn("Riot Connect Error : " + e.getMessage());
       return null;
     }
   }
@@ -233,7 +199,7 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
           .build();
       return uri.toString();
     } catch (URISyntaxException e) {
-      log.error("URI Build Error : " + e.getMessage());
+      log.warn("URI Build Error : " + e.getMessage());
     }
     return null;
   }
@@ -246,13 +212,6 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
     return riotConfiguration.getMatchGameInfoByMatchId().replaceAll("\\{matchId\\}", matchId);
   }
 
-  /**
-   * 해당 트랜잭션은 모두 같이 처리되거나, 혹은 한개라도 실패할 경우 모두 Rollback이 되고 다음으로 Match를 Insert하는 것으로 넘어가게 된다.
-   *
-   * @param matchDto
-   * @return
-   * @throws Exception
-   */
   @Override
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public boolean insertMatchDataByDB(MatchDto matchDto) throws Exception {
@@ -278,6 +237,22 @@ public class MatchGameInfoServiceImpl implements MatchGameInfoService {
   private ResponseDto haveNoSyncDataReturnOk() {
     SyncResultDto rtnData = new SyncResultDto(0, 0);
     return new ResponseDto(HttpStatus.OK.value(), rtnData);
+  }
+
+  /**
+   * Riot에서 받아온 Data를 DB에 Insert하기 전에 필요한 하위 Dto의 value 세팅
+   *
+   * @param riotData
+   */
+  private void setMatchIdInData(MatchDto riotData) {
+    String dataMatchId = riotData.getMetadata().getMatchId();
+    String dataVersion = riotData.getMetadata().getDataVersion();
+
+    riotData.getInfo().setMatchId(dataMatchId);
+    riotData.getInfo().setDataVersion(dataVersion);
+    riotData.getInfo().getTeams().stream().forEach(teamDto -> {
+      teamDto.setMatchId(dataMatchId);
+    });
   }
 
   /**
