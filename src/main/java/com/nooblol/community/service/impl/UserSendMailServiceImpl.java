@@ -39,12 +39,12 @@ public class UserSendMailServiceImpl implements UserSendMailService {
       simpleMailMessage.setText(mailContent.get("content"));
       javaMailSender.send(simpleMailMessage);
     } catch (MailException mailEx) {
-      log.error("메일 발송 실패, 사용자메일 : " + toUser);
-      log.error("Exception 내용 :" + mailEx.getMessage());
+      log.warn("메일 발송 실패, 사용자메일 : " + toUser);
+      log.warn("[UserSendMailServiceImpl MailException]", mailEx);
       return false;
     } catch (Exception e) {
-      log.error("메일 발송 실패, 사용자메일 : " + toUser);
-      log.error("Exception 내용 :" + e.getMessage());
+      log.warn("메일 발송 실패, 사용자메일 : " + toUser);
+      log.warn("[UserSendMailServiceImpl Exception]", e);
       return false;
     }
     return true;
