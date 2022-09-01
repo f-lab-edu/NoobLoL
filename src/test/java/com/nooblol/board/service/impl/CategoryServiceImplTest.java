@@ -3,6 +3,7 @@ package com.nooblol.board.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
+import com.nooblol.board.dto.BbsDto;
 import com.nooblol.board.dto.CategoryDto;
 import com.nooblol.board.mapper.CategoryMapper;
 import com.nooblol.board.utils.BoardStatusEnum;
@@ -76,4 +77,62 @@ class CategoryServiceImplTest {
     //then
     assertEquals(result, mockCategoryList);
   }
+
+  @Test
+  @DisplayName("게시판리스트 조회시 Enum에 없는 값인 경우 Null이 반환된다")
+  void getBbsList_WhenNoHaveEnumThenReturnNull() {
+    //given
+    int noHaveCategoryId = 999;
+    int noHaveStatus = 999;
+
+    //mock
+
+    //when
+
+    //then
+    assertEquals(categoryService.getBbsList(noHaveCategoryId, noHaveStatus), null);
+  }
+
+  @Test
+  @DisplayName("게시판리스트 조회시 Enum에 없는 값인 경우 Null이 반환된다")
+  void getBbsList_WhenNoHaveEnumThenReturnListCategory() {
+    //given
+    int haveStatus = BoardStatusEnum.ACTIVE.getStatus();
+    int haveCategoryId = 1;
+
+    List<BbsDto> mockBbsList = new ArrayList<>();
+
+    BbsDto mockBbsDto1 = new BbsDto().builder()
+        .bbsId(1)
+        .bbsName("샘플1")
+        .status(BoardStatusEnum.ACTIVE.getStatus())
+        .categoryId(haveCategoryId)
+        .createdUserId("test1").updatedUserId("test1")
+        .createdAt(new Timestamp(System.currentTimeMillis()))
+        .updatedAt(new Timestamp(System.currentTimeMillis()))
+        .build();
+
+    BbsDto mockBbsDto2 = new BbsDto().builder()
+        .bbsId(1)
+        .bbsName("샘플2")
+        .status(BoardStatusEnum.ACTIVE.getStatus())
+        .categoryId(haveCategoryId)
+        .createdUserId("test1").updatedUserId("test1")
+        .createdAt(new Timestamp(System.currentTimeMillis()))
+        .updatedAt(new Timestamp(System.currentTimeMillis()))
+        .build();
+
+    mockBbsList.add(mockBbsDto1);
+    mockBbsList.add(mockBbsDto2);
+
+    //mock
+    when(categoryMapper.selectBbsList(any())).thenReturn(mockBbsList);
+
+    //when
+    List<BbsDto> result = categoryService.getBbsList(haveCategoryId, haveStatus);
+
+    //then
+    assertEquals(result, mockBbsList);
+  }
+
 }
