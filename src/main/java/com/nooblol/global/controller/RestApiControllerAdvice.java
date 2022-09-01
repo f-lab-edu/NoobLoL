@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+
 /**
  * Validation 을 진행하게 될 경우 ResponseEntity가 반환이 아닌, ResponseDto가 응답이 되도록 하기 위한 설정
  */
@@ -25,8 +26,7 @@ public class RestApiControllerAdvice {
 
   @ExceptionHandler({ConstraintViolationException.class})
   public ResponseDto constraintViolationException(
-      ConstraintViolationException e,
-      HttpServletRequest request
+      ConstraintViolationException e, HttpServletRequest request
   ) {
     if (!ObjectUtils.isEmpty(e)) {
       e.getConstraintViolations().forEach(error -> {
@@ -38,6 +38,7 @@ public class RestApiControllerAdvice {
                 + ", ErrorContent : " + error.getMessage()
         );
       });
+      log.warn("Exception Trace : ", e);
     }
     return ResponseEnum.BAD_REQUEST.getResponse();
   }
@@ -48,11 +49,12 @@ public class RestApiControllerAdvice {
       HttpServletRequest request
   ) {
     if (!ObjectUtils.isEmpty(e)) {
-      log.info(
+      log.warn(
           "[IllegalArgumentException] :"
               + "requestUrl: " + request.getRequestURI()
               + ", Error Message : " + e.getMessage()
       );
+      log.warn("Exception Trace : ", e);
     }
     switch (e.getMessage()) {
       case ExceptionMessage.NO_DATA:
@@ -65,8 +67,7 @@ public class RestApiControllerAdvice {
         ResponseDto rtn = ResponseEnum.CONFLICT.getResponse();
         rtn.setResult("이미 존재하는 데이터 입니다");
         return rtn;
-      case ExceptionMessage.FORBIDDEN:
-        return ResponseEnum.FORBIDDEN.getResponse();
+
       default:
         return ResponseEnum.BAD_REQUEST.getResponse();
     }
@@ -108,6 +109,7 @@ public class RestApiControllerAdvice {
    */
   @ExceptionHandler({NoHandlerFoundException.class})
   public ResponseDto noHandlerFoundExceptionHandling(NoHandlerFoundException e) {
+    log.warn("[NoHandlerFoundExceptionHandling]", e);
     return ResponseEnum.BAD_REQUEST.getResponse();
   }
 }
