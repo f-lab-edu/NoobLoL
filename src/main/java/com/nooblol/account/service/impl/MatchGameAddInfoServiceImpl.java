@@ -7,9 +7,7 @@ import com.nooblol.account.mapper.MatchGameAddInfoMapper;
 import com.nooblol.account.service.MatchGameAddInfoService;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.utils.ResponseEnum;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +23,7 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
 
   private final MatchGameAddInfoMapper matchGameAddInfoMapper;
 
-  /**
-   * 해당 경기에 참여한 모든 사용자의 게임 내용 반환
-   *
-   * @param matchId
-   * @return
-   */
+
   @Override
   @Transactional(readOnly = true)
   public ResponseDto getMatchAllParticipantsList(String matchId) {
@@ -38,16 +31,11 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<MatchGameParticipantsDto> selectMatchAllParticipantsListByMatchId(String matchId) {
     return matchGameAddInfoMapper.selectMatchAllParticipantsListByMatchId(matchId);
   }
 
-  /**
-   * 해당경기에서 벤이된 챔피언을 리스트로 전달하며, 어느팀에서 벤을 하였는지는 구분 되어있지 않다.
-   *
-   * @param matchId
-   * @return
-   */
   @Override
   @Transactional(readOnly = true)
   public ResponseDto getMatchBanList(String matchId) {
@@ -59,14 +47,6 @@ public class MatchGameAddInfoServiceImpl implements MatchGameAddInfoService {
     return matchGameAddInfoMapper.selectMatchGameBanList(matchId);
   }
 
-
-  /**
-   * 사용자가 해당 경기에서 사용한 모든 룬정보 반환.
-   *
-   * @param matchId
-   * @param puuid
-   * @return
-   */
   @Override
   @Transactional(readOnly = true)
   public ResponseDto getMatchUseRunList(String matchId, String puuid) {

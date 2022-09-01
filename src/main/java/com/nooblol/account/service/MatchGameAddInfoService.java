@@ -8,14 +8,34 @@ import java.util.List;
 
 public interface MatchGameAddInfoService {
 
+  /**
+   * 해당 Match Id 에 참여한 모든 사용자의 게임 내용 반환
+   *
+   * @param matchId
+   * @return
+   */
   ResponseDto getMatchAllParticipantsList(String matchId);
+
 
   List<MatchGameParticipantsDto> selectMatchAllParticipantsListByMatchId(String matchId);
 
+  /**
+   * 해당 Match Id 에서 벤이된 챔피언을 리스트로 전달하며, 어느팀에서 벤을 하였는지는 구분 되어있지 않다.
+   *
+   * @param matchId
+   * @return
+   */
   ResponseDto getMatchBanList(String matchId);
 
   List<MatchGameBansDto> selectMatchBanListByMatchId(String matchId);
 
+  /**
+   * 사용자가 해당 경기에서 사용한 모든 룬정보 반환.
+   *
+   * @param matchId
+   * @param puuid
+   * @return
+   */
   ResponseDto getMatchUseRunList(String matchId, String puuid);
 
   List<MatchUseRuneDto> selectMatchUseRuneByMatchIdAndPuuid(String matchId, String puuid);
