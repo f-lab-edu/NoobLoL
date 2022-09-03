@@ -59,4 +59,10 @@ public class BoardController {
         categoryService.getBbsList(categoryIdValue, statusValue)
     );
   }
+
+
+  @GetMapping("/bbsAllList")
+  public ResponseDto getAllBbsList() {
+    return CommonUtils.makeListToResponseDto(categoryService.getAllBbsList());
+  }
 }

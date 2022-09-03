@@ -26,4 +26,10 @@ public interface CategoryService {
    */
   List<BbsDto> getBbsList(int categoryId, int status);
 
+  /**
+   * 상태구분없이 모든 게시판 획득
+   * @return
+   */
+  List<BbsDto> getAllBbsList();
+
 }

@@ -12,4 +12,6 @@ public interface CategoryMapper {
   List<CategoryDto> selectCategory(int active);
 
   List<BbsDto> selectBbsList(SearchBbsListDto searchBbsListDto);
+
+  List<BbsDto> selectAllBbsList();
 }

@@ -28,4 +28,16 @@
     WHERE category_id = #{categoryId}
       AND status = #{status}
   </select>
+
+  <select id="selectAllBbsList" resultType="BbsDto">
+    SELECT bbs_id,
+           category_id,
+           bbs_name,
+           status,
+           created_user_id,
+           created_at,
+           updated_user_id,
+           updated_at
+    FROM bbs
+  </select>
 </mapper>

@@ -46,4 +46,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     return null;
   }
+
+  @Override
+  public List<BbsDto> getAllBbsList() {
+    return categoryMapper.selectAllBbsList();
+  }
 }
