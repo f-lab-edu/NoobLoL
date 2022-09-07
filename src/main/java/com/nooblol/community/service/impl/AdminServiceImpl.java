@@ -8,7 +8,7 @@ import com.nooblol.community.service.UserSignOutService;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.ResponseEnum;
-import com.nooblol.global.utils.UserUtils;
+import com.nooblol.global.utils.EncryptUtils;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
@@ -30,7 +30,7 @@ public class AdminServiceImpl implements AdminService {
   @Override
   public ResponseDto addAdminMember(UserSignUpRequestDto userSignUpRequestDto) {
     try {
-      String password = UserUtils.stringChangeToSha512(userSignUpRequestDto.getPassword());
+      String password = EncryptUtils.stringChangeToSha512(userSignUpRequestDto.getPassword());
       userSignUpRequestDto.setPassword(password);
 
       userSignUpRequestDto.setAdminUserRole();
