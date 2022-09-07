@@ -1,6 +1,8 @@
 package com.nooblol.community.controller;
 
+import com.nooblol.community.dto.UserSignOutDto;
 import com.nooblol.community.dto.UserSignUpRequestDto;
+import com.nooblol.community.service.UserSignOutService;
 import com.nooblol.community.service.UserSignUpService;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.utils.RegexConstants;
@@ -23,11 +25,24 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserSignUpService userSignUpService;
+  private final UserSignOutService userSignOutService;
 
   @PostMapping("/singup")
   public ResponseDto singUpSubmit(@Valid @RequestBody UserSignUpRequestDto userSignUpDto) {
     return userSignUpService.signUpUser(userSignUpDto);
   }
+
+  /**
+   * 회원탈퇴로 DB에 Role의 상태값을 변경해서 데이터를 보존하는게 아닌 Delete를 시켜버린다.
+   *
+   * @param userSignOutDto UserId, Password를 Parameter로 받는다
+   * @return
+   */
+  @PostMapping("/signout")
+  public ResponseDto signOutSubmit(@Valid @RequestBody UserSignOutDto userSignOutDto) {
+    return userSignOutService.signOutUser(userSignOutDto);
+  }
+
 
   /**
    * E-mail파라미터를 받아, 해당 메일주소를
@@ -54,5 +69,4 @@ public class UserController {
   public ResponseDto authUserByMail(@PathVariable @NotBlank String userId) {
     return userSignUpService.changeRoleAuthUser(userId.trim());
   }
-
 }
