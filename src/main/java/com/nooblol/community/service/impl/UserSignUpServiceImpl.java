@@ -7,11 +7,11 @@ import com.nooblol.community.service.UserSignUpService;
 import com.nooblol.community.utils.UserRoleStatus;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.exception.ExceptionMessage;
+import com.nooblol.global.utils.MailConstants;
 import com.nooblol.global.utils.ResponseEnum;
-import com.nooblol.global.utils.UserUtils;
+import com.nooblol.global.utils.EncryptUtils;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -35,18 +35,13 @@ public class UserSignUpServiceImpl implements UserSignUpService {
   @Override
   public ResponseDto signUpUser(UserSignUpRequestDto userDto) {
     try {
-      String encodePassword = UserUtils.stringChangeToSha512(userDto.getPassword());
+      String encodePassword = EncryptUtils.stringChangeToSha512(userDto.getPassword());
       userDto.setPassword(encodePassword);
-
       userSignUpMapper.insertSignUpUser(userDto);
 
+    } catch (DuplicateKeyException e) {
+      throw new IllegalArgumentException(ExceptionMessage.HAVE_DATA);
     } catch (Exception e) {
-      if (e instanceof DuplicateKeyException) {
-        SQLException se = (SQLException) e.getCause();
-        if (se.getErrorCode() == 23505) {
-          throw new IllegalArgumentException(ExceptionMessage.HAVE_DATA);
-        }
-      }
       throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
 
@@ -61,7 +56,7 @@ public class UserSignUpServiceImpl implements UserSignUpService {
   public boolean sendSignUpUserMail(UserSignUpRequestDto userDto) {
     return userSendMailService.sendMail(
         userDto.getUserEmail(),
-        getAuthMailTitle(userDto)
+        getAuthMailContent(userDto)
     );
   }
 
@@ -73,11 +68,7 @@ public class UserSignUpServiceImpl implements UserSignUpService {
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
-    if (userDto.getUserRole() != UserRoleStatus.UNAUTH_USER.getRoleValue()) {
-      throw new IllegalArgumentException(
-          userDto.getUserName() + "님의 계정은 활성화가 필요한 상태가 아닙니다."
-      );
-    }
+    isNotUnAuthUser(userDto);
 
     boolean result = sendSignUpUserMail(userDto);
 
@@ -93,11 +84,7 @@ public class UserSignUpServiceImpl implements UserSignUpService {
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
-    if (dbUserData.getUserRole() != UserRoleStatus.UNAUTH_USER.getRoleValue()) {
-      throw new IllegalArgumentException(
-          dbUserData.getUserName() + "님의 계정은 활성화가 필요한 상태가 아닙니다."
-      );
-    }
+    isNotUnAuthUser(dbUserData);
 
     UserSignUpRequestDto userDto = new UserSignUpRequestDto();
     userDto.setUserId(userId);
@@ -121,11 +108,13 @@ public class UserSignUpServiceImpl implements UserSignUpService {
   }
 
   @Override
-  public Map<String, String> getAuthMailTitle(UserSignUpRequestDto userDto) {
+  public Map<String, String> getAuthMailContent(UserSignUpRequestDto userDto) {
     Map<String, String> mailContent = new HashMap<>();
 
     String titleStr = "[NoobLoL]" + userDto.getUserName() + "님 회원가입 인증 메일입니다";
     mailContent.put("title", titleStr);
+    mailContent.put("name", userDto.getUserName());
+    mailContent.put("context", MailConstants.USER_SIGNUP);
     try {
       mailContent.put("content", getContent(userDto));
     } catch (UnknownHostException ex) {
@@ -138,15 +127,13 @@ public class UserSignUpServiceImpl implements UserSignUpService {
     }
   }
 
-  /*
-    TODO : [22. 08. 25] 메일을 확인해보니 a태그가 활성화가 되어있질 않음. html로 만들어서 제작하는 방법을 알아보는게 필요하다 판단됨.
-   */
   private String getContent(UserSignUpRequestDto userDto) throws UnknownHostException {
     String domain = InetAddress.getLocalHost().getHostName();
 
     String[] activeProfilesAry = environment.getActiveProfiles();
     String portNum = environment.getProperty("local.server.port");
-    String contentStr = "<a href=\"http://" + domain;
+
+    String contentStr = "http://" + domain;
 
     if (!ObjectUtils.isEmpty(activeProfilesAry)) {
       for (String activeProfile : activeProfilesAry) {
@@ -156,9 +143,16 @@ public class UserSignUpServiceImpl implements UserSignUpService {
         }
       }
     }
-    contentStr += "/user/auth/" + userDto.getUserId() + "\"> NoobLoL 회원인증 링크 입니다 </a>";
+    contentStr += "/user/auth/" + userDto.getUserId();
 
     return contentStr;
   }
 
+  private void isNotUnAuthUser(UserSignUpRequestDto user) {
+    if (user.getUserRole() != UserRoleStatus.UNAUTH_USER.getRoleValue()) {
+      throw new IllegalArgumentException(
+          user.getUserName() + "님의 계정은 활성화가 필요한 상태가 아닙니다."
+      );
+    }
+  }
 }

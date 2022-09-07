@@ -2,7 +2,7 @@ package com.nooblol.account.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nooblol.account.dto.SummonerHistoryDto;
+import com.nooblol.account.dto.summoner.SummonerHistoryDto;
 import com.nooblol.account.mapper.SummonerHistoryMapper;
 import com.nooblol.account.service.SummonerHistoryService;
 import com.nooblol.global.config.RiotConfiguration;
@@ -34,6 +34,7 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
 
   private final ObjectMapper objectMapper;
   private final RestTemplate restTemplate;
+  private final HttpHeaders initRiotHeader;
 
   @Override
   public ResponseDto getSummonerHistoryInfo(String summonerId, boolean sync) {
@@ -43,14 +44,6 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
     return summonerHistoryProcess(summonerId, sync);
   }
 
-  /**
-   * sync가 true인경우에만 DB의 값을 조회하며, 데이터가 존재하지 않거나 또는 false로 넘긴 경우 RiotAPI를 조회하여 정보를 취득한 이후 DB처리를 하고
-   * 반환한다.
-   *
-   * @param summonerId
-   * @param sync
-   * @return
-   */
   ResponseDto summonerHistoryProcess(String summonerId, boolean sync) {
     ResponseDto responseDto = null;
     if (sync) {
@@ -69,7 +62,8 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
   public ResponseDto selSummonerHistoryByRiot(String summonerId) {
     ResponseDto rtnDto = null;
     String url =
-        riotConfiguration.getDomain() + riotConfiguration.getSummonerHistorySearchBySummonerIdApi()
+        riotConfiguration.getSummonerDomain()
+            + riotConfiguration.getSummonerHistorySearchBySummonerIdApi()
             + summonerId;
     try {
       ResponseEntity response = getApiResponseData(url);
@@ -87,11 +81,9 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
   }
 
   private ResponseEntity getApiResponseData(String url) throws IOException {
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.add("X-Riot-Token", riotConfiguration.getApiKey());
-
-    return restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(httpHeaders),
-        String.class);
+    return restTemplate.exchange(
+        url, HttpMethod.GET, new HttpEntity<String>(initRiotHeader), String.class
+    );
   }
 
   private ResponseDto makeResponseToDto(ResponseEntity response) throws IOException {

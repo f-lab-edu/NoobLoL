@@ -1,6 +1,6 @@
 package com.nooblol.community.dto;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +19,7 @@ public class UserDto {
   private int userRole;
   private int level;
   private int exp;
-  private Timestamp createAt;
-  private Timestamp updatedAt;
+  private LocalDateTime createAt;
+  private LocalDateTime updatedAt;
 
 }

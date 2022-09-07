@@ -1,6 +1,6 @@
 package com.nooblol.account.mapper;
 
-import com.nooblol.account.dto.SummonerDto;
+import com.nooblol.account.dto.summoner.SummonerDto;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

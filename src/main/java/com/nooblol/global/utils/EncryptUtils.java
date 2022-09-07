@@ -6,7 +6,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-public class UserUtils {
+public class EncryptUtils {
+
+  public static final String ENCRYPT_TYPE = "SHA-512";
 
   /**
    * 인수값 문자열을 SHA-512 로 암호화
@@ -18,7 +20,7 @@ public class UserUtils {
    */
   public static String stringChangeToSha512(String value)
       throws NoSuchAlgorithmException, UnsupportedEncodingException {
-    MessageDigest md = MessageDigest.getInstance("SHA-512");
+    MessageDigest md = MessageDigest.getInstance(ENCRYPT_TYPE);
     md.update(value.getBytes(StandardCharsets.UTF_8));
     return Base64.getEncoder().encodeToString(md.digest());
   }
