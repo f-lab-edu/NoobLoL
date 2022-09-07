@@ -1,7 +1,6 @@
 package com.nooblol.board.service;
 
 import com.nooblol.board.dto.ArticleDto;
-import javax.servlet.http.HttpSession;
 
 public interface ArticleService {
 
