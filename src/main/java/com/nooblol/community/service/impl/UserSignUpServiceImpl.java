@@ -8,10 +8,9 @@ import com.nooblol.community.utils.UserRoleStatus;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.ResponseEnum;
-import com.nooblol.global.utils.UserUtils;
+import com.nooblol.global.utils.EncryptUtils;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -35,18 +34,13 @@ public class UserSignUpServiceImpl implements UserSignUpService {
   @Override
   public ResponseDto signUpUser(UserSignUpRequestDto userDto) {
     try {
-      String encodePassword = UserUtils.stringChangeToSha512(userDto.getPassword());
+      String encodePassword = EncryptUtils.stringChangeToSha512(userDto.getPassword());
       userDto.setPassword(encodePassword);
-
       userSignUpMapper.insertSignUpUser(userDto);
 
+    } catch (DuplicateKeyException e) {
+      throw new IllegalArgumentException(ExceptionMessage.HAVE_DATA);
     } catch (Exception e) {
-      if (e instanceof DuplicateKeyException) {
-        SQLException se = (SQLException) e.getCause();
-        if (se.getErrorCode() == 23505) {
-          throw new IllegalArgumentException(ExceptionMessage.HAVE_DATA);
-        }
-      }
       throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
 
@@ -138,9 +132,6 @@ public class UserSignUpServiceImpl implements UserSignUpService {
     }
   }
 
-  /*
-    TODO : [22. 08. 25] 메일을 확인해보니 a태그가 활성화가 되어있질 않음. html로 만들어서 제작하는 방법을 알아보는게 필요하다 판단됨.
-   */
   private String getContent(UserSignUpRequestDto userDto) throws UnknownHostException {
     String domain = InetAddress.getLocalHost().getHostName();
 
