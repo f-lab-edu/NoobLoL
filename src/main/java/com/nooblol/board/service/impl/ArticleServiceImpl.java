@@ -4,11 +4,13 @@ import com.nooblol.board.dto.ArticleDto;
 import com.nooblol.board.service.ArticleService;
 import com.nooblol.board.mapper.ArticleMapper;
 import com.nooblol.board.utils.ArticleAuthMessage;
+import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.user.utils.UserRoleStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 @Slf4j
 @Service
@@ -21,6 +23,11 @@ public class ArticleServiceImpl implements ArticleService {
   public ArticleDto getArticleInfo(int articleId, String userId) {
     articleMapper.addReadCount(articleId);
     ArticleDto result = articleMapper.selectArticleByArticleId(articleId);
+
+    if (ObjectUtils.isEmpty(result)) {
+      throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
+    }
+
     result.setAuthMessage(getUserArticleAuth(userId));
     return result;
   }
