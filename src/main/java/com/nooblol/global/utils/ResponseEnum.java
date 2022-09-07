@@ -25,4 +25,5 @@ public enum ResponseEnum {
     this.response.setResult(result);
   }
 
+
 }
