@@ -36,7 +36,7 @@ public class ArticleServiceImpl implements ArticleService {
       return ArticleAuthMessage.ADMIN.name();
     }
 
-    return ArticleAuthMessage.GUEST.name();
+    return ArticleAuthMessage.USER.name();
   }
 
   @Override
