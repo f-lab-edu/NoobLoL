@@ -93,8 +93,8 @@ COMMIT;
 
 CREATE TABLE `users`
 (
-    `user_id`            int PRIMARY KEY AUTO_INCREMENT,
-    `user_email`         varchar(255),
+    `user_id`            varchar(255) primary key not null,
+    `user_email`         varchar(255) unique,
     `user_name`          varchar(255),
     `user_password_hash` varchar(255),
     `user_role`          int,

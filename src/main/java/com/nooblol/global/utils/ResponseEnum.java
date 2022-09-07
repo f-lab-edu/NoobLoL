@@ -9,10 +9,11 @@ import org.springframework.http.HttpStatus;
  */
 @Getter
 public enum ResponseEnum {
-  BAD_REQUEST(HttpStatus.BAD_REQUEST.value(), "잘못된 요청입니다. 파라미터를 확인 해주세요."),
+  BAD_REQUEST(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST),
   NOT_FOUND(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND),
-  INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 에러"),
-  OK(HttpStatus.OK.value(), null);
+  INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR),
+  OK(HttpStatus.OK.value(), null),
+  CONFLICT(HttpStatus.CONFLICT.value(), null);
 
   ResponseDto response;
 
@@ -23,5 +24,6 @@ public enum ResponseEnum {
   <T> void setResponseResult(T result) {
     this.response.setResult(result);
   }
+
 
 }
