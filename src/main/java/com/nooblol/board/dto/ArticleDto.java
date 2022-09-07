@@ -1,6 +1,7 @@
 package com.nooblol.board.dto;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +22,7 @@ public class ArticleDto {
   private String articleContent;
   private int status;
   private String createdUserId;
-  private Timestamp createdAt;
-  private Timestamp updatedAt;
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
   private String authMessage;
 }
