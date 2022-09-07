@@ -44,9 +44,9 @@ CREATE TABLE `match_gameinfo`
 
 CREATE TABLE `match_game_bans`
 (
-    `match_id`  varchar(255),
-    `bans`      int,
-    `pick_turn` int
+    `match_id`    varchar(255),
+    `champion_id` int,
+    `pick_turn`   int
 );
 
 
