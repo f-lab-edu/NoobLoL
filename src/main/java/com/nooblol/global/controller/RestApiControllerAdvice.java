@@ -99,14 +99,7 @@ public class RestApiControllerAdvice {
     return ResponseEnum.BAD_REQUEST.getResponse();
   }
 
-  /*
-  TODO : [22. 08. 25] NoHandlerFoundException 설정을 진행하여 Parameter가 없는 경우 해당 Exception으로 Return 할 수 있도록 계획함.
-    <p>
-    테스트는 두가지로 진행 해봄
-    1. DispatcherServlet Bean을 가져와 dispatcherServlet.setThrowExceptionIfNoHandlerFound의 설정을 바꾸는 방법 → Fail
-    2. application.yml에서 `spring.mvc.throw-exception-if-no-handler-found`의 설정과, `dispatch-options-request`을 진행하고서
-     해당 메소드로 Handling하려 하였으나 안됨. 추후 다른 방법을 찾아봐야 한다.
-   */
+  //PathVariable의 파라미터가 없는경우 해당 Exception이 실행 된다.
   @ExceptionHandler({NoHandlerFoundException.class})
   public ResponseDto noHandlerFoundExceptionHandling(NoHandlerFoundException e) {
     log.warn("[NoHandlerFoundExceptionHandling]", e);

@@ -24,6 +24,13 @@ spring:
           starttls:
             enable: true
 
+  #NoHandlerException Setting
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
 #Embedded Tomcat Session TimeOut
 server:
   servlet:
