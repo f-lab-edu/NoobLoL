@@ -6,7 +6,7 @@ import com.nooblol.community.service.UserInfoService;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.ResponseEnum;
-import com.nooblol.global.utils.UserUtils;
+import com.nooblol.global.utils.EncryptUtils;
 import java.sql.SQLException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -39,12 +39,12 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     try {
       userUpdateInfoDto.setOrgPassword(
-          UserUtils.stringChangeToSha512(userUpdateInfoDto.getOrgPassword())
+          EncryptUtils.stringChangeToSha512(userUpdateInfoDto.getOrgPassword())
       );
 
       //New Password의 경우 null이 존재 할 수 있다. 쿼리문에서 분기처리가 존재하기에 null이 와도 상관 없다.
       userUpdateInfoDto.setNewPassword(
-          UserUtils.stringChangeToSha512(userUpdateInfoDto.getNewPassword())
+          EncryptUtils.stringChangeToSha512(userUpdateInfoDto.getNewPassword())
       );
 
       ResponseDto result = ResponseEnum.OK.getResponse();
