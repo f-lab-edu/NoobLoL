@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nooblol.board.mapper.ArticleMapper">
+  <select id="selectArticleByArticleId" parameterType="int" resultType="ArticleDto">
+    SELECT article_id,
+           bbs_id,
+           article_title,
+           article_read_count,
+           article_content,
+           status,
+           created_user_id,
+           created_at,
+           updated_at
+    FROM bbs_articles
+    WHERE article_id = #{articleId}
+  </select>
+
+  <select id="selectUserAuth" parameterType="String" resultType="int">
+    SELECT user_role
+    FROM users
+    WHERE user_id = #{userId}
+  </select>
+
+  <update id="addReadCount" parameterType="int">
+    UPDATE bbs_articles
+    SET article_read_count = article_read_count + 1
+    WHERE article_id = #{articleId}
+  </update>
+</mapper>
