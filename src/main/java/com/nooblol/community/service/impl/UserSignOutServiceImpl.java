@@ -5,8 +5,8 @@ import com.nooblol.community.mapper.UserSignOutMapper;
 import com.nooblol.community.service.UserSignOutService;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.exception.ExceptionMessage;
+import com.nooblol.global.utils.EncryptUtils;
 import com.nooblol.global.utils.ResponseEnum;
-import com.nooblol.global.utils.UserUtils;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class UserSignOutServiceImpl implements UserSignOutService {
   @Override
   public ResponseDto signOutUser(UserSignOutDto userSignOutDto) {
     try {
-      String encodePassword = UserUtils.stringChangeToSha512(userSignOutDto.getPassword());
+      String encodePassword = EncryptUtils.stringChangeToSha512(userSignOutDto.getPassword());
       userSignOutDto.setPassword(encodePassword);
     } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
       throw new IllegalArgumentException(ExceptionMessage.SERVER_ERROR);

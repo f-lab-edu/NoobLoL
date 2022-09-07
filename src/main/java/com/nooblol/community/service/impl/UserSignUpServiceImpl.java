@@ -68,11 +68,7 @@ public class UserSignUpServiceImpl implements UserSignUpService {
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
-    if (userDto.getUserRole() != UserRoleStatus.UNAUTH_USER.getRoleValue()) {
-      throw new IllegalArgumentException(
-          userDto.getUserName() + "님의 계정은 활성화가 필요한 상태가 아닙니다."
-      );
-    }
+    isNotUnAuthUser(userDto);
 
     boolean result = sendSignUpUserMail(userDto);
 
@@ -88,11 +84,7 @@ public class UserSignUpServiceImpl implements UserSignUpService {
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
-    if (dbUserData.getUserRole() != UserRoleStatus.UNAUTH_USER.getRoleValue()) {
-      throw new IllegalArgumentException(
-          dbUserData.getUserName() + "님의 계정은 활성화가 필요한 상태가 아닙니다."
-      );
-    }
+    isNotUnAuthUser(dbUserData);
 
     UserSignUpRequestDto userDto = new UserSignUpRequestDto();
     userDto.setUserId(userId);
@@ -156,4 +148,11 @@ public class UserSignUpServiceImpl implements UserSignUpService {
     return contentStr;
   }
 
+  private void isNotUnAuthUser(UserSignUpRequestDto user) {
+    if (user.getUserRole() != UserRoleStatus.UNAUTH_USER.getRoleValue()) {
+      throw new IllegalArgumentException(
+          user.getUserName() + "님의 계정은 활성화가 필요한 상태가 아닙니다."
+      );
+    }
+  }
 }
