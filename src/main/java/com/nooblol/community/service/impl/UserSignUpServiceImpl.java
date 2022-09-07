@@ -7,6 +7,7 @@ import com.nooblol.community.service.UserSignUpService;
 import com.nooblol.community.utils.UserRoleStatus;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.exception.ExceptionMessage;
+import com.nooblol.global.utils.MailConstants;
 import com.nooblol.global.utils.ResponseEnum;
 import com.nooblol.global.utils.EncryptUtils;
 import java.net.InetAddress;
@@ -120,6 +121,8 @@ public class UserSignUpServiceImpl implements UserSignUpService {
 
     String titleStr = "[NoobLoL]" + userDto.getUserName() + "님 회원가입 인증 메일입니다";
     mailContent.put("title", titleStr);
+    mailContent.put("name", userDto.getUserName());
+    mailContent.put("context", MailConstants.USER_SIGNUP);
     try {
       mailContent.put("content", getContent(userDto));
     } catch (UnknownHostException ex) {
@@ -137,7 +140,8 @@ public class UserSignUpServiceImpl implements UserSignUpService {
 
     String[] activeProfilesAry = environment.getActiveProfiles();
     String portNum = environment.getProperty("local.server.port");
-    String contentStr = "<a href=\"http://" + domain;
+
+    String contentStr = "http://" + domain;
 
     if (!ObjectUtils.isEmpty(activeProfilesAry)) {
       for (String activeProfile : activeProfilesAry) {
@@ -147,7 +151,7 @@ public class UserSignUpServiceImpl implements UserSignUpService {
         }
       }
     }
-    contentStr += "/user/auth/" + userDto.getUserId() + "\"> NoobLoL 회원인증 링크 입니다 </a>";
+    contentStr += "/user/auth/" + userDto.getUserId();
 
     return contentStr;
   }
