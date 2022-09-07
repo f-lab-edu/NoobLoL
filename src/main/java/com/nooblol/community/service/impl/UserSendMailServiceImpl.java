@@ -2,21 +2,21 @@ package com.nooblol.community.service.impl;
 
 import com.nooblol.community.service.UserSendMailService;
 import java.util.Map;
+import javax.mail.Message.RecipientType;
+import javax.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserSendMailServiceImpl implements UserSendMailService {
-
-  private final Logger log = LoggerFactory.getLogger(getClass());
 
   private final JavaMailSender javaMailSender;
 
@@ -26,18 +26,18 @@ public class UserSendMailServiceImpl implements UserSendMailService {
       return false;
     }
 
-    SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+    MimeMessage mailMessage = javaMailSender.createMimeMessage();
 
     try {
       //수신인 설정
-      simpleMailMessage.setTo(toUser);
+      mailMessage.addRecipients(RecipientType.TO, toUser);
 
       //제목
-      simpleMailMessage.setSubject(mailContent.get("title"));
+      mailMessage.setSubject(mailContent.get("title"), CharEncoding.UTF_8);
 
       //내용
-      simpleMailMessage.setText(mailContent.get("content"));
-      javaMailSender.send(simpleMailMessage);
+      mailMessage.setText(mailContent.get("content"), CharEncoding.UTF_8, "html");
+      javaMailSender.send(mailMessage);
     } catch (MailException mailEx) {
       log.warn("메일 발송 실패, 사용자메일 : " + toUser);
       log.warn("[UserSendMailServiceImpl MailException]", mailEx);
