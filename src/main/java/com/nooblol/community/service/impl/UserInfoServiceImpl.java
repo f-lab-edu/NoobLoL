@@ -7,7 +7,6 @@ import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.ResponseEnum;
 import com.nooblol.global.utils.EncryptUtils;
-import java.sql.SQLException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -22,12 +21,6 @@ public class UserInfoServiceImpl implements UserInfoService {
 
   private final UserInfoMapper userInfoMapper;
 
-  /**
-   * 사용자 정보 변경에 대한 기능으로 닉네임과 Password에 대해서만 변경이 가능하다.
-   *
-   * @param userUpdateInfoDto
-   * @return
-   */
   @Override
   public ResponseDto updateUserInfo(UserInfoUpdateDto userUpdateInfoDto) {
     //두개가 모두 공백인 경우는 Update를 진행할 정보가 없기 떄문에 BadRequest를 반환한다.
@@ -55,10 +48,7 @@ public class UserInfoServiceImpl implements UserInfoService {
       }
       return result;
     } catch (Exception e) {
-      if (e instanceof SQLException) {
-        throw new IllegalArgumentException(ExceptionMessage.SERVER_ERROR);
-      }
-      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
+      throw new IllegalArgumentException(ExceptionMessage.SERVER_ERROR);
     }
   }
 
