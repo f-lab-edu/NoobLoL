@@ -17,4 +17,12 @@ public class SessionUtils {
     }
     return userAttribute.getUserId();
   }
+
+  public static Integer getSessionUserRole(HttpSession session) {
+    UserDto userAttribute = (UserDto) session.getAttribute(SessionEnum.USER_LOGIN.getValue());
+    if (ObjectUtils.isEmpty(userAttribute)) {
+      return null;
+    }
+    return userAttribute.getUserRole();
+  }
 }
