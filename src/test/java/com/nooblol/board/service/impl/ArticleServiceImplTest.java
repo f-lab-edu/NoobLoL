@@ -7,13 +7,17 @@ import com.nooblol.board.dto.ArticleDto;
 import com.nooblol.board.mapper.ArticleMapper;
 import com.nooblol.board.utils.ArticleAuthMessage;
 import com.nooblol.global.exception.ExceptionMessage;
+import com.nooblol.global.utils.SessionEnum;
+import com.nooblol.user.dto.UserDto;
 import com.nooblol.user.utils.UserRoleStatus;
+import javax.servlet.http.HttpSession;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpSession;
 
 @ExtendWith(MockitoExtension.class)
 class ArticleServiceImplTest {
@@ -107,5 +111,122 @@ class ArticleServiceImplTest {
 
     //then
     assertEquals(result, mockData);
+  }
+
+  @Test
+  @DisplayName("일반 사용자이며 게시물을 등록하는 경우에 DB에 정상적으로 데이터가 삽입되면 결과로 True를 Return받는다")
+  void upsertArticle_WhenUserIsAuthUserAndInsertIsSuccessThenReturnTrue() {
+    //given
+    UserDto sessionUserData = new UserDto().builder()
+        .userId("test")
+        .userEmail("test@test.com")
+        .userName("test")
+        .userRole(UserRoleStatus.AUTH_USER.getRoleValue())
+        .level(1)
+        .exp(0)
+        .build();
+
+    HttpSession session = new MockHttpSession();
+    session.setAttribute(SessionEnum.USER_LOGIN.getValue(), sessionUserData);
+
+    ArticleDto mockArticleDto = new ArticleDto();
+
+    //mock
+    when(articleMapper.upsertArticle(mockArticleDto)).thenReturn(1);
+
+    //when
+    boolean result = articleService.upsertArticle(mockArticleDto, session, true);
+
+    //then
+    assertEquals(result, true);
+  }
+
+  @Test
+  @DisplayName("사용자 관리자이며 게시물을 등록이나 수정을 하는 경우에 DB에 정상적으로 데이터가 삽입되면 결과로 True를 Return받는다")
+  void upsertArticle_WhenUserIsAdminAndUpsertIsSuccessThenReturnTrue() {
+    //given
+    UserDto sessionUserData = new UserDto().builder()
+        .userId("test")
+        .userEmail("test@test.com")
+        .userName("test")
+        .userRole(UserRoleStatus.ADMIN.getRoleValue())
+        .level(1)
+        .exp(0)
+        .build();
+
+    HttpSession session = new MockHttpSession();
+    session.setAttribute(SessionEnum.USER_LOGIN.getValue(), sessionUserData);
+
+    ArticleDto mockArticleDto = new ArticleDto();
+
+    //mock
+    when(articleMapper.upsertArticle(mockArticleDto)).thenReturn(1);
+
+    //when
+    boolean result = articleService.upsertArticle(mockArticleDto, session, false);
+
+    //then
+    assertEquals(result, true);
+  }
+
+  @Test
+  @DisplayName("일반 사용자이며 게시물을 수정하는 경우에 기존 글과 동일한 사용자이면, Return값으로 True를 받는다")
+  void upsertArticle_WhenUserIsAuthUserAndUpdateIsSuccessThenReturnTrue() {
+    //given
+    UserDto sessionUserData = new UserDto().builder()
+        .userId("test")
+        .userEmail("test@test.com")
+        .userName("test")
+        .userRole(UserRoleStatus.AUTH_USER.getRoleValue())
+        .level(1)
+        .exp(0)
+        .build();
+
+    HttpSession session = new MockHttpSession();
+    session.setAttribute(SessionEnum.USER_LOGIN.getValue(), sessionUserData);
+
+    ArticleDto mockArticleDto = new ArticleDto().builder().articleId(1).build();
+
+    //mock
+    when(articleMapper.upsertArticle(mockArticleDto)).thenReturn(1);
+    when(articleMapper.selectCreatedUserId(mockArticleDto.getArticleId()))
+        .thenReturn(sessionUserData.getUserId());
+
+    //when
+    boolean result = articleService.upsertArticle(mockArticleDto, session, false);
+
+    //then
+    assertEquals(result, true);
+  }
+
+  @Test
+  @DisplayName("일반 사용자이며 게시물을 수정하는 경우에 기존 글과 다른 사용자이면, Forbidden Exception이 발생한다")
+  void upsertArticle_WhenUserIsAuthUserAndNotEqualCreatedUserThenForbiddenException() {
+    //given
+    UserDto sessionUserData = new UserDto().builder()
+        .userId("test")
+        .userEmail("test@test.com")
+        .userName("test")
+        .userRole(UserRoleStatus.AUTH_USER.getRoleValue())
+        .level(1)
+        .exp(0)
+        .build();
+
+    HttpSession session = new MockHttpSession();
+    session.setAttribute(SessionEnum.USER_LOGIN.getValue(), sessionUserData);
+
+    ArticleDto mockArticleDto = new ArticleDto().builder().articleId(1).build();
+
+    //mock
+    when(articleMapper.selectCreatedUserId(mockArticleDto.getArticleId()))
+        .thenReturn("different User");
+
+    //when
+    Exception e = assertThrows(IllegalArgumentException.class, () -> {
+      articleService.upsertArticle(mockArticleDto, session, false);
+    });
+
+    //then
+    assertEquals(e.getMessage(), ExceptionMessage.FORBIDDEN);
   }
 }
