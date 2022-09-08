@@ -17,7 +17,7 @@
   </update>
 
 
-  <select id="selectAdminDto" parameterType="UserLoginDto">
+  <select id="selectUser" parameterType="UserLoginDto" resultType="UserDto">
     SELECt user_id,
            user_email,
            user_name,
