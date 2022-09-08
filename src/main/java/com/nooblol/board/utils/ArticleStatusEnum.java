@@ -3,11 +3,11 @@ package com.nooblol.board.utils;
 import lombok.Getter;
 
 @Getter
-public enum BoardStatusEnum {
-  ACTIVE(1), DEACTIVE(2);
+public enum ArticleStatusEnum {
+  ACTIVE(1), SECRET(2);
 
 
-  BoardStatusEnum(int status) {
+  ArticleStatusEnum(int status) {
     this.status = status;
   }
 
