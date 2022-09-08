@@ -70,7 +70,7 @@ public class ArticleController {
         .updatedAt(articleDto.getUpdatedAt())
         .build();
 
-    boolean upsertResult = articleService.upsertArticle(upsertArticle, session, false);
+    boolean upsertResult = articleService.upsertArticle(upsertArticle, session, true);
 
     ResponseDto result = ResponseEnum.OK.getResponse();
     result.setResult(upsertResult);
@@ -97,7 +97,7 @@ public class ArticleController {
         .updatedAt(articleDto.getUpdatedAt())
         .build();
 
-    boolean upsertResult = articleService.upsertArticle(upsertArticle, session, true);
+    boolean upsertResult = articleService.upsertArticle(upsertArticle, session, false);
 
     ResponseDto result = ResponseEnum.OK.getResponse();
     result.setResult(upsertResult);

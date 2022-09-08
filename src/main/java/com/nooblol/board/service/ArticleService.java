@@ -35,7 +35,7 @@ public interface ArticleService {
    * @param articleDto
    * @return
    */
-  boolean upsertArticle(ArticleDto articleDto, HttpSession session, boolean isUpdate);
+  boolean upsertArticle(ArticleDto articleDto, HttpSession session, boolean isInsert);
 
   /**
    * 현재 DB에서 사용주인 ArticleId의 최대값에 + 1을 하여 return한다. 만약 ArticleId가 없는 경우에는 1을 반환한다.
