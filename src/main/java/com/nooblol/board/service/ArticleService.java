@@ -30,9 +30,11 @@ public interface ArticleService {
   void addReadCount(int articleId);
 
   /**
-   * 게시물 Upsert
+   * 게시물의 삽입 또는 수정을 진행한다.
    *
    * @param articleDto
+   * @param session
+   * @param isInsert   삽입인 경우 True, Update인 경우 False
    * @return
    */
   boolean upsertArticle(ArticleDto articleDto, HttpSession session, boolean isInsert);
