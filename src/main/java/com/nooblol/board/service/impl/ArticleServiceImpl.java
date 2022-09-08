@@ -64,13 +64,9 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     String dbCreatedUserId = articleMapper.selectCreatedUserId(articleDto.getArticleId());
-    try {
-      if (StringUtils.isBlank(dbCreatedUserId) ||
-          !dbCreatedUserId.equals(SessionUtils.getSessionUserId(session))) {
-        throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
+    if (StringUtils.isBlank(dbCreatedUserId) ||
+        !dbCreatedUserId.equals(SessionUtils.getSessionUserId(session))) {
+      throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
     }
 
     return articleMapper.upsertArticle(articleDto) == 0 ? false : true;
