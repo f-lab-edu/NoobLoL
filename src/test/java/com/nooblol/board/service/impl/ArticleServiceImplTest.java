@@ -229,4 +229,119 @@ class ArticleServiceImplTest {
     //then
     assertEquals(e.getMessage(), ExceptionMessage.FORBIDDEN);
   }
+
+  @Test
+  @DisplayName("게시글을 삭제할 때 DB에 데이터가 없는 경우 NoData Exception이 발생한다.")
+  void deleteArticle_WhenIsNotHaveArticleInDbThenNoDataException() {
+    //given
+    int testArticleId = 1;
+
+    //mock
+    when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(null);
+
+    //when
+    Exception e = assertThrows(IllegalArgumentException.class, () -> {
+      articleService.deleteArticle(testArticleId, null);
+    });
+
+    //then
+    assertEquals(e.getMessage(), ExceptionMessage.NO_DATA);
+  }
+
+  @Test
+  @DisplayName("게시글을 삭제할 때 요청자가 관리자인 경우, 정상삭제 되었으면 Return으로 True값을 받는다.")
+  void deleteArticle_WhenUserIsAdminAndDeleteSuccessThenReturnTrue() {
+    //given
+    int testArticleId = 1;
+
+    UserDto sessionUserData = new UserDto().builder()
+        .userId("test")
+        .userEmail("test@test.com")
+        .userName("test")
+        .userRole(UserRoleStatus.ADMIN.getRoleValue())
+        .level(1)
+        .exp(0)
+        .build();
+    HttpSession session = new MockHttpSession();
+    session.setAttribute(SessionEnum.USER_LOGIN.getValue(), sessionUserData);
+
+    ArticleDto mockReturnDto = new ArticleDto().builder()
+        .createdUserId(sessionUserData.getUserId())
+        .build();
+
+    //mock
+    when(articleMapper.deleteArticleByArticleId(testArticleId)).thenReturn(1);
+    when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(mockReturnDto);
+
+    //when
+    boolean result = articleService.deleteArticle(testArticleId, session);
+
+    //then
+    assertEquals(result, true);
+  }
+
+  @Test
+  @DisplayName("게시글을 삭제할 때 요청자가 작성자인 경우, 정상삭제 되었으면 Return으로 True값을 받는다.")
+  void deleteArticle_WhenUserIsAuthUserAndDeleteSuccessThenReturnTrue() {
+    //given
+    int testArticleId = 1;
+
+    UserDto sessionUserData = new UserDto().builder()
+        .userId("test")
+        .userEmail("test@test.com")
+        .userName("test")
+        .userRole(UserRoleStatus.AUTH_USER.getRoleValue())
+        .level(1)
+        .exp(0)
+        .build();
+    HttpSession session = new MockHttpSession();
+    session.setAttribute(SessionEnum.USER_LOGIN.getValue(), sessionUserData);
+
+    ArticleDto mockReturnDto = new ArticleDto().builder()
+        .createdUserId(sessionUserData.getUserId())
+        .build();
+
+    //mock
+    when(articleMapper.deleteArticleByArticleId(testArticleId)).thenReturn(1);
+    when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(mockReturnDto);
+
+    //when
+    boolean result = articleService.deleteArticle(testArticleId, session);
+
+    //then
+    assertEquals(result, true);
+  }
+
+  @Test
+  @DisplayName("게시글을 삭제할 때 일반사용자가 요청시 작성자가 아닌 경우, ForBidden Exception이 발생한다.")
+  void deleteArticle_WhenUserIsNotCreatedUserThenForbiddenException() {
+    //given
+    int testArticleId = 1;
+
+    UserDto sessionUserData = new UserDto().builder()
+        .userId("test")
+        .userEmail("test@test.com")
+        .userName("test")
+        .userRole(UserRoleStatus.AUTH_USER.getRoleValue())
+        .level(1)
+        .exp(0)
+        .build();
+    HttpSession session = new MockHttpSession();
+    session.setAttribute(SessionEnum.USER_LOGIN.getValue(), sessionUserData);
+
+    ArticleDto mockReturnDto = new ArticleDto().builder()
+        .createdUserId("different UserId")
+        .build();
+
+    //mock
+    when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(mockReturnDto);
+
+    //when
+    Exception e = assertThrows(IllegalArgumentException.class, () -> {
+      articleService.deleteArticle(testArticleId, session);
+    });
+
+    //then
+    assertEquals(e.getMessage(), ExceptionMessage.FORBIDDEN);
+  }
 }
