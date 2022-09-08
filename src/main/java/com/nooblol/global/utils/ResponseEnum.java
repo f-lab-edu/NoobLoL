@@ -25,9 +25,4 @@ public enum ResponseEnum {
     this.response = new ResponseDto(resultCode, result);
   }
 
-  <T> void setResponseResult(T result) {
-    this.response.setResult(result);
-  }
-
-
 }
