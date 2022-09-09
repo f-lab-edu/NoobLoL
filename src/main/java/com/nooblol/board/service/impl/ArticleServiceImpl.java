@@ -83,6 +83,7 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public boolean deleteArticle(int articleId, HttpSession session) {
     ArticleDto haveArticleData = articleMapper.selectArticleByArticleId(articleId);
 
@@ -161,12 +162,18 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   /**
-   * 게시글을 삭제하며, 정상적으로 삭제가 되면 True, 삭제된 건수가 없으면 False를 Return한다
+   * 먼저 추천, 비추천에 대한 기록도 모두 삭제하며,
+   * <p>
+   * 이후 게시글을 삭제하며, 정상적으로 삭제가 되면 True, 삭제된 건수가 없으면 False를 Return한다
    *
    * @param articleId
    * @return
    */
   private boolean isArticleDeleteSuccess(int articleId) {
+    articleMapper.deleteArticleStatue(
+        new ArticleStatusDto().builder().articleId(articleId).build()
+    );
+
     return articleMapper.deleteArticleByArticleId(articleId) == 0 ? false : true;
   }
 
