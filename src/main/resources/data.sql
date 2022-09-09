@@ -28,3 +28,14 @@ INSERT INTO bbs_articles(article_id, bbs_id, article_title, article_read_count, 
                          status,
                          created_user_id, created_at, updated_at)
 VALUES (2, 1, 'Test Article Title - 22', 0, '내용이웨요22', 1, 'test', now(), now());
+
+
+
+INSERT INTO bbs_articles_status (article_id, user_id, type, created_at)
+VALUES (1, 'test', true, now());
+
+INSERT INTO bbs_articles_status (article_id, user_id, type, created_at)
+VALUES (1, 'test2', true, now());
+
+INSERT INTO bbs_articles_status (article_id, user_id, type, created_at)
+VALUES (1, 'test3', false, now());

@@ -1,6 +1,8 @@
 package com.nooblol.board.service.impl;
 
 import com.nooblol.board.dto.ArticleDto;
+import com.nooblol.board.dto.ArticleStatusDto;
+import com.nooblol.board.dto.LikeAndNotLikeResponseDto;
 import com.nooblol.board.service.ArticleService;
 import com.nooblol.board.mapper.ArticleMapper;
 import com.nooblol.board.utils.ArticleAuthMessage;
@@ -12,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 @Slf4j
@@ -23,7 +27,7 @@ public class ArticleServiceImpl implements ArticleService {
 
   @Override
   public ArticleDto getArticleInfo(int articleId, String userId) {
-    articleMapper.addReadCount(articleId);
+    addReadCount(articleId);
     ArticleDto result = articleMapper.selectArticleByArticleId(articleId);
 
     if (ObjectUtils.isEmpty(result)) {
@@ -101,6 +105,35 @@ public class ArticleServiceImpl implements ArticleService {
     return isArticleDeleteSuccess(articleId);
   }
 
+  @Override
+  public boolean likeArticle(int articleId, HttpSession session) {
+    validatedNotHaveArticle(articleId);
+
+    ArticleStatusDto requestArticleStatusDto =
+        createArticleStatusDto(
+            articleId, SessionUtils.getSessionUserId(session), true
+        );
+
+    return statusProcess(requestArticleStatusDto);
+  }
+
+  @Override
+  public boolean notLikeArticle(int articleId, HttpSession session) {
+    validatedNotHaveArticle(articleId);
+
+    ArticleStatusDto requestArticleStatusDto =
+        createArticleStatusDto(
+            articleId, SessionUtils.getSessionUserId(session), false
+        );
+
+    return statusProcess(requestArticleStatusDto);
+  }
+
+  @Override
+  public LikeAndNotLikeResponseDto likeAndNotListStatus(int articleId) {
+    return articleMapper.selectArticleAllStatusByArticleId(articleId);
+  }
+
   /**
    * Upsert가 정상적으로 진행된 경우 True를 Return한다.
    *
@@ -136,4 +169,51 @@ public class ArticleServiceImpl implements ArticleService {
   private boolean isArticleDeleteSuccess(int articleId) {
     return articleMapper.deleteArticleByArticleId(articleId) == 0 ? false : true;
   }
+
+
+  private boolean isNotArticleInDb(int articleId) {
+    return ObjectUtils.isEmpty(articleMapper.selectArticleByArticleId(articleId));
+  }
+
+  private void validatedNotHaveArticle(int articleId) {
+    if (isNotArticleInDb(articleId)) {
+      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
+    }
+  }
+
+  private ArticleStatusDto createArticleStatusDto(int articleId, String userId, boolean type) {
+    ArticleStatusDto articleStatusDto = new ArticleStatusDto().builder()
+        .articleId(articleId)
+        .userId(userId)
+        .type(type)
+        .build();
+
+    articleStatusDto.setCreatedAtNow();
+
+    return articleStatusDto;
+  }
+
+  /**
+   * 추천, 비추천에 대한 프로세스, 해당 게시물에 대해 사용자가 좋아요가 없는 경우 Insert 이미 같은 타입(추천, 비추천)을 한경우는 삭제, 다른 타입인 경우는
+   * Exception이 발생한다
+   *
+   * @param requestArticleStatusDto
+   * @return
+   */
+  private boolean statusProcess(ArticleStatusDto requestArticleStatusDto) {
+    ArticleStatusDto IsHaveStatusData = articleMapper.selectArticleStatusByArticleIdAndUserId(
+        requestArticleStatusDto);
+
+    if (ObjectUtils.isEmpty(IsHaveStatusData)) {
+      return articleMapper.insertArticleStatus(requestArticleStatusDto) > 0 ? true : false;
+    }
+
+    if (IsHaveStatusData.isType() != requestArticleStatusDto.isType()) {
+      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
+    }
+
+    return articleMapper.deleteArticleStatue(requestArticleStatusDto) > 0 ? true : false;
+  }
+
+
 }

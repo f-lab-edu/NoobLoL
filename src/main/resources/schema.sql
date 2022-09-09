@@ -151,12 +151,14 @@ CREATE TABLE `bbs_articles`
     `updated_at`         datetime
 );
 
+/*
+  22. 09. 09 BBSID컬럼 삭제 : articleId로 추적이 가능하기 떄문에 해당 테이블에서는 꼭 필요하지 않다 판단.
+ */
 CREATE TABLE `bbs_articles_status`
 (
     `article_id` int,
-    `bbs_id`     varchar(255),
     `user_id`    varchar(255),
-    `type`       tinyint,
+    `type`       tinyint(1),
     `created_at` datetime DEFAULT (now())
 );
 

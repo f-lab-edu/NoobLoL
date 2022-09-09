@@ -1,6 +1,7 @@
 package com.nooblol.board.service;
 
 import com.nooblol.board.dto.ArticleDto;
+import com.nooblol.board.dto.LikeAndNotLikeResponseDto;
 import javax.servlet.http.HttpSession;
 
 public interface ArticleService {
@@ -48,10 +49,37 @@ public interface ArticleService {
 
   /**
    * 게시물 삭제, 요청자가 관리자인 경우 또는 글 작성자인 경우에만 삭제를 진행한다.
+   * Delete를 진행하는 경우 관련 테이블에 대해서도 삭제가 이뤄지다 보니, Transaction으로 묶어 처리를 진행한다
    *
    * @param articleId
    * @param session
    * @return
    */
   boolean deleteArticle(int articleId, HttpSession session);
+
+  /**
+   * 게시물 추천
+   *
+   * @param articleId
+   * @param session   한개의 Article에 한번만 추천또는 비추천이 가능하며, 재요청이 들어온 경우 Delete처리를 하기위함.
+   * @return
+   */
+  boolean likeArticle(int articleId, HttpSession session);
+
+  /**
+   * 게시물 비추천
+   *
+   * @param articleId
+   * @param session   한개의 Article에 한번만 추천또는 비추천이 가능하며, 재요청이 들어온 경우 Delete처리를 하기위함.
+   * @return
+   */
+  boolean notLikeArticle(int articleId, HttpSession session);
+
+  /**
+   * 해당 ArticleId의 좋아요 갯수와 싫어요 갯수를 Return한다.
+   *
+   * @param articleId
+   * @return
+   */
+  LikeAndNotLikeResponseDto likeAndNotListStatus(int articleId);
 }

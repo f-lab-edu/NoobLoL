@@ -114,4 +114,41 @@ public class ArticleController {
     return CommonUtils.makeToResponseOkDto(deleteResult);
   }
 
+
+  /**
+   * 파라미터로 제공한 게시물의 추천, 비추천 갯수를 Return한다
+   *
+   * @param articleId
+   * @return
+   */
+  @GetMapping("/status/{articleId}")
+  public ResponseDto likeAndNotLikeArticle(@PathVariable int articleId) {
+    return CommonUtils.makeToResponseOkDto(articleService.likeAndNotListStatus(articleId));
+  }
+
+  /**
+   * 게시물 추천
+   *
+   * @param articleId
+   * @param session
+   * @return
+   */
+  @UserLoginCheck
+  @GetMapping("/like/{articleId}")
+  public ResponseDto likeArticle(@PathVariable int articleId, HttpSession session) {
+    return CommonUtils.makeToResponseOkDto(articleService.likeArticle(articleId, session));
+  }
+
+  /**
+   * 게시물 비추천
+   *
+   * @param articleId
+   * @param session
+   * @return
+   */
+  @UserLoginCheck
+  @GetMapping("/notLike/{articleId}")
+  public ResponseDto notLikeArticle(@PathVariable int articleId, HttpSession session) {
+    return CommonUtils.makeToResponseOkDto(articleService.notLikeArticle(articleId, session));
+  }
 }
