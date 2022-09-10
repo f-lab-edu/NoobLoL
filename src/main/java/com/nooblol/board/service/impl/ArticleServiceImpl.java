@@ -8,6 +8,7 @@ import com.nooblol.board.mapper.ArticleMapper;
 import com.nooblol.board.utils.ArticleAuthMessage;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionUtils;
+import com.nooblol.global.utils.UserUtils;
 import com.nooblol.user.utils.UserRoleStatus;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -60,12 +61,12 @@ public class ArticleServiceImpl implements ArticleService {
   @Override
   public boolean upsertArticle(ArticleDto articleDto, HttpSession session, boolean isInsert) {
     //UserLoginCheck의 Annotation을 통해 무조건 Session로그인이 확인된 상황이기에, Role이 Null이 올 수 없음
-    if (isUserAdmin(SessionUtils.getSessionUserRole(session)) || isInsert) {
+    if (UserUtils.isUserAdmin((SessionUtils.getSessionUserRole(session))) || isInsert) {
       return isArticleUpsertSuccess(articleDto);
     }
 
     //일반 사용자이면서, 게시물의 원작자 여부 확인
-    boolean isNotCreatedUser = isNotArticleCreatedUser(
+    boolean isNotCreatedUser = UserUtils.isNotCreatedUser(
         articleMapper.selectCreatedUserId(articleDto.getArticleId()),
         SessionUtils.getSessionUserId(session)
     );
@@ -91,11 +92,11 @@ public class ArticleServiceImpl implements ArticleService {
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
-    if (isUserAdmin(SessionUtils.getSessionUserRole(session))) {
+    if (UserUtils.isUserAdmin(SessionUtils.getSessionUserRole(session))) {
       return isArticleDeleteSuccess(articleId);
     }
 
-    boolean isNotCreatedUser = isNotArticleCreatedUser(
+    boolean isNotCreatedUser = UserUtils.isNotCreatedUser(
         haveArticleData.getCreatedUserId(), SessionUtils.getSessionUserId(session)
     );
 
@@ -135,6 +136,11 @@ public class ArticleServiceImpl implements ArticleService {
     return articleMapper.selectArticleAllStatusByArticleId(articleId);
   }
 
+  @Override
+  public boolean isNotArticleInDb(int articleId) {
+    return ObjectUtils.isEmpty(articleMapper.selectArticleByArticleId(articleId));
+  }
+
   /**
    * Upsert가 정상적으로 진행된 경우 True를 Return한다.
    *
@@ -145,21 +151,6 @@ public class ArticleServiceImpl implements ArticleService {
     return articleMapper.upsertArticle(articleDto) == 0 ? false : true;
   }
 
-  /**
-   * 게시글을 작성한 사용자가 Session에 저장된 사용자가 아닌 경우 True를 Return한다.
-   *
-   * @param dbCreatedUserId 데이터가 없는 경우 빈값이 올 수 있기에 무조건 첫번쨰 파라미터는 DB의 CreatedUserId를 넣어야 한다.
-   * @param sessionUserId   Session에 존재하는 로그인된 사용자 Id
-   * @return
-   */
-  private boolean isNotArticleCreatedUser(String dbCreatedUserId, String sessionUserId) {
-    return StringUtils.isBlank(dbCreatedUserId) || !dbCreatedUserId.equals(sessionUserId);
-  }
-
-
-  private boolean isUserAdmin(int userRole) {
-    return userRole == UserRoleStatus.ADMIN.getRoleValue();
-  }
 
   /**
    * 먼저 추천, 비추천에 대한 기록도 모두 삭제하며,
@@ -175,11 +166,6 @@ public class ArticleServiceImpl implements ArticleService {
     );
 
     return articleMapper.deleteArticleByArticleId(articleId) == 0 ? false : true;
-  }
-
-
-  private boolean isNotArticleInDb(int articleId) {
-    return ObjectUtils.isEmpty(articleMapper.selectArticleByArticleId(articleId));
   }
 
   private void validatedNotHaveArticle(int articleId) {

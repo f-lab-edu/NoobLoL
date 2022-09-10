@@ -82,4 +82,12 @@ public interface ArticleService {
    * @return
    */
   LikeAndNotLikeResponseDto likeAndNotListStatus(int articleId);
+
+  /**
+   * 게시물의 존재 여부 확인
+   *
+   * @param articleId
+   * @return
+   */
+  boolean isNotArticleInDb(int articleId);
 }
