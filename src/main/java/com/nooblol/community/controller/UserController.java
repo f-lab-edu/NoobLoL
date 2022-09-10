@@ -44,7 +44,7 @@ public class UserController {
    * @return 정상적으로 Update가 성공했으면 OK Response와 결과값으로 true가 Return되며, 정보 수정에 실패하면 OK상태코드와 false값을
    * Return한다
    */
-  @PostMapping("/update")
+  @PostMapping("/")
   public ResponseDto userUpdate(@Valid @RequestBody UserInfoUpdateDto userInfoUpdateDto) {
     return userInfoService.updateUserInfo(userInfoUpdateDto);
   }
