@@ -2,7 +2,7 @@ package com.nooblol.account.service.impl;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nooblol.account.dto.SummonerDto;
+import com.nooblol.account.dto.summoner.SummonerDto;
 import com.nooblol.account.mapper.SummonerMapper;
 import com.nooblol.account.service.SummonerService;
 import com.nooblol.global.config.RiotConfiguration;
@@ -33,6 +33,7 @@ public class SummonerServiceImpl implements SummonerService {
 
   private final ObjectMapper objectMapper;
   private final RestTemplate restTemplate;
+  private final HttpHeaders initRiotHeader;
 
   @Override
   public ResponseDto getSummonerAccointInfo(String summonerName) {
@@ -42,13 +43,6 @@ public class SummonerServiceImpl implements SummonerService {
     return summonerAccountProcess(summonerName);
   }
 
-  /**
-   * 소환사명을 바탕으로 RiotAPI에 무조건 조회를 하며, 조회해온 데이터가 DB와 일치하는 경우 별다른 작업없이 반환하며 데이터가 변경이 있는 경우에는 DB Update
-   * 또는 Insert이후 RiotAPI에서 조회해온 데이터를 반환한다.
-   *
-   * @param summonerName
-   * @return
-   */
   @Override
   public ResponseDto summonerAccountProcess(String summonerName) {
     ResponseDto responseDto = selectSummonerAccountByRiot(summonerName);
@@ -73,17 +67,12 @@ public class SummonerServiceImpl implements SummonerService {
     }
   }
 
-  /**
-   * 소환사명 검색 : https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/
-   *
-   * @param summonerName
-   * @return
-   */
   @Override
   public ResponseDto selectSummonerAccountByRiot(String summonerName) {
     summonerName = summonerNameWhiteSpaceReplace(summonerName);
-    String url = riotConfiguration.getDomain() + riotConfiguration.getSummonerNameSearchByNameApi()
-        + summonerName;
+    String url =
+        riotConfiguration.getSummonerDomain() + riotConfiguration.getSummonerNameSearchByNameApi()
+            + summonerName;
     return responseResult(url, SummonerDto.class);
   }
 
@@ -106,11 +95,8 @@ public class SummonerServiceImpl implements SummonerService {
   private <T> ResponseDto responseResult(String url, Class<T> resultClass) {
     ResponseDto rtnData = null;
     try {
-      HttpHeaders httpHeaders = new HttpHeaders();
-      httpHeaders.add("X-Riot-Token", riotConfiguration.getApiKey());
-
       ResponseEntity<String> response =
-          restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(httpHeaders),
+          restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(initRiotHeader),
               String.class);
 
       rtnData = makeResponseDto(response, resultClass);

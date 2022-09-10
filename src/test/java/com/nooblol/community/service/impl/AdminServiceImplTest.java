@@ -19,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpSession;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -45,8 +46,9 @@ class AdminServiceImplTest {
     //mock
     when(userSignUpMapper.insertSignUpUser(mockUserDto)).thenReturn(0);
 
+    //TODO : 추후 로그인 정보를 담는 부분 추가
     //when
-    ResponseDto result = adminService.addAdminMember(mockUserDto);
+    ResponseDto result = adminService.addAdminMember(mockUserDto, new MockHttpSession());
 
     //then
     assertEquals(result.getResultCode(), HttpStatus.OK.value());
@@ -65,8 +67,9 @@ class AdminServiceImplTest {
     //mock
     when(userSignUpMapper.insertSignUpUser(mockUserDto)).thenReturn(1);
 
+    //TODO : 추후 로그인 정보를 담는 부분 추가
     //when
-    ResponseDto result = adminService.addAdminMember(mockUserDto);
+    ResponseDto result = adminService.addAdminMember(mockUserDto, new MockHttpSession());
 
     //then
     assertEquals(result.getResultCode(), HttpStatus.OK.value());
@@ -87,7 +90,8 @@ class AdminServiceImplTest {
 
     //when
     Exception e = assertThrows(IllegalArgumentException.class, () -> {
-      adminService.addAdminMember(mockUserDto);
+      //TODO : 추후 로그인 정보를 담는 부분 추가
+      adminService.addAdminMember(mockUserDto, new MockHttpSession());
     });
 
     //then

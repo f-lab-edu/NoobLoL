@@ -2,15 +2,17 @@ package com.nooblol.community.controller;
 
 import com.nooblol.community.dto.UserSignOutDto;
 import com.nooblol.community.dto.UserSignUpRequestDto;
+import com.nooblol.community.dto.UserInfoUpdateDto;
+import com.nooblol.community.service.UserInfoService;
 import com.nooblol.community.service.UserSignOutService;
 import com.nooblol.community.service.UserSignUpService;
 import com.nooblol.global.dto.ResponseDto;
+import com.nooblol.global.utils.RegexConstants;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,19 +20,33 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
 
-  private final Logger log = LoggerFactory.getLogger(getClass());
-
   private final UserSignUpService userSignUpService;
   private final UserSignOutService userSignOutService;
+
+  private final UserInfoService userInfoService;
 
   @PostMapping("/singup")
   public ResponseDto singUpSubmit(@Valid @RequestBody UserSignUpRequestDto userSignUpDto) {
     return userSignUpService.signUpUser(userSignUpDto);
+  }
+
+
+  /**
+   * UserName과 UserPassword에 대해서만 수정이 가능하며, 관리자와 메일을 인증한 사용자만 사용자 정보에 대하여 변경이 가능하다.
+   *
+   * @param userInfoUpdateDto
+   * @return 정상적으로 Update가 성공했으면 OK Response와 결과값으로 true가 Return되며, 정보 수정에 실패하면 OK상태코드와 false값을
+   * Return한다
+   */
+  @PostMapping("/")
+  public ResponseDto userUpdate(@Valid @RequestBody UserInfoUpdateDto userInfoUpdateDto) {
+    return userInfoService.updateUserInfo(userInfoUpdateDto);
   }
 
   /**
@@ -53,7 +69,7 @@ public class UserController {
    */
   @GetMapping("/resend-authmail/{email:.+}")
   public ResponseDto resendAuthMail(
-      @PathVariable @NotBlank @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$", message = "이메일 형식에 맞지 않습니다.")
+      @PathVariable @NotBlank @Pattern(regexp = RegexConstants.MAIL_REGEX, message = "이메일 형식에 맞지 않습니다.")
       String email
   ) {
     return userSignUpService.reSendSignUpUserMail(email.trim());
