@@ -29,18 +29,27 @@ public class ReplyRequestDto {
 
   @Getter
   @Setter
-  @Builder
   @NoArgsConstructor
   @AllArgsConstructor
   public static class ReplyInsertDto extends ReplyRequestDto {
 
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Builder
+    public ReplyInsertDto(
+        @NotNull(message = ArticleMessage.ARTICLE_ID_NULL) Integer articleId,
+        @NotNull(message = ArticleMessage.REPLY_CONTENT_NULL) String replyContent,
+        @NotNull(message = ArticleMessage.REPLY_STATUS_NULL) Integer status, Integer sortNo,
+        LocalDateTime createdAt
+    ) {
+      super(articleId, replyContent, status, sortNo);
+      this.createdAt = createdAt;
+    }
   }
 
 
   @Getter
   @Setter
-  @Builder
   @NoArgsConstructor
   @AllArgsConstructor
   public static class ReplyUpdateDto extends ReplyRequestDto {
@@ -51,5 +60,16 @@ public class ReplyRequestDto {
      */
     @NotNull(message = ArticleMessage.REPLY_ID_NULL)
     private Integer replyId;
+
+    @Builder
+    public ReplyUpdateDto(
+        @NotNull(message = ArticleMessage.ARTICLE_ID_NULL) Integer articleId,
+        @NotNull(message = ArticleMessage.REPLY_CONTENT_NULL) String replyContent,
+        @NotNull(message = ArticleMessage.REPLY_STATUS_NULL) Integer status, Integer sortNo,
+        Integer replyId
+    ) {
+      super(articleId, replyContent, status, sortNo);
+      this.replyId = replyId;
+    }
   }
 }
