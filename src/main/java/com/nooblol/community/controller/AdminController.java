@@ -54,14 +54,27 @@ public class AdminController {
     return adminService.deleteAdminMember(userSignOutDto, session);
   }
 
+  /**
+   * 관리자 권한으로, 사용자 계정의 강제 삭제
+   * @param adminDeleteUserDto
+   * @param session
+   * @return
+   */
   @PostMapping("/forceDeleteUser")
   public ResponseDto adminForcedDeleteuser(
-      @Valid @RequestBody AdminDeleteUserDto adminDeleteUserDto) {
+      @Valid @RequestBody AdminDeleteUserDto adminDeleteUserDto, HttpSession session) {
     return adminService.forceDeleteUser(adminDeleteUserDto);
   }
 
+  /**
+   * 관리자 권한으로, 모든 사용자 계정의 조회
+   * @param adminUserDto
+   * @param session
+   * @return
+   */
   @PostMapping("/userList")
-  public ResponseDto getAllUserList(@Valid @RequestBody AdminUserDto adminUserDto) {
+  public ResponseDto getAllUserList(@Valid @RequestBody AdminUserDto adminUserDto,
+      HttpSession session) {
     return adminService.getAllUserList(adminUserDto);
   }
 }
