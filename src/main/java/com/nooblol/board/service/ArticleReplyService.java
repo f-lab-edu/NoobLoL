@@ -27,6 +27,7 @@ public interface ArticleReplyService {
 
   /**
    * 댓글의 Insert, Update를 진행한다
+   *
    * @param replyDto
    * @return
    */
@@ -41,10 +42,4 @@ public interface ArticleReplyService {
    */
   boolean deleteReplyByReplyId(int replyId, HttpSession session);
 
-  /**
-   * 게시물의 모든 댓글을 삭제, ArticleService에서 게시글을 삭제하게 될 경우 사용하기 위하여 제작함.
-   * @param articleId
-   * @return
-   */
-  boolean deleteReplyByArticleId(int articleId);
 }

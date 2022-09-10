@@ -3,7 +3,7 @@ package com.nooblol.board.service.impl;
 import com.nooblol.board.dto.ArticleDto;
 import com.nooblol.board.dto.ArticleStatusDto;
 import com.nooblol.board.dto.LikeAndNotLikeResponseDto;
-import com.nooblol.board.service.ArticleReplyService;
+import com.nooblol.board.mapper.ArticleReplyMapper;
 import com.nooblol.board.service.ArticleService;
 import com.nooblol.board.mapper.ArticleMapper;
 import com.nooblol.board.utils.ArticleAuthMessage;
@@ -27,7 +27,7 @@ public class ArticleServiceImpl implements ArticleService {
 
   private final ArticleMapper articleMapper;
 
-  private final ArticleReplyService articleReplyService;
+  private final ArticleReplyMapper articleReplyMapper;
 
   @Override
   public ArticleDto getArticleInfo(int articleId, String userId) {
@@ -167,8 +167,7 @@ public class ArticleServiceImpl implements ArticleService {
     articleMapper.deleteArticleStatue(
         new ArticleStatusDto().builder().articleId(articleId).build()
     );
-
-    articleReplyService.deleteReplyByArticleId(articleId);
+    articleReplyMapper.deleteReplyByArticleId(articleId);
 
     return articleMapper.deleteArticleByArticleId(articleId) == 0 ? false : true;
   }

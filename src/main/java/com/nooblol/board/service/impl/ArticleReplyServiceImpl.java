@@ -64,10 +64,6 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
     return articleReplyMapper.deleteReplyByReplyId(replyId) > 0;
   }
 
-  @Override
-  public boolean deleteReplyByArticleId(int articleId) {
-    return articleReplyMapper.deleteReplyByArticleId(articleId) > 0;
-  }
 
   private void validHaveArticleInDb(int articleId) {
     if (articleService.isNotArticleInDb(articleId)) {
