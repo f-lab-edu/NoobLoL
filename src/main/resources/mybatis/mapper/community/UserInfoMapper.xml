@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nooblol.community.mapper.UserInfoMapper">
+  <!--유저정보 수정 기능-->
+  <update id="updateUserInfo" parameterType="UserInfoUpdateDto">
+    UPDATE users
+    SET updated_at         = #{updatedAt}
+      , user_name          = #{newUserName}
+      , user_password_hash = #{newPassword}
+    WHERE user_id = #{userId}
+      AND user_password_hash = #{orgPassword}
+  </update>
+
+
+</mapper>
