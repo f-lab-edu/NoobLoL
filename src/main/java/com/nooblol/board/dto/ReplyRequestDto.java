@@ -39,11 +39,10 @@ public class ReplyRequestDto {
     public ReplyInsertDto(
         @NotNull(message = ArticleMessage.ARTICLE_ID_NULL) Integer articleId,
         @NotNull(message = ArticleMessage.REPLY_CONTENT_NULL) String replyContent,
-        @NotNull(message = ArticleMessage.REPLY_STATUS_NULL) Integer status, Integer sortNo,
-        LocalDateTime createdAt
+        @NotNull(message = ArticleMessage.REPLY_STATUS_NULL) Integer status,
+        Integer sortNo
     ) {
       super(articleId, replyContent, status, sortNo);
-      this.createdAt = createdAt;
     }
   }
 
