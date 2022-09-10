@@ -7,18 +7,14 @@ import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.EncryptUtils;
 import com.nooblol.global.utils.ResponseEnum;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserSignOutServiceImpl implements UserSignOutService {
-
-  private final Logger log = LoggerFactory.getLogger(getClass());
 
   private final UserSignOutMapper userSignOutMapper;
 
@@ -27,8 +23,8 @@ public class UserSignOutServiceImpl implements UserSignOutService {
     try {
       String encodePassword = EncryptUtils.stringChangeToSha512(userSignOutDto.getPassword());
       userSignOutDto.setPassword(encodePassword);
-    } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-      throw new IllegalArgumentException(ExceptionMessage.SERVER_ERROR);
+    } catch (Exception e) {
+      throw new IllegalArgumentException(ExceptionMessage.SERVER_ERROR, e);
     }
 
     if (userSignOutMapper.selectUserCount(userSignOutDto) == 0) {
@@ -36,12 +32,7 @@ public class UserSignOutServiceImpl implements UserSignOutService {
     }
 
     ResponseDto rtnDto = ResponseEnum.OK.getResponse();
-    if (userSignOutMapper.deleteUser(userSignOutDto) == 0) {
-      rtnDto.setResult(false);
-      return rtnDto;
-    }
-
-    rtnDto.setResult(true);
+    rtnDto.setResult(userSignOutMapper.deleteUser(userSignOutDto) > 0);
     return rtnDto;
   }
 }

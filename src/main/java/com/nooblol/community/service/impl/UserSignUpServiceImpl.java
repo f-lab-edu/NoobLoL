@@ -15,18 +15,16 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserSignUpServiceImpl implements UserSignUpService {
-
-  private final Logger log = LoggerFactory.getLogger(getClass());
 
   private final UserSignUpMapper userSignUpMapper;
   private final UserSendMailService userSendMailService;
@@ -40,15 +38,13 @@ public class UserSignUpServiceImpl implements UserSignUpService {
       userSignUpMapper.insertSignUpUser(userDto);
 
     } catch (DuplicateKeyException e) {
-      throw new IllegalArgumentException(ExceptionMessage.HAVE_DATA);
+      throw new IllegalArgumentException(ExceptionMessage.HAVE_DATA, e);
     } catch (Exception e) {
-      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
+      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST, e);
     }
 
-    boolean result = sendSignUpUserMail(userDto);
-
     ResponseDto response = ResponseEnum.OK.getResponse();
-    response.setResult(result);
+    response.setResult(sendSignUpUserMail(userDto));
     return response;
   }
 
@@ -91,19 +87,13 @@ public class UserSignUpServiceImpl implements UserSignUpService {
     userDto.setUserRole(UserRoleStatus.AUTH_USER.getRoleValue());
 
     try {
-      int updateResult = userSignUpMapper.updateUserRole(userDto);
+
       ResponseDto response = ResponseEnum.OK.getResponse();
-
-      if (updateResult <= 0) {
-        response.setResult(false);
-      } else {
-        response.setResult(true);
-      }
-
+      response.setResult(userSignUpMapper.updateUserRole(userDto) > 0);
       return response;
+
     } catch (Exception e) {
-      log.error("User Role Update Error!!" + userId);
-      throw new IllegalArgumentException(ExceptionMessage.SERVER_ERROR);
+      throw new IllegalArgumentException(ExceptionMessage.SERVER_ERROR, e);
     }
   }
 
