@@ -39,3 +39,11 @@ VALUES (1, 'test2', true, now());
 
 INSERT INTO bbs_articles_status (article_id, user_id, type, created_at)
 VALUES (1, 'test3', false, now());
+
+INSERT INTO bbs_articles_reply(reply_id, article_id, reply_content, status, sort_no,
+                               created_user_id, created_at)
+VALUES (1, 1, 'test', 1, 1, 'test', now());
+
+INSERT INTO bbs_articles_reply(reply_id, article_id, reply_content, status, sort_no,
+                               created_user_id, created_at)
+VALUES (2, 1, 'test', 1, 1, 'no-user', now());
