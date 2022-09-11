@@ -67,7 +67,8 @@ public class RestApiControllerAdvice {
         ResponseDto rtn = ResponseEnum.CONFLICT.getResponse();
         rtn.setResult("이미 존재하는 데이터 입니다");
         return rtn;
-
+      case ExceptionMessage.FORBIDDEN:
+        return ResponseEnum.FORBIDDEN.getResponse();
       default:
         return ResponseEnum.BAD_REQUEST.getResponse();
     }

@@ -10,4 +10,6 @@ public class ExceptionMessage {
   public static final String BAD_REQUEST = "BAD_REQUEST";
   public static final String SERVER_ERROR = "SERVER_ERROR";
   public static final String HAVE_DATA = "HAVE_DATA";
+
+  public static final String FORBIDDEN = "FORBIDDEN";
 }

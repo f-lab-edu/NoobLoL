@@ -1,11 +1,12 @@
 package com.nooblol.community.dto;
 
 import com.nooblol.community.utils.UserRoleStatus;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,10 +31,17 @@ public class UserSignUpRequestDto {
 
   private int userRole = UserRoleStatus.UNAUTH_USER.getRoleValue();
 
-  private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
-  private Timestamp updatedAt = new Timestamp(System.currentTimeMillis());
+  private LocalDateTime createdAt = LocalDateTime.now();
+  private LocalDateTime updatedAt = LocalDateTime.now();
 
   public void setAdminUserRole() {
     setUserRole(UserRoleStatus.ADMIN.getRoleValue());
+  }
+
+  @Builder
+  public UserSignUpRequestDto(String userEmail, String userName, String password) {
+    this.userEmail = userEmail;
+    this.userName = userName;
+    this.password = password;
   }
 }

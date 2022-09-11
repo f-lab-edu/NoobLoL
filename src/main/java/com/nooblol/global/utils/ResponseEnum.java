@@ -13,7 +13,9 @@ public enum ResponseEnum {
   NOT_FOUND(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND),
   INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR),
   OK(HttpStatus.OK.value(), null),
-  CONFLICT(HttpStatus.CONFLICT.value(), null);
+  CONFLICT(HttpStatus.CONFLICT.value(), null),
+  FORBIDDEN(HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN);
+
 
   ResponseDto response;
 
@@ -24,6 +26,5 @@ public enum ResponseEnum {
   <T> void setResponseResult(T result) {
     this.response.setResult(result);
   }
-
 
 }
