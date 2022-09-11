@@ -8,10 +8,8 @@ import com.nooblol.board.dto.ReplyRequestDto.ReplyUpdateDto;
 import com.nooblol.board.mapper.ArticleReplyMapper;
 import com.nooblol.board.service.ArticleService;
 import com.nooblol.global.exception.ExceptionMessage;
-import com.nooblol.global.utils.SessionEnum;
+import com.nooblol.global.utils.SessionSampleObject;
 import com.nooblol.global.utils.SessionUtils;
-import com.nooblol.user.dto.UserDto;
-import com.nooblol.user.utils.UserRoleStatus;
 import javax.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockHttpSession;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -41,30 +38,9 @@ class ArticleReplyServiceImplTest {
 
   @BeforeEach
   void setUp() {
-    authUserSession = new MockHttpSession();
-    authUserSession.setAttribute(
-        SessionEnum.USER_LOGIN.getValue(),
-        new UserDto().builder()
-            .userId("test")
-            .userEmail("test@test.com")
-            .userName("test")
-            .userRole(UserRoleStatus.AUTH_USER.getRoleValue())
-            .level(1)
-            .exp(0)
-            .build())
-    ;
+    authUserSession = SessionSampleObject.authUserLoginSession;
 
-    adminSession = new MockHttpSession();
-    adminSession.setAttribute(
-        SessionEnum.USER_LOGIN.getValue(),
-        new UserDto().builder()
-            .userId("admin")
-            .userEmail("admin@test.com")
-            .userName("admin")
-            .userRole(UserRoleStatus.ADMIN.getRoleValue())
-            .level(1)
-            .exp(0)
-            .build());
+    adminSession = SessionSampleObject.adminUserLoginSession;
   }
 
 
