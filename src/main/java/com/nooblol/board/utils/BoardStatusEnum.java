@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum BoardStatusEnum {
-  ACTIVE(1), DEACTIVE(2);
+  ACTIVE(1), DEACTIVE(2), DELETE(9);
 
 
   BoardStatusEnum(int status) {

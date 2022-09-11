@@ -3,7 +3,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nooblol.board.mapper.CategoryMapper">
 
-  <select id="selectCategory" parameterType="int" resultType="CategoryDto">
+  <select id="selectCategoryList" parameterType="int" resultType="CategoryDto">
     SELECT category_id,
            category_name,
            status,
@@ -13,6 +13,18 @@
            updated_at
     FROM bbs_category
     WHERE status = #{status}
+  </select>
+
+  <select id="selectCategoryByCategoryId" parameterType="int" resultType="CategoryDto">
+    SELECT category_id,
+           category_name,
+           status,
+           created_user_id,
+           created_at,
+           updated_user_id,
+           updated_at
+    FROM bbs_category
+    WHERE category_id = #{categoryId}
   </select>
 
   <select id="selectBbsList" parameterType="SearchBbsListDto" resultType="BbsDto">
@@ -40,4 +52,31 @@
            updated_at
     FROM bbs
   </select>
+
+  <insert id="insertCategory"
+    parameterType="com.nooblol.board.dto.CategoryRequestDto$CategoryInsertDto">
+    INSERT INTO bbs_category (category_name, status, created_user_id, created_at, updated_user_id,
+                              updated_at)
+    VALUES (#{categoryName}, #{status}, #{createdUserId}, #{createdAt}, #{updatedUserId},
+            #{updatedAt})
+  </insert>
+
+  <update id="updateCategory"
+    parameterType="com.nooblol.board.dto.CategoryRequestDto$CategoryUpdateDto">
+    UPDATE bbs_category
+    SET category_name   = #{newCategoryName},
+        status          = #{status},
+        updated_user_id = #{updatedUserId},
+        updated_at      = #{updatedAt}
+    WHERE category_id = #{categoryId}
+  </update>
+
+  <update id="deleteCategory"
+    parameterType="com.nooblol.board.dto.CategoryRequestDto$CategoryDeleteDto">
+    UPDATE bbs_category
+    SET status          = #{status},
+        updated_user_id = #{updatedUserId},
+        updated_at      = #{updatedAt}
+    WHERE category_id = #{categoryId}
+  </update>
 </mapper>

@@ -19,6 +19,7 @@ public class AuthCheckAspect {
 
   /**
    * 사용자로그인이 필요한 기능에서 AOP를 활용하여 사전에 로그인이 안된 사용자를 거름
+   *
    * @param jp
    */
   @Before("@annotation(com.nooblol.global.annotation.UserLoginCheck)")
