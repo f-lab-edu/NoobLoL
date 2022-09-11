@@ -1,6 +1,5 @@
 package com.nooblol.community.service.impl;
 
-import com.nooblol.community.dto.AdminUpdateUserDto;
 import com.nooblol.community.dto.UserDto;
 import com.nooblol.community.dto.UserSignOutDto;
 import com.nooblol.community.dto.UserSignUpRequestDto;
@@ -104,48 +103,26 @@ public class AdminServiceImpl implements AdminService {
   }
 
   @Override
-  public ResponseDto changeToActiveUser(AdminUpdateUserDto adminUpdateUserDto) {
-    return updateUser(adminUpdateUserDto, UserRoleStatus.AUTH_USER.getRoleValue());
+  public ResponseDto changeToActiveUser(String changeUserId, HttpSession session) {
+    isSessionUserIsNotAdmin(session);
+    return updateUser(changeUserId, UserRoleStatus.AUTH_USER.getRoleValue());
   }
 
   @Override
-  public ResponseDto changeToSuspensionUser(AdminUpdateUserDto adminUpdateUserDto) {
-    return updateUser(adminUpdateUserDto, UserRoleStatus.SUSPENSION_USER.getRoleValue());
+  public ResponseDto changeToSuspensionUser(String changeUserId, HttpSession session) {
+    isSessionUserIsNotAdmin(session);
+    return updateUser(changeUserId, UserRoleStatus.SUSPENSION_USER.getRoleValue());
   }
 
-  private ResponseDto updateUser(AdminUpdateUserDto adminUpdateUserDto, int roleStatus) {
-    try {
-      String password = EncryptUtils.stringChangeToSha512(
-          adminUpdateUserDto.getAdminUserPassword());
-      adminUpdateUserDto.setAdminUserPassword(password);
+  private ResponseDto updateUser(String changeUserId, int roleStatus) {
+    UserDto changeUser = new UserDto().builder()
+        .userId(changeUserId)
+        .userRole(roleStatus)
+        .build();
 
-      UserDto adminDbData = adminMapper.selectAdminDto(adminUpdateUserDto);
-
-      if (ObjectUtils.isEmpty(adminDbData) ||
-          adminDbData.getUserRole() != UserRoleStatus.ADMIN.getRoleValue()) {
-        throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
-      }
-
-      UserDto changeUser = new UserDto();
-      changeUser.setUserId(adminUpdateUserDto.getUpdateUserId());
-      changeUser.setUserRole(roleStatus);
-
-      ResponseDto result = ResponseEnum.OK.getResponse();
-
-      if (adminMapper.changeUserRole(changeUser) == 0) {
-        result.setResult(false); //수정할 데이터가 없는 경우 (이미 활동정지가 된 유저)
-      } else {
-        result.setResult(true);
-      }
-      return result;
-    } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-      throw new IllegalArgumentException(ExceptionMessage.SERVER_ERROR);
-    } catch (Exception e) {
-      if (e.getMessage().equals(ExceptionMessage.FORBIDDEN)) {
-        throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
-      }
-      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
-    }
+    ResponseDto result = ResponseEnum.OK.getResponse();
+    result.setResult(adminMapper.changeUserRole(changeUser) > 0);
+    return result;
   }
 
   /**

@@ -1,7 +1,5 @@
 package com.nooblol.community.service;
 
-import com.nooblol.community.dto.AdminUpdateUserDto;
-import com.nooblol.community.dto.AdminUserDto;
 import com.nooblol.community.dto.UserSignOutDto;
 import com.nooblol.community.dto.UserSignUpRequestDto;
 import com.nooblol.global.dto.ResponseDto;
@@ -48,16 +46,20 @@ public interface AdminService {
 
   /**
    * 사용자의 Status를 활성상태(AUTH_USER)로 변경
-   * @param adminUpdateUserDto
+   *
+   * @param changeUserId
+   * @param session
    * @return
    */
-  ResponseDto changeToActiveUser(AdminUpdateUserDto adminUpdateUserDto);
+  ResponseDto changeToActiveUser(String changeUserId, HttpSession session);
 
   /**
    * 사용자의 Status를 일시정지상태로 변경
-   * @param adminUpdateUserDto
+   *
+   * @param changeUserId
+   * @param session
    * @return
    */
-  ResponseDto changeToSuspensionUser(AdminUpdateUserDto adminUpdateUserDto);
+  ResponseDto changeToSuspensionUser(String changeUserId, HttpSession session);
 
 }

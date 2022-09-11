@@ -1,9 +1,9 @@
 package com.nooblol.community.controller;
 
-import com.nooblol.community.dto.AdminUpdateUserDto;
 import com.nooblol.community.dto.UserSignOutDto;
 import com.nooblol.community.dto.UserSignUpRequestDto;
 import com.nooblol.community.service.AdminService;
+import com.nooblol.community.utils.AdminConstants;
 import com.nooblol.global.dto.ResponseDto;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -69,7 +70,7 @@ public class AdminController {
    */
   @DeleteMapping("/forceUserDelete/{deleteUserId}")
   public ResponseDto deleteForcedUser(
-      @PathVariable(required = false) @NotBlank(message = "삭제하려는 사용자의 UserId가 입력되지 않았습니다.") String deleteUserId,
+      @PathVariable(required = false) @NotBlank(message = AdminConstants.ADMIN_DELETEUSERID_NULL) String deleteUserId,
       HttpSession session) {
     return adminService.forceDeleteUser(deleteUserId, session);
   }
@@ -91,14 +92,18 @@ public class AdminController {
     return adminService.getAllUserList(pageNum, limitNum, session);
   }
 
-  @PostMapping("/userChangeActive")
-  public ResponseDto changeToActiveUser(@Valid @RequestBody AdminUpdateUserDto adminUpdateUserDto) {
-    return adminService.changeToActiveUser(adminUpdateUserDto);
+
+  @PutMapping("/userChangeToActive/{changeUserId}")
+  public ResponseDto changeToActiveUser(
+      @PathVariable(required = false) @NotBlank(message = AdminConstants.ADMIN_USERID_NULL) String changeUserId,
+      HttpSession session) {
+    return adminService.changeToActiveUser(changeUserId, session);
   }
 
-  @PostMapping("/userChangeToSuspension")
+  @PutMapping("/userChangeToSuspension/{changeUserId}")
   public ResponseDto changeToSuspensionUser(
-      @Valid @RequestBody AdminUpdateUserDto adminUpdateUserDto) {
-    return adminService.changeToSuspensionUser(adminUpdateUserDto);
+      @PathVariable(required = false) @NotBlank(message = AdminConstants.ADMIN_USERID_NULL) String changeUserId,
+      HttpSession session) {
+    return adminService.changeToSuspensionUser(changeUserId, session);
   }
 }
