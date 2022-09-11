@@ -1,7 +1,5 @@
 package com.nooblol.community.service.impl;
 
-import com.nooblol.community.dto.AdminDeleteUserDto;
-import com.nooblol.community.dto.AdminUserDto;
 import com.nooblol.community.dto.UserDto;
 import com.nooblol.community.dto.UserSignOutDto;
 import com.nooblol.community.dto.UserSignUpRequestDto;
@@ -9,7 +7,6 @@ import com.nooblol.community.mapper.AdminMapper;
 import com.nooblol.community.mapper.UserSignUpMapper;
 import com.nooblol.community.service.AdminService;
 import com.nooblol.community.service.UserSignOutService;
-import com.nooblol.community.utils.UserRoleStatus;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.ResponseEnum;
@@ -22,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 @Slf4j
 @Service
@@ -56,7 +52,7 @@ public class AdminServiceImpl implements AdminService {
     } catch (DuplicateKeyException e) {
       throw new IllegalArgumentException(ExceptionMessage.HAVE_DATA, e);
     } catch (Exception e) {
-      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
+      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST, e);
     }
   }
 
@@ -74,32 +70,14 @@ public class AdminServiceImpl implements AdminService {
     현재 Login정보가 담긴 기능이 제작되지 않은 상황. 로그인기능의 수정을 진행하면서 해당 영역의 수정이 필요함.
    */
   @Override
-  public ResponseDto forceDeleteUser(AdminDeleteUserDto adminDeleteUserDto) {
-    try {
-      String adminPassword = EncryptUtils.stringChangeToSha512(
-          adminDeleteUserDto.getAdminUserPassword()
-      );
-      adminDeleteUserDto.setAdminUserPassword(adminPassword);
-
-      UserDto adminDbData = adminMapper.selectAdminDto(adminDeleteUserDto);
-
-      if (ObjectUtils.isEmpty(adminDbData) ||
-          adminDbData.getUserRole() != UserRoleStatus.ADMIN.getRoleValue()) {
-        throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
-      }
-
-      ResponseDto resultDto = ResponseEnum.OK.getResponse();
-      resultDto.setResult(adminMapper.forcedDeleteUser(adminDeleteUserDto.getDeleteUserId()) > 0);
-
-      return resultDto;
-    } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-      throw new IllegalArgumentException(ExceptionMessage.SERVER_ERROR, e);
-    } catch (IllegalArgumentException e) {
-      //내부 발생이 Catch로 잡혀서 따로 분류
+  public ResponseDto forceDeleteUser(String deleteUserId, HttpSession session) {
+    if (isSessionUserIsNotAdmin(session)) {
       throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
-    } catch (Exception e) {
-      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
+
+    ResponseDto resultDto = ResponseEnum.OK.getResponse();
+    resultDto.setResult(adminMapper.forcedDeleteUser(deleteUserId) > 0);
+    return resultDto;
   }
 
   /*
@@ -110,32 +88,16 @@ public class AdminServiceImpl implements AdminService {
   사용자의 강제삭제 기능과 똑같이 로직수정이 필요함
  */
   @Override
-  public ResponseDto getAllUserList(AdminUserDto adminUserDto) {
-    try {
-      String password = EncryptUtils.stringChangeToSha512(adminUserDto.getAdminUserPassword());
-      adminUserDto.setAdminUserPassword(password);
-
-      UserDto adminDbData = adminMapper.selectAdminDto(adminUserDto);
-
-      if (ObjectUtils.isEmpty(adminDbData) ||
-          adminDbData.getUserRole() != UserRoleStatus.ADMIN.getRoleValue()) {
-        throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
-      }
-
-      List<UserDto> userList = adminMapper.getAllUserList();
-
-      ResponseDto resultDto = ResponseEnum.OK.getResponse();
-      resultDto.setResult(userList);
-
-      return resultDto;
-    } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-      throw new IllegalArgumentException(ExceptionMessage.SERVER_ERROR);
-    } catch (IllegalArgumentException e) {
-      //내부 발생이 Catch로 잡혀서 따로 분류
+  public ResponseDto getAllUserList(int pageNum, int limitNum, HttpSession session) {
+    if (isSessionUserIsNotAdmin(session)) {
       throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
-    } catch (Exception e) {
-      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
+    List<UserDto> userList = adminMapper.getAllUserList(pageNum, limitNum);
+
+    ResponseDto resultDto = ResponseEnum.OK.getResponse();
+    resultDto.setResult(userList);
+
+    return resultDto;
   }
 
   /**

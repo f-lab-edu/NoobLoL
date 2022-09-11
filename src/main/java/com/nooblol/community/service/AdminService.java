@@ -1,7 +1,5 @@
 package com.nooblol.community.service;
 
-import com.nooblol.community.dto.AdminDeleteUserDto;
-import com.nooblol.community.dto.AdminUserDto;
 import com.nooblol.community.dto.UserSignOutDto;
 import com.nooblol.community.dto.UserSignUpRequestDto;
 import com.nooblol.global.dto.ResponseDto;
@@ -11,6 +9,7 @@ public interface AdminService {
 
   /**
    * 관리자 계정의 추가한다
+   *
    * @param userSignUpRequestDto
    * @param session
    * @return
@@ -19,6 +18,7 @@ public interface AdminService {
 
   /**
    * 관리자 계정을 삭제한다
+   *
    * @param userSignOutDto
    * @param session
    * @return
@@ -27,15 +27,20 @@ public interface AdminService {
 
   /**
    * 일반 사용자계정의 삭제한다
-   * @param adminDeleteUserDto
+   *
+   * @param deleteUserId
+   * @param session
    * @return
    */
-  ResponseDto forceDeleteUser(AdminDeleteUserDto adminDeleteUserDto);
+  ResponseDto forceDeleteUser(String deleteUserId, HttpSession session);
 
   /**
-   * 모든 사용자 계정의 조회한다
-   * @param adminUserDto
+   * 모든 사용자 계정의 조회한다 limitNum건 단위로 pageNum번에 맞춰서 조회한다.
+   *
+   * @param pageNum
+   * @param limitNum
+   * @param session
    * @return
    */
-  ResponseDto getAllUserList(AdminUserDto adminUserDto);
+  ResponseDto getAllUserList(int pageNum, int limitNum, HttpSession session);
 }
