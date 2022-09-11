@@ -31,8 +31,8 @@ public class UserController {
 
   private final UserInfoService userInfoService;
 
-  @PostMapping("/singup")
-  public ResponseDto singUpSubmit(@Valid @RequestBody UserSignUpRequestDto userSignUpDto) {
+  @PostMapping("/signup")
+  public ResponseDto signUpSubmit(@Valid @RequestBody UserSignUpRequestDto userSignUpDto) {
     return userSignUpService.signUpUser(userSignUpDto);
   }
 
