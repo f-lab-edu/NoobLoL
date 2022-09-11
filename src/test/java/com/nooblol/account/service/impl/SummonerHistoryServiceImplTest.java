@@ -2,7 +2,7 @@ package com.nooblol.account.service.impl;
 
 import static org.mockito.BDDMockito.given;
 
-import com.nooblol.account.dto.SummonerHistoryDto;
+import com.nooblol.account.dto.summoner.SummonerHistoryDto;
 import com.nooblol.account.service.SummonerHistoryService;
 import com.nooblol.global.dto.ResponseDto;
 import java.util.ArrayList;

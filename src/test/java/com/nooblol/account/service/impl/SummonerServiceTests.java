@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-import com.nooblol.account.dto.SummonerDto;
+import com.nooblol.account.dto.summoner.SummonerDto;
 import com.nooblol.account.service.SummonerService;
 import com.nooblol.global.dto.ResponseDto;
 import org.junit.jupiter.api.Assertions;
