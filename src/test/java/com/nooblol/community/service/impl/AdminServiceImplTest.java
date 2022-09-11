@@ -1,9 +1,11 @@
 package com.nooblol.community.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.when;
 
-import com.nooblol.community.dto.AdminUpdateUserDto;
 import com.nooblol.community.dto.UserDto;
 import com.nooblol.community.dto.UserSignUpRequestDto;
 import com.nooblol.community.mapper.AdminMapper;
@@ -154,47 +156,16 @@ class AdminServiceImplTest {
   }
 
   @Test
-  @DisplayName("사용자의 권한을 변경하려는 경우, 요청자가 관리자 계정이 아닌경우 Forbidden Exception을 획득한다.")
-  void changeToActiveUser_WhenNotAdminThenForbiddenException() {
-    //given
-    AdminUpdateUserDto mockAdminUserDto = new AdminUpdateUserDto();
-    mockAdminUserDto.setAdminUserId("test1");
-    mockAdminUserDto.setAdminUserPassword("abcde");
-    mockAdminUserDto.setUpdateUserId("sample1");
-
-    UserDto mockReturnUserDto = new UserDto();
-    mockReturnUserDto.setUserRole(UserRoleStatus.AUTH_USER.getRoleValue());
-
-    //mock
-    when(adminMapper.selectAdminDto(mockAdminUserDto)).thenReturn(mockReturnUserDto);
-
-    //when
-    Exception e = assertThrows(IllegalArgumentException.class, () -> {
-      adminService.changeToActiveUser(mockAdminUserDto);
-    });
-
-    //then
-    assertEquals(e.getMessage(), ExceptionMessage.FORBIDDEN);
-  }
-
-  @Test
   @DisplayName("사용자의 권한을 AUTH_USER로 변경하려는 경우, Response로 Ok와 결과값으로 true를 획득한다.")
   void changeToActiveUser_WhenAdminThenResponseOk() {
     //given
-    AdminUpdateUserDto mockAdminUserDto = new AdminUpdateUserDto();
-    mockAdminUserDto.setAdminUserId("test1");
-    mockAdminUserDto.setAdminUserPassword("abcde");
-    mockAdminUserDto.setUpdateUserId("sample1");
-
-    UserDto mockReturnUserDto = new UserDto();
-    mockReturnUserDto.setUserRole(UserRoleStatus.ADMIN.getRoleValue());
+    String changeUserId = "test";
 
     //mock
-    when(adminMapper.selectAdminDto(mockAdminUserDto)).thenReturn(mockReturnUserDto);
     when(adminMapper.changeUserRole(any())).thenReturn(1);
 
     //when
-    ResponseDto result = adminService.changeToActiveUser(mockAdminUserDto);
+    ResponseDto result = adminService.changeToActiveUser(changeUserId, new MockHttpSession());
 
     //then
     assertEquals(result.getResultCode(), HttpStatus.OK.value());
