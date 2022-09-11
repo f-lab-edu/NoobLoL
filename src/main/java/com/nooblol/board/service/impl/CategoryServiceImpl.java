@@ -66,7 +66,7 @@ public class CategoryServiceImpl implements CategoryService {
   public boolean insertCategory(CategoryInsertDto categoryInsertDto, HttpSession session) {
     isSessionUserIsAdmin(session);
 
-    String reqUserId = SessionUtils.getSessionUserId(session);
+    String reqUserId = Optional.of(SessionUtils.getSessionUserId(session)).get();
     categoryInsertDto.setCreatedUserId(reqUserId);
     categoryInsertDto.setUpdatedUserId(reqUserId);
 
@@ -121,9 +121,15 @@ public class CategoryServiceImpl implements CategoryService {
   public boolean deleteCategory(int categoryId, HttpSession session) {
     isSessionUserIsAdmin(session);
 
-    if (ObjectUtils.isEmpty(selectCategory(categoryId))) {
+    CategoryDto dbCategoryData = selectCategory(categoryId);
+
+    if (ObjectUtils.isEmpty(dbCategoryData)) {
       log.warn(ExceptionMessage.NOT_FOUND, categoryId);
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
+    }
+
+    if (dbCategoryData.getStatus() == BoardStatusEnum.DELETE.getStatus()) {
+      return true;
     }
 
     return categoryMapper.deleteCategory(

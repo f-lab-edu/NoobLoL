@@ -5,17 +5,28 @@ import static org.mockito.BDDMockito.*;
 
 import com.nooblol.board.dto.BbsDto;
 import com.nooblol.board.dto.CategoryDto;
+import com.nooblol.board.dto.CategoryRequestDto.CategoryInsertDto;
+import com.nooblol.board.dto.CategoryRequestDto.CategoryUpdateDto;
 import com.nooblol.board.mapper.CategoryMapper;
 import com.nooblol.board.utils.BoardStatusEnum;
+import com.nooblol.global.exception.ExceptionMessage;
+import com.nooblol.global.utils.SessionEnum;
+import com.nooblol.global.utils.SessionSampleObject;
+import com.nooblol.user.dto.UserDto;
+import com.nooblol.user.utils.UserRoleStatus;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpSession;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpSession;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceImplTest {
@@ -25,6 +36,10 @@ class CategoryServiceImplTest {
 
   @Mock
   private CategoryMapper categoryMapper;
+
+
+  private HttpSession authUserSession = SessionSampleObject.authUserLoginSession;
+  private HttpSession adminSession = SessionSampleObject.adminUserLoginSession;
 
   @Test
   @DisplayName("카테고리를 조회시 Enum에 없는 값인 경우 Null이 반환된다")
@@ -53,8 +68,8 @@ class CategoryServiceImplTest {
     mockCategoryDto1.setStatus(BoardStatusEnum.ACTIVE.getStatus());
     mockCategoryDto1.setCreatedUserId("a");
     mockCategoryDto1.setUpdatedUserId("a");
-    mockCategoryDto1.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-    mockCategoryDto1.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+    mockCategoryDto1.setCreatedAt(LocalDateTime.now());
+    mockCategoryDto1.setUpdatedAt(LocalDateTime.now());
 
     CategoryDto mockCategoryDto2 = new CategoryDto();
     mockCategoryDto2.setCategoryId(2);
@@ -62,14 +77,14 @@ class CategoryServiceImplTest {
     mockCategoryDto2.setStatus(BoardStatusEnum.ACTIVE.getStatus());
     mockCategoryDto2.setCreatedUserId("a");
     mockCategoryDto2.setUpdatedUserId("a");
-    mockCategoryDto2.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-    mockCategoryDto2.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+    mockCategoryDto2.setCreatedAt(LocalDateTime.now());
+    mockCategoryDto2.setUpdatedAt(LocalDateTime.now());
 
     mockCategoryList.add(mockCategoryDto1);
     mockCategoryList.add(mockCategoryDto2);
 
     //mock
-    when(categoryMapper.selectCategory(haveStatus)).thenReturn(mockCategoryList);
+    when(categoryMapper.selectCategoryList(haveStatus)).thenReturn(mockCategoryList);
 
     //when
     List<CategoryDto> result = categoryService.getCategoryList(haveStatus);
@@ -135,4 +150,161 @@ class CategoryServiceImplTest {
     assertEquals(result, mockBbsList);
   }
 
+
+  @Test
+  @DisplayName("카테고리 생성시 데이터가 삽입에 성공한 경우 결과값으로 True를 획득힌다.")
+  void insertCategory_WhenInsertSuccessThenReturnTrue() {
+    //given
+    CategoryInsertDto mockCategoryInsertDto = new CategoryInsertDto();
+
+    //mock
+    when(categoryMapper.insertCategory(mockCategoryInsertDto)).thenReturn(1);
+
+    //when
+    boolean result = categoryService.insertCategory(mockCategoryInsertDto, adminSession);
+
+    //then
+    assertTrue(result);
+  }
+
+  @Test
+  @DisplayName("카테고리의 수정시, DB에 수정요청한 카테고리정보가 없는 경우 NotFound Exception이 발생한다")
+  void updateCategory_WhenNoFoundCategoryDataThenNotFoundException() {
+    //given
+    int nullCategoryId = 99999;
+
+    CategoryUpdateDto mockUpdateDto = new CategoryUpdateDto().builder()
+        .categoryId(nullCategoryId)
+        .build();
+    //mock
+    when(categoryMapper.selectCategoryByCategoryId(nullCategoryId)).thenReturn(null);
+
+    //when
+    Exception e = assertThrows(IllegalArgumentException.class, () -> {
+      categoryService.updateCategory(mockUpdateDto, adminSession);
+    });
+
+    //then
+    assertEquals(e.getMessage(), ExceptionMessage.NO_DATA);
+  }
+
+  @Test
+  @DisplayName("카테고리의 수정시, 변경되는 데이터가 없는 경우 BadRequest Exception이 발생한다")
+  void updateCategory_WhenNoDataToChangeThenBadRequestException() {
+    //given
+    int categoryId = 1;
+    String sameTitle = "title";
+    int sameStatus = BoardStatusEnum.ACTIVE.getStatus();
+
+    CategoryUpdateDto updateDto = new CategoryUpdateDto().builder()
+        .categoryId(categoryId)
+        .newCategoryName(sameTitle)
+        .status(sameStatus)
+        .build();
+
+    CategoryDto mockCategoryDto = new CategoryDto().builder()
+        .categoryId(categoryId)
+        .categoryName(sameTitle)
+        .status(sameStatus)
+        .build();
+    //mock
+    when(categoryMapper.selectCategoryByCategoryId(categoryId)).thenReturn(mockCategoryDto);
+
+    //when
+    Exception e = assertThrows(IllegalArgumentException.class, () -> {
+      categoryService.updateCategory(updateDto, adminSession);
+    });
+
+    //then
+    assertEquals(e.getMessage(), ExceptionMessage.BAD_REQUEST);
+  }
+
+
+  @Test
+  @DisplayName("카테고리의 수정시, 데이터의 수정이 이루어진 경우 결과값으로 true를 획득한다")
+  void updateCategory_WhenUpdateSuccessThenReturnTrue() {
+    //given
+    int categoryId = 1;
+
+    CategoryUpdateDto updateDto = new CategoryUpdateDto().builder()
+        .categoryId(categoryId)
+        .newCategoryName("reqNewCategory")
+        .build();
+
+    CategoryDto mockCategoryDto = new CategoryDto().builder()
+        .categoryId(categoryId)
+        .categoryName("dbTitle")
+        .status(BoardStatusEnum.ACTIVE.getStatus())
+        .build();
+    //mock
+    when(categoryMapper.selectCategoryByCategoryId(categoryId)).thenReturn(mockCategoryDto);
+    when(categoryMapper.updateCategory(updateDto)).thenReturn(1);
+
+    //when
+    boolean result = categoryService.updateCategory(updateDto, adminSession);
+
+    //then
+    assertTrue(result);
+  }
+
+  @Test
+  @DisplayName("카테고리를 삭제 할 때, 카테고리가 DB에 없는 경우, NotFound Exception이 발생한다")
+  void deleteCategory_WhenNoHaveCategoryDataThenNotFoundException() {
+    //given
+    int nullCategoryId = 99999;
+
+    //mock
+    when(categoryMapper.selectCategoryByCategoryId(nullCategoryId)).thenReturn(null);
+
+    //when
+    Exception e = assertThrows(IllegalArgumentException.class, () -> {
+      categoryService.deleteCategory(nullCategoryId, adminSession);
+    });
+
+    //then
+    assertEquals(e.getMessage(), ExceptionMessage.NO_DATA);
+  }
+
+  @Test
+  @DisplayName("카테고리를 삭제 할 때, 이미 DB에서 상태값이 삭제가 되어있는 경우 결과값으로 true를 획득한다")
+  void deleteCategory_WhenCategoryAlreadyDeleteThenReturnTrue() {
+    //given
+    int categoryId = 1;
+
+    CategoryDto mockCategoryDto = new CategoryDto().builder()
+        .categoryId(categoryId)
+        .status(BoardStatusEnum.DELETE.getStatus())
+        .build();
+
+    //mock
+    when(categoryMapper.selectCategoryByCategoryId(categoryId)).thenReturn(mockCategoryDto);
+
+    //when
+    boolean result = categoryService.deleteCategory(categoryId, adminSession);
+
+    //then
+    assertTrue(result);
+  }
+
+  @Test
+  @DisplayName("카테고리를 삭제 할 때, 삭제가 이뤄진 경우 결과값으로 true를 획득한다")
+  void deleteCategory_WhenUpdateStatusDeleteSuccessThenReturnTrue() {
+    //given
+    int categoryId = 1;
+
+    CategoryDto mockCategoryDto = new CategoryDto().builder()
+        .categoryId(categoryId)
+        .status(BoardStatusEnum.ACTIVE.getStatus())
+        .build();
+
+    //mock
+    when(categoryMapper.selectCategoryByCategoryId(categoryId)).thenReturn(mockCategoryDto);
+    when(categoryMapper.deleteCategory(any())).thenReturn(1);
+
+    //when
+    boolean result = categoryService.deleteCategory(categoryId, adminSession);
+
+    //then
+    assertTrue(result);
+  }
 }

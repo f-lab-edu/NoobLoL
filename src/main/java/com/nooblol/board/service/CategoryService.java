@@ -63,7 +63,8 @@ public interface CategoryService {
   CategoryDto selectCategory(int categoryId);
 
   /**
-   * 카테고리의 삭제의 경우에는 실제 DELETE가 이뤄지지 않으며, STATUS의 값만 변경함.
+   * 카테고리의 삭제의 경우에는 실제 DELETE가 이뤄지지 않으며, STATUS의 값만 변경되며, 이미 Status가 삭제된 상태이거나 또는 DB에서 수정이 정상적으로 이뤄진
+   * 경우 결과값으로 True가 반환된다.
    * <p>
    * 카테고리를 삭제 -> 게시판의 삭제 -> 게시글의 삭제로 데이터에 삭제해야 하는 데이터가 너무 방대해짐.
    *
