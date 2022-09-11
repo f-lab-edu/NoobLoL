@@ -13,7 +13,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserSignUpRequestDto {
@@ -37,5 +36,12 @@ public class UserSignUpRequestDto {
 
   public void setAdminUserRole() {
     setUserRole(UserRoleStatus.ADMIN.getRoleValue());
+  }
+
+  @Builder
+  public UserSignUpRequestDto(String userEmail, String userName, String password) {
+    this.userEmail = userEmail;
+    this.userName = userName;
+    this.password = password;
   }
 }
