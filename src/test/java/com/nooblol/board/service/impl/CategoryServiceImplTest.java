@@ -4,30 +4,34 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import com.nooblol.board.dto.BbsDto;
+import com.nooblol.board.dto.BbsRequestDto.BbsInsertDto;
+import com.nooblol.board.dto.BbsRequestDto.BbsUpdateDto;
 import com.nooblol.board.dto.CategoryDto;
 import com.nooblol.board.dto.CategoryRequestDto.CategoryInsertDto;
 import com.nooblol.board.dto.CategoryRequestDto.CategoryUpdateDto;
 import com.nooblol.board.mapper.CategoryMapper;
 import com.nooblol.board.utils.BoardStatusEnum;
 import com.nooblol.global.exception.ExceptionMessage;
-import com.nooblol.global.utils.SessionEnum;
 import com.nooblol.global.utils.SessionSampleObject;
-import com.nooblol.user.dto.UserDto;
-import com.nooblol.user.utils.UserRoleStatus;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpSession;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestClassOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Category Service Test")
 class CategoryServiceImplTest {
 
   @InjectMocks
@@ -209,7 +213,6 @@ class CategoryServiceImplTest {
 
     }
 
-
     @Nested
     @DisplayName("삭제 테스트")
     class DeleteTest {
@@ -303,7 +306,7 @@ class CategoryServiceImplTest {
       }
 
       @Test
-      @DisplayName("게시판리스트 조회시 Enum에 없는 값인 경우 Null이 반환된다")
+      @DisplayName("게시판리스트 조회시 Enum에 존재하는 값인 경우 게시판 리스트가 반환된다")
       void getBbsList_WhenNoHaveEnumThenReturnListCategory() {
         //given
         int haveStatus = BoardStatusEnum.ACTIVE.getStatus();
@@ -345,7 +348,149 @@ class CategoryServiceImplTest {
       }
     }
 
+    @Nested
+    @DisplayName("생성 테스트")
+    class InsertTest {
+
+      @Test
+      @DisplayName("게시판의 생성시, 정상적으로 데이터가 삽입이 되었다면 결과값으로 True를 획득한다")
+      void insertBbs_WhenInsertSuccessThenReturnTrue() {
+        //given
+        BbsInsertDto bbsInsertDto = new BbsInsertDto();
+
+        //mock
+        when(categoryMapper.insertBbs(bbsInsertDto)).thenReturn(1);
+
+        //when
+        boolean result = categoryService.insertBbs(bbsInsertDto, adminSession);
+
+        //then
+        assertTrue(result);
+      }
+    }
+
+    @Nested
+    @DisplayName("수정 테스트")
+    class UpdateTest {
+
+      @Test
+      @DisplayName("게시판의 정보를 수정하고자 할 때, 해당 게시판정보가 DB에 없는 경우 NPE가 발생한다.")
+      void updateBbs_WhenDbNoHaveBbsDataThenNullPointerException() {
+        //given
+        int nullBbsId = 99999;
+        BbsUpdateDto mockBbsUpdateDto = new BbsUpdateDto().builder().bbsId(nullBbsId).build();
+
+        //mock
+        when(categoryMapper.selectBbsByBbsId(nullBbsId)).thenReturn(null);
+
+        //when
+        Exception e = assertThrows(NullPointerException.class, () -> {
+          categoryService.updateBbs(mockBbsUpdateDto, adminSession);
+        });
+
+        assertEquals(e.getClass(), NullPointerException.class);
+      }
+
+      @Test
+      @DisplayName("게시판의 정보 수정시 할 때, 해당 정보와 DB의 게시판정보가 동일한 경우 BadRequest Exception이 발생한다")
+      void updateBbs_WhenDbEqualsUpdateDataThenBadRequestException() {
+        //given
+        int bbsId = 1;
+        BbsUpdateDto bbsUpdateDto = new BbsUpdateDto().builder()
+            .bbsId(bbsId)
+            .categoryId(1)
+            .bbsName("test")
+            .status(BoardStatusEnum.ACTIVE.getStatus())
+            .build();
+
+        BbsDto mockBbsDto = new BbsDto().builder()
+            .bbsId(bbsId)
+            .categoryId(1)
+            .bbsName("test")
+            .status(BoardStatusEnum.ACTIVE.getStatus())
+            .build();
+
+        //mock
+        when(categoryMapper.selectBbsByBbsId(bbsId)).thenReturn(mockBbsDto);
+
+        //when
+        Exception e = assertThrows(IllegalArgumentException.class, () -> {
+          categoryService.updateBbs(bbsUpdateDto, adminSession);
+        });
+
+        //then
+        assertEquals(e.getMessage(), ExceptionMessage.BAD_REQUEST);
+      }
+
+      @Test
+      @DisplayName("게시판의 정보 수정시, 수정된 데이터가 존재하는 경우 Return으로 True를 획득한다")
+      void updateBbs_WhenDbDataUpdateSuccessThenReturnTrue() {
+        //given
+        int bbsId = 1;
+        BbsUpdateDto bbsUpdateDto = new BbsUpdateDto().builder()
+            .bbsId(bbsId)
+            .categoryId(1)
+            .bbsName("test")
+            .status(BoardStatusEnum.ACTIVE.getStatus())
+            .build();
+
+        BbsDto mockBbsDto = new BbsDto().builder()
+            .bbsId(bbsId)
+            .categoryId(5)
+            .bbsName("sample")
+            .status(BoardStatusEnum.ACTIVE.getStatus())
+            .build();
+
+        //mock
+        when(categoryMapper.selectBbsByBbsId(bbsId)).thenReturn(mockBbsDto);
+        when(categoryMapper.updateBbs(bbsUpdateDto)).thenReturn(1);
+
+        //when
+        boolean result = categoryService.updateBbs(bbsUpdateDto, adminSession);
+
+        //then
+        assertTrue(result);
+      }
+    }
+
+    @Nested
+    @DisplayName("삭제 테스트")
+    class DeleteTest {
+
+      @Test
+      @DisplayName("파라미터로 받은 게시판ID가 DB에 데이터가 없는 경우 NotFoundException이 발생한다")
+      void deleteBbs_WhenDbNotFoundBbsThenNotFoundException() {
+        //given
+        int noBbsId = 99999;
+
+        //mock
+        when(categoryMapper.selectBbsByBbsId(noBbsId)).thenReturn(null);
+
+        //when
+        Exception e = assertThrows(IllegalArgumentException.class, () -> {
+          categoryService.deleteBbs(noBbsId, adminSession);
+        });
+
+        //then
+        assertEquals(e.getMessage(), ExceptionMessage.NO_DATA);
+      }
+    }
+
+    @Test
+    @DisplayName("파라미터로 받은 게시판ID가 DB에 존재하고, Status값을 정상적으로 Update한 경우 결과값으로 True를 획득한다.")
+    void deleteBbs_WhenDeleteBbsSuccessThenReturnTrue() {
+      //given
+      int bbsId = 1;
+
+      //mock
+      when(categoryMapper.selectBbsByBbsId(bbsId)).thenReturn(new BbsDto());
+      when(categoryMapper.deleteBbs(any())).thenReturn(1);
+
+      //when
+      boolean result = categoryService.deleteBbs(bbsId, adminSession);
+
+      //then
+      assertTrue(result);
+    }
   }
-
-
 }

@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.*;
 import com.nooblol.board.dto.ArticleDto;
 import com.nooblol.board.dto.ArticleStatusDto;
 import com.nooblol.board.mapper.ArticleMapper;
+import com.nooblol.board.mapper.ArticleReplyMapper;
 import com.nooblol.board.utils.ArticleAuthMessage;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionEnum;
@@ -25,6 +26,9 @@ class ArticleServiceImplTest {
 
   @Mock
   private ArticleMapper articleMapper;
+
+  @Mock
+  private ArticleReplyMapper articleReplyMapper;
 
   @InjectMocks
   private ArticleServiceImpl articleService;
@@ -273,6 +277,7 @@ class ArticleServiceImplTest {
     //mock
     when(articleMapper.deleteArticleByArticleId(testArticleId)).thenReturn(1);
     when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(mockReturnDto);
+    when(articleReplyMapper.deleteReplyByArticleId(testArticleId)).thenReturn(1);
 
     //when
     boolean result = articleService.deleteArticle(testArticleId, session);
@@ -305,6 +310,7 @@ class ArticleServiceImplTest {
     //mock
     when(articleMapper.deleteArticleByArticleId(testArticleId)).thenReturn(1);
     when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(mockReturnDto);
+    when(articleReplyMapper.deleteReplyByArticleId(testArticleId)).thenReturn(1);
 
     //when
     boolean result = articleService.deleteArticle(testArticleId, session);
