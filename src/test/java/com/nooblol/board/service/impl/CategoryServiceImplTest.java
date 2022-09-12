@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpSession;
+import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Nested;
@@ -32,6 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Category Service Test")
+@TestClassOrder(ClassOrderer.OrderAnnotation.class)
 class CategoryServiceImplTest {
 
   @InjectMocks
@@ -44,6 +46,7 @@ class CategoryServiceImplTest {
   HttpSession authUserSession = SessionSampleObject.authUserLoginSession;
   HttpSession adminSession = SessionSampleObject.adminUserLoginSession;
 
+  @Order(1)
   @Nested
   @DisplayName("카테고리 테스트")
   class CategoryTest {
@@ -282,6 +285,7 @@ class CategoryServiceImplTest {
 
   }
 
+  @Order(2)
   @Nested
   @DisplayName("게시판 테스트 ")
   class BbsTest {
