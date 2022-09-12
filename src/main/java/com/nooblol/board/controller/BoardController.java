@@ -1,5 +1,7 @@
 package com.nooblol.board.controller;
 
+import com.nooblol.board.dto.BbsRequestDto.BbsInsertDto;
+import com.nooblol.board.dto.BbsRequestDto.BbsUpdateDto;
 import com.nooblol.board.dto.CategoryRequestDto;
 import com.nooblol.board.utils.ArticleMessage;
 import com.nooblol.board.utils.BoardStatusEnum;
@@ -26,10 +28,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
+@Validated
 @RestController
 @RequestMapping("/board")
 @RequiredArgsConstructor
-@Validated
 public class BoardController {
 
   private final CategoryService categoryService;
@@ -112,6 +114,7 @@ public class BoardController {
 
   /**
    * 카테고리의 삭제하며,  정상적으로 데이터 변경이 성공하면 결과값으로 True를 Return한다
+   *
    * @param categoryId
    * @param session
    * @return
@@ -122,5 +125,46 @@ public class BoardController {
       @PathVariable @NotNull(message = ArticleMessage.CATEGORY_ID_NULL) Integer categoryId,
       HttpSession session) {
     return CommonUtils.makeToResponseOkDto(categoryService.deleteCategory(categoryId, session));
+  }
+
+  /**
+   * 관리자기능 - 게시판 생성
+   *
+   * @param bbsInsertDto
+   * @param session
+   * @return
+   */
+  @UserLoginCheck
+  @PostMapping("/bbs")
+  public ResponseDto insertBbs(@Valid @RequestBody BbsInsertDto bbsInsertDto, HttpSession session) {
+    return CommonUtils.makeToResponseOkDto(categoryService.insertBbs(bbsInsertDto, session));
+  }
+
+  /**
+   * 관리자기능 - 게시판 정보 수정
+   *
+   * @param bbsUpdateDto
+   * @param session
+   * @return
+   */
+  @UserLoginCheck
+  @PutMapping("/bbs")
+  public ResponseDto updateBbs(@Valid @RequestBody BbsUpdateDto bbsUpdateDto, HttpSession session) {
+    return CommonUtils.makeToResponseOkDto(categoryService.updateBbs(bbsUpdateDto, session));
+  }
+
+  /**
+   * 관리자기능 - 게시판 삭제, 실제 DB데이터 삭제는 이뤄지지 않으며 Status를 변경함
+   * @param bbsId
+   * @param session
+   * @return
+   */
+  @UserLoginCheck
+  @DeleteMapping("/bbs/{bbsId}")
+  public ResponseDto deleteBbs(
+      @PathVariable(required = false) @NotNull(message = ArticleMessage.BBS_ID_NULL) Integer bbsId,
+      HttpSession session
+  ) {
+    return CommonUtils.makeToResponseOkDto(categoryService.deleteBbs(bbsId, session));
   }
 }
