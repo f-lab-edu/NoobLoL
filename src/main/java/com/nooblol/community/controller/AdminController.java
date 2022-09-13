@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-//TODO : AOP로 UserLoginCheck, UserRoleAdminCheck 2개에 대해서 적용필요
 
 @Slf4j
 @RestController
@@ -90,7 +89,7 @@ public class AdminController {
   }
 
   /**
-   * 관리자 권한으로 특정 사용자의 권한을 활성화 시킨다.
+   * 관리자 권한으로 특정 사용자의 권한을 활성화 상태로 변경한다.
    *
    * @param changeUserId 활성화 시키고자 하는 사용자의 UserId
    * @return
@@ -102,6 +101,13 @@ public class AdminController {
     return adminService.changeToActiveUser(changeUserId);
   }
 
+  /**
+   * 관리자의 권한으로 특정 사용자의 권한을 일시정지 상태로 변경한다.
+   *
+   * @param changeUserId
+   * @return
+   */
+  @UserRoleIsAdminCehck
   @PutMapping("/userChangeToSuspension/{changeUserId}")
   public ResponseDto changeToSuspensionUser(
       @PathVariable(required = false) @NotBlank(message = AdminConstants.ADMIN_USERID_NULL) String changeUserId) {
