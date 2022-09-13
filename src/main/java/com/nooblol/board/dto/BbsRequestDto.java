@@ -68,22 +68,15 @@ public class BbsRequestDto {
 
     private Integer status;
 
-    /*
-    TODO [22. 09 .12] : assertTrue가 정상적으로 사용이 되지않는 듯함.
-     */
-    @AssertTrue
-    public boolean validationUpdateData() {
-      System.out.println("????????");
-      /*if (ObjectUtils.isEmpty(categoryId) &&
+    @AssertTrue(message = ArticleMessage.BBS_UPDATE_VALIDATION)
+    public boolean isValidUpdateData() {
+      if (ObjectUtils.isEmpty(categoryId) &&
           StringUtils.isBlank(bbsName) &&
           ObjectUtils.isEmpty(status)) {
         return false;
-      }*/
-
-      if (categoryId == 0 && bbsName == null && status == 0) {
-        return true;
       }
-      return false;
+
+        return true;
     }
 
 

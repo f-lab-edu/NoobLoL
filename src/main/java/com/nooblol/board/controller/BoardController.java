@@ -155,6 +155,7 @@ public class BoardController {
 
   /**
    * 관리자기능 - 게시판 삭제, 실제 DB데이터 삭제는 이뤄지지 않으며 Status를 변경함
+   *
    * @param bbsId
    * @param session
    * @return
