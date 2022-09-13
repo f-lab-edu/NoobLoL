@@ -14,4 +14,6 @@ public interface AdminMapper {
   List<UserDto> getAllUserList(@Param("pageNum") int pageNum, @Param("limitNum") int limitNum);
 
   int forcedDeleteUser(String deleteUserId);
+
+  int changeUserRole(UserDto userDto);
 }

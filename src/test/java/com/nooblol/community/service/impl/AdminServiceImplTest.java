@@ -1,7 +1,10 @@
 package com.nooblol.community.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.when;
 
 import com.nooblol.community.dto.UserDto;
 import com.nooblol.community.dto.UserSignUpRequestDto;
@@ -150,6 +153,23 @@ class AdminServiceImplTest {
     //then
     assertEquals(result.getResultCode(), HttpStatus.OK.value());
     assertEquals(mockReturnList, result.getResult());
+  }
+
+  @Test
+  @DisplayName("사용자의 권한을 AUTH_USER로 변경하려는 경우, Response로 Ok와 결과값으로 true를 획득한다.")
+  void changeToActiveUser_WhenAdminThenResponseOk() {
+    //given
+    String changeUserId = "test";
+
+    //mock
+    when(adminMapper.changeUserRole(any())).thenReturn(1);
+
+    //when
+    ResponseDto result = adminService.changeToActiveUser(changeUserId, new MockHttpSession());
+
+    //then
+    assertEquals(result.getResultCode(), HttpStatus.OK.value());
+    assertEquals(result.getResult(), true);
   }
 
 }

@@ -43,4 +43,23 @@ public interface AdminService {
    * @return
    */
   ResponseDto getAllUserList(int pageNum, int limitNum, HttpSession session);
+
+  /**
+   * 사용자의 Status를 활성상태(AUTH_USER)로 변경
+   *
+   * @param changeUserId
+   * @param session
+   * @return
+   */
+  ResponseDto changeToActiveUser(String changeUserId, HttpSession session);
+
+  /**
+   * 사용자의 Status를 일시정지상태로 변경
+   *
+   * @param changeUserId
+   * @param session
+   * @return
+   */
+  ResponseDto changeToSuspensionUser(String changeUserId, HttpSession session);
+
 }
