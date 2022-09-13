@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AdminController {
 
-
   private final AdminService adminService;
 
 
@@ -88,7 +87,7 @@ public class AdminController {
       @RequestParam(value = "page", defaultValue = "0") int pageNum,
       @RequestParam(value = "limit", defaultValue = "30") int limitNum,
       HttpSession session) {
-    pageNum = pageNum * 30;
+    pageNum = pageNum * limitNum;
     return adminService.getAllUserList(pageNum, limitNum, session);
   }
 

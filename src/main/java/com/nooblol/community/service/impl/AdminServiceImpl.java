@@ -134,6 +134,7 @@ public class AdminServiceImpl implements AdminService {
   private boolean isSessionUserIsNotAdmin(HttpSession session) {
     /**
      * TODO [22. 09. 10] : Session의 Login정보를 담는 기능이 이후에 개발되었다 보니 Git으로 가져오는 것보다는 로그인, 비로그인작업을 진행하면서 수정 예정
+     * TODO [22. 09 .13] : 로그인 로그아웃시 AOP로 변경할것.
      */
     return false;
   }
