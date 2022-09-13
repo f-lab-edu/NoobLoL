@@ -5,15 +5,11 @@
   <!--유저정보 수정 기능-->
   <update id="updateUserInfo" parameterType="UserInfoUpdateDto">
     UPDATE users
-    SET updated_at = #{updatedAt}
-    <if test="newUserName != null and newUserName != ''">
-      , user_name = #{newUserName}
-    </if>
-    <if test="newPassword != null and newPassword != ''">
+    SET updated_at         = #{updatedAt}
+      , user_name          = #{newUserName}
       , user_password_hash = #{newPassword}
-    </if>
     WHERE user_id = #{userId}
-    AND user_password_hash = #{orgPassword}
+      AND user_password_hash = #{orgPassword}
   </update>
 
 
