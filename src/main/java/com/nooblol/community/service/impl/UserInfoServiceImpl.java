@@ -13,7 +13,6 @@ import com.nooblol.global.utils.SessionEnum;
 import com.nooblol.global.utils.EncryptUtils;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +70,7 @@ public class UserInfoServiceImpl implements UserInfoService {
   }
 
   @Override
-  public ResponseDto userLogin(UserLoginDto userLoginDto, HttpServletRequest request) {
+  public ResponseDto userLogin(UserLoginDto userLoginDto, HttpSession session) {
     try {
       String password = EncryptUtils.stringChangeToSha512(userLoginDto.getUserPassword());
       userLoginDto.setUserPassword(password);
@@ -87,28 +86,28 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     ResponseDto result = ResponseEnum.OK.getResponse();
     if (loginUser.getUserRole() == UserRoleStatus.SUSPENSION_USER.getRoleValue()) {
-      result.setResult("SUSPENSION_USER");
+      result.setResult(UserRoleStatus.SUSPENSION_USER);
       return result;
     }
 
     if (loginUser.getUserRole() == UserRoleStatus.UNAUTH_USER.getRoleValue()) {
-      result.setResult("UNAUTH_USER");
+      result.setResult(UserRoleStatus.UNAUTH_USER);
       return result;
     }
 
-    HttpSession session = request.getSession();
     session.setAttribute(SessionEnum.USER_LOGIN.getValue(), loginUser);
     result.setResult(loginUser);
     return result;
   }
 
   @Override
-  public ResponseDto userLogout(HttpServletRequest request) {
-    HttpSession session = request.getSession();
+  public ResponseDto userLogout(HttpSession session) {
     if (session != null) {
-      session.invalidate();
+      session.removeAttribute(SessionEnum.USER_LOGIN.getValue());
     }
-    return ResponseEnum.OK.getResponse();
+    ResponseDto result = ResponseEnum.OK.getResponse();
+    result.setResult(true);
+    return result;
   }
 
 }

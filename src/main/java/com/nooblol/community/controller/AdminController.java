@@ -4,6 +4,7 @@ import com.nooblol.community.dto.UserSignOutDto;
 import com.nooblol.community.dto.UserSignUpRequestDto;
 import com.nooblol.community.service.AdminService;
 import com.nooblol.community.utils.AdminConstants;
+import com.nooblol.community.utils.UserConstants;
 import com.nooblol.global.annotation.UserRoleIsAdminCehck;
 import com.nooblol.global.dto.ResponseDto;
 import javax.validation.Valid;
@@ -97,7 +98,7 @@ public class AdminController {
   @UserRoleIsAdminCehck
   @PutMapping("/userChangeToActive/{changeUserId}")
   public ResponseDto changeToActiveUser(
-      @PathVariable(required = false) @NotBlank(message = AdminConstants.ADMIN_USERID_NULL) String changeUserId) {
+      @PathVariable(required = false) @NotBlank(message = UserConstants.USER_ID_NULL) String changeUserId) {
     return adminService.changeToActiveUser(changeUserId);
   }
 
@@ -110,7 +111,7 @@ public class AdminController {
   @UserRoleIsAdminCehck
   @PutMapping("/userChangeToSuspension/{changeUserId}")
   public ResponseDto changeToSuspensionUser(
-      @PathVariable(required = false) @NotBlank(message = AdminConstants.ADMIN_USERID_NULL) String changeUserId) {
+      @PathVariable(required = false) @NotBlank(message = UserConstants.USER_ID_NULL) String changeUserId) {
     return adminService.changeToSuspensionUser(changeUserId);
   }
 }

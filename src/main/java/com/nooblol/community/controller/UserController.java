@@ -7,14 +7,16 @@ import com.nooblol.community.service.UserSignOutService;
 import com.nooblol.community.dto.UserInfoUpdateDto;
 import com.nooblol.community.service.UserInfoService;
 import com.nooblol.community.service.UserSignUpService;
+import com.nooblol.global.annotation.UserLoginCheck;
 import com.nooblol.global.dto.ResponseDto;
-import javax.servlet.http.HttpServletRequest;
 import com.nooblol.global.utils.RegexConstants;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,10 +31,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserSignUpService userSignUpService;
+
   private final UserSignOutService userSignOutService;
 
   private final UserInfoService userInfoService;
 
+  /**
+   * 사용자의 회원가입
+   *
+   * @param userSignUpDto
+   * @return
+   */
   @PostMapping("/signup")
   public ResponseDto signUpSubmit(@Valid @RequestBody UserSignUpRequestDto userSignUpDto) {
     return userSignUpService.signUpUser(userSignUpDto);
@@ -40,6 +49,8 @@ public class UserController {
 
 
   /**
+   * 사용자의 정보 수정 기능.
+   * <p>
    * UserName과 UserPassword에 대해서만 수정이 가능하며, 관리자와 메일을 인증한 사용자만 사용자 정보에 대하여 변경이 가능하다.
    *
    * @param userInfoUpdateDto
@@ -57,21 +68,34 @@ public class UserController {
    * @param userSignOutDto UserId, Password를 Parameter로 받는다
    * @return
    */
-  @PostMapping("/signout")
+  @DeleteMapping("/signout")
   public ResponseDto signOutSubmit(@Valid @RequestBody UserSignOutDto userSignOutDto) {
     return userSignOutService.signOutUser(userSignOutDto);
   }
 
+  /**
+   * 사용자 로그인을 진행한다
+   * @param userLoginDto
+   * @param session
+   * @return
+   */
   @PostMapping("/login")
   public ResponseDto userLogin(
-      @Valid @RequestBody UserLoginDto userLoginDto, HttpServletRequest request
+      @Valid @RequestBody UserLoginDto userLoginDto, HttpSession session
   ) {
-    return userInfoService.userLogin(userLoginDto, request);
+    return userInfoService.userLogin(userLoginDto, session);
   }
 
+  /**
+   * 사용자의 로그아웃 로그인이 되어있어야만 한다.
+   *
+   * @param session
+   * @return
+   */
+  @UserLoginCheck
   @PostMapping("/logout")
-  public ResponseDto userLogout(HttpServletRequest request) {
-    return userInfoService.userLogout(request);
+  public ResponseDto userLogout(HttpSession session) {
+    return userInfoService.userLogout(session);
   }
 
   /**
