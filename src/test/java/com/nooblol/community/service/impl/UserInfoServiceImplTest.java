@@ -135,7 +135,7 @@ class UserInfoServiceImplTest {
 
     //then
     assertEquals(result.getResultCode(), HttpStatus.OK.value());
-    assertEquals(result.getResult(), "SUSPENSION_USER");
+    assertEquals(result.getResult(), UserRoleStatus.SUSPENSION_USER);
   }
 
   @Test
@@ -159,7 +159,7 @@ class UserInfoServiceImplTest {
 
     //then
     assertEquals(result.getResultCode(), HttpStatus.OK.value());
-    assertEquals(result.getResult(), "UNAUTH_USER");
+    assertEquals(result.getResult(), UserRoleStatus.UNAUTH_USER);
   }
 
   @Test
