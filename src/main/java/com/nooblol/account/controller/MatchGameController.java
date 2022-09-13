@@ -47,7 +47,7 @@ public class MatchGameController {
       @RequestParam(value = "page", defaultValue = "0") int pageNum,
       @RequestParam(value = "limit", defaultValue = "30") int limitNum
   ) throws Exception {
-    pageNum = pageNum * 30;
+    pageNum = pageNum * limitNum;
     if (sync) {
       return matchGameInfoService.getMatchInfoListByPuuid(puuid, pageNum, limitNum);
     }
