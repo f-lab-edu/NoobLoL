@@ -2,11 +2,17 @@ package com.nooblol.user.controller;
 
 import com.nooblol.global.annotation.UserLoginCheck;
 import com.nooblol.global.dto.ResponseDto;
-import com.nooblol.user.dto.LetterDeleteRequestDto;
+import com.nooblol.global.utils.CommonUtils;
+import com.nooblol.global.utils.SessionUtils;
+import com.nooblol.user.dto.LetterDto;
 import com.nooblol.user.dto.LetterInsertRequestDto;
+import com.nooblol.user.dto.LetterSearchDto;
+import com.nooblol.user.service.LetterService;
+import com.nooblol.user.utils.LetterConstants;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -26,9 +32,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("/user/letter")
+@RequestMapping("/letter")
 @RequiredArgsConstructor
 public class LetterController {
+
+  private final LetterService letterService;
+
 
   /**
    * Parameter로 받은 letterId의 쪽지를 조회한다. 조회시에는 session에 저장된 사용자가 letterId를 받은 발신자 혹은 수신자인 경우에만 데이터를
@@ -40,27 +49,37 @@ public class LetterController {
    */
   @UserLoginCheck
   @GetMapping("/{letterId}")
-  public ResponseDto getLetter(@PathVariable @NotBlank int letterId, HttpSession session) {
-    return null;
+  public ResponseDto getLetter(
+      @PathVariable @NotNull(message = LetterConstants.LETTER_ID_NULL) int letterId,
+      HttpSession session
+  ) {
+    return CommonUtils.makeToResponseOkDto(letterService.getLetter(letterId, session));
   }
 
   /**
-   * 사용자의 쪽찌 List를 조회한다.
+   * 발송, 수신 둘중 한개의 쪽지 리스트 조회한다
    *
+   * @param type     발송리스트, 수신리스트를 선택한다.
    * @param pageNum
    * @param limitNum
    * @param session
    * @return
    */
   @UserLoginCheck
-  @GetMapping("/list")
-  public ResponseDto getLetterList(
-      @RequestParam(value = "page", defaultValue = "0") int pageNum,
-      @RequestParam(value = "limit", defaultValue = "30") int limitNum,
+  @GetMapping("/list/{type}")
+  public ResponseDto getLetterToList(
+      @PathVariable @NotBlank(message = LetterConstants.LETTER_TYPE_NULL) String type,
+      @RequestParam(value = "page", required = false, defaultValue = "0") int pageNum,
+      @RequestParam(value = "limit", required = false, defaultValue = "30") int limitNum,
       HttpSession session
   ) {
+    LetterSearchDto searchParameterDto = makeLetterListSearchDto(
+        SessionUtils.getSessionUserId(session), pageNum, limitNum, type
+    );
 
-    return null;
+    return CommonUtils.makeToResponseOkDto(
+        letterService.getLetterListByLetterId(searchParameterDto)
+    );
   }
 
   /**
@@ -75,20 +94,52 @@ public class LetterController {
       @Valid @RequestBody LetterInsertRequestDto letterInsertRequestDto,
       HttpSession session
   ) {
-    return null;
+    return CommonUtils.makeToResponseOkDto(
+        letterService.insertLetter(letterInsertRequestDto, session)
+    );
   }
 
   /**
-   * 쪽지의 삭제 - Status값만 변경한다. 수신받은 letterId와 Type인 To, From을 확인하여, 해당 Status를 삭제로 변경한다
+   * 쪽지의 삭제 - Status만 변경한다. 수신받은 letterId와 Type인 To, From을 확인하여, 해당 Status를 삭제로 변경한다
    *
    * @param session
    * @return
    */
   @UserLoginCheck
-  @DeleteMapping("/")
+  @DeleteMapping("/{type}/{letterId}")
   public ResponseDto deleteLetter(
-      @Valid @RequestBody LetterDeleteRequestDto letterDeleteRequestDto, HttpSession session
+      @PathVariable @NotBlank(message = LetterConstants.LETTER_TYPE_NULL) String type,
+      @PathVariable @NotNull(message = LetterConstants.LETTER_ID_NULL) int letterId,
+      HttpSession session
   ) {
-    return null;
+    LetterDto letterDto = new LetterDto().builder()
+        .letterId(letterId)
+        .type(type)
+        .build();
+
+    return CommonUtils.makeToResponseOkDto(
+        letterService.deleteLetter(letterDto, session)
+    );
+  }
+
+  /**
+   * 쪽지 리스트를 조회하는 DTO 생성
+   *
+   * @param userId
+   * @param pageNum
+   * @param limitNum
+   * @param type
+   * @return
+   */
+  private LetterSearchDto makeLetterListSearchDto(
+      String userId, int pageNum, int limitNum, String type
+  ) {
+    return new LetterSearchDto().builder()
+        .userId(userId)
+        .statusArr(LetterConstants.LETTER_LIST_SEARCH_STATUS_ARR)
+        .pageNum(pageNum * limitNum)
+        .limitNum(limitNum)
+        .letterType(type)
+        .build();
   }
 }
