@@ -1,5 +1,6 @@
 package com.nooblol.user.controller;
 
+import com.nooblol.global.annotation.LetterTypeValidation;
 import com.nooblol.global.annotation.UserLoginCheck;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.utils.CommonUtils;
@@ -59,16 +60,17 @@ public class LetterController {
   /**
    * 발송, 수신 둘중 한개의 쪽지 리스트 조회한다
    *
-   * @param type     발송리스트, 수신리스트를 선택한다.
+   * @param type     발송리스트, 수신리스트를 선택한다. 값이 없는 경우 BAD_REQUEST
    * @param pageNum
    * @param limitNum
    * @param session
    * @return
    */
   @UserLoginCheck
+  @LetterTypeValidation
   @GetMapping("/list/{type}")
   public ResponseDto getLetterToList(
-      @PathVariable @NotBlank(message = LetterConstants.LETTER_TYPE_NULL) String type,
+      @PathVariable String type,
       @RequestParam(value = "page", required = false, defaultValue = "0") int pageNum,
       @RequestParam(value = "limit", required = false, defaultValue = "30") int limitNum,
       HttpSession session
@@ -91,8 +93,7 @@ public class LetterController {
   @UserLoginCheck
   @PostMapping("/")
   public ResponseDto insertLetter(
-      @Valid @RequestBody LetterInsertRequestDto letterInsertRequestDto,
-      HttpSession session
+      @Valid @RequestBody LetterInsertRequestDto letterInsertRequestDto, HttpSession session
   ) {
     return CommonUtils.makeToResponseOkDto(
         letterService.insertLetter(letterInsertRequestDto, session)
@@ -106,6 +107,7 @@ public class LetterController {
    * @return
    */
   @UserLoginCheck
+  @LetterTypeValidation
   @DeleteMapping("/{type}/{letterId}")
   public ResponseDto deleteLetter(
       @PathVariable @NotBlank(message = LetterConstants.LETTER_TYPE_NULL) String type,
