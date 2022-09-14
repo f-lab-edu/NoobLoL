@@ -65,14 +65,14 @@
 
   <update id="updateLetterToStatusByLetterIdAndToUserId" parameterType="LetterDto">
     UPDATE users_letter
-    SET to_status = #{status}
+    SET to_status = #{toStatus}
     WHERE letter_id = #{letterId}
       AND to_user_id = #{toUserId}
   </update>
 
   <update id="updateLetterFromStatusByLetterIdAndFromUserId" parameterType="LetterDto">
     UPDATE users_letter
-    SET from_status = #{status}
+    SET from_status = #{fromStatus}
     WHERE letter_id = #{letterId}
       AND from_user_id = #{fromUserId}
   </update>

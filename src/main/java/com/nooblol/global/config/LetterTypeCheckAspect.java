@@ -25,8 +25,8 @@ public class LetterTypeCheckAspect {
    *
    * @param jp
    */
-  @Before("@annotation(com.nooblol.global.annotation.LetterTypeValidation) && args(type, ..)")
-  public void letterTypeValidation(JoinPoint jp, String type) {
+  @Before("@annotation(com.nooblol.global.annotation.LetterTypeValidation) && args(type,..)")
+  public void letterTypeValidation(JoinPoint jp, String type) throws Throwable {
     if (!typeValid(type.toUpperCase())) {
 
       log.info("[LetterTypeCheckAspect.letterTypeValidation] Bad Request User Id : "

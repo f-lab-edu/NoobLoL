@@ -42,7 +42,9 @@ public class LetterController {
 
   /**
    * Parameter로 받은 letterId의 쪽지를 조회한다. 조회시에는 session에 저장된 사용자가 letterId를 받은 발신자 혹은 수신자인 경우에만 데이터를
-   * Return한다
+   * Return한다.
+   * <p>
+   * 수신자가 현재 로그인한 사용자인 경우에는 Status의 상태값을 읽은 상태로 변경한다.
    *
    * @param letterId
    * @param session
@@ -85,7 +87,7 @@ public class LetterController {
   }
 
   /**
-   * 쪽지의 발송
+   * 쪽지의 발송기능이며, 본인이 본인한테의 쪽지 발송은 불가능하다.
    *
    * @param session
    * @return

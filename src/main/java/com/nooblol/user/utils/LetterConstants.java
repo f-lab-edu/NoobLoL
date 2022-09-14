@@ -24,9 +24,13 @@ public class LetterConstants {
   //ToStatus, FromStatus Value
   public static final int LETTER_STATUS_READ = 1;
   public static final int LETTER_STATUS_UNREAD = 2;
-  public static final int LETTER_STATUS_DELETED = 9;
+  public static final int LETTER_STATUS_DELETE = 9;
 
   public static final int[] LETTER_LIST_SEARCH_STATUS_ARR = {
+      LETTER_STATUS_READ, LETTER_STATUS_UNREAD
+  };
+
+  public static final int[] LETTER_LIST_STATUS_ARR = {
       LETTER_STATUS_READ, LETTER_STATUS_UNREAD
   };
 

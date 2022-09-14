@@ -27,13 +27,13 @@ public interface LetterService {
 
 
   /**
-   * 쪽지데이터 삽입
+   * 쪽지의 발송기능이며, 본인이 본인한테의 쪽지 발송은 불가능하다.
    *
-   * @param letterInsertRequestDto
+   * @param requestDto
    * @param session
    * @return
    */
-  boolean insertLetter(LetterInsertRequestDto letterInsertRequestDto, HttpSession session);
+  boolean insertLetter(LetterInsertRequestDto requestDto, HttpSession session);
 
   /**
    * 쪽지의 삭제, 실제로는 DB에서 Status값을 Update 처리만 한다.
