@@ -9,6 +9,7 @@ import com.nooblol.board.service.ArticleService;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionUtils;
 import com.nooblol.global.utils.UserUtils;
+import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -62,6 +63,18 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
     }
 
     return articleReplyMapper.deleteReplyByReplyId(replyId) > 0;
+  }
+
+  @Override
+  public ReplyDto selectReplyByReplyId(int replyId) {
+    return articleReplyMapper.selectReplyByReplyId(replyId);
+  }
+
+  @Override
+  public List<ReplyDto> selectReplyListByArticleId(int articleId) {
+    validHaveArticleInDb(articleId);
+
+    return articleReplyMapper.selectReplyListByArticleId(articleId);
   }
 
 

@@ -44,4 +44,16 @@ public class CommonUtils {
     result.setResult(obj);
     return result;
   }
+
+  /**
+   * Null이어도 Return이 되도 상관이 없는 경우 사용한다.
+   *
+   * @param obj
+   * @return
+   */
+  public static ResponseDto makeResponseOkDtoOfNullable(Object obj) {
+    ResponseDto result = ResponseEnum.OK.getResponse();
+    result.setResult(obj);
+    return result;
+  }
 }
