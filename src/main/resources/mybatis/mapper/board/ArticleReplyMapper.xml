@@ -40,4 +40,31 @@
     FROM bbs_articles_reply
     WHERE article_id = #{articleId}
   </delete>
+
+  <select id="selectReplyByReplyId" parameterType="int" resultType="ReplyDto">
+    SELECT reply_id,
+           article_id,
+           reply_content,
+           status,
+           sort_no,
+           created_at,
+           created_user_id,
+           created_at
+    FROM bbs_articles_reply
+    WHERE reply_id = #{replyId}
+  </select>
+
+  <select id="selectReplyListByArticleId" parameterType="int" resultType="ReplyDto">
+    SELECT reply_id,
+           article_id,
+           reply_content,
+           status,
+           sort_no,
+           created_at,
+           created_user_id,
+           created_at
+    FROM bbs_articles_reply
+    WHERE article_id = #{articleId}
+    ORDER BY sort_no
+  </select>
 </mapper>
