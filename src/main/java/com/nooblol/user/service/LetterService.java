@@ -23,7 +23,7 @@ public interface LetterService {
    * @param letterSearchDto
    * @return
    */
-  List<LetterDto> getLetterListByLetterId(LetterSearchDto letterSearchDto);
+  List<LetterDto> getLetterListByUserId(LetterSearchDto letterSearchDto);
 
 
   /**

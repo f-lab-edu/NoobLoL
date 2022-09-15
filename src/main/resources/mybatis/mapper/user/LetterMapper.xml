@@ -6,11 +6,11 @@
     INSERT INTO users_letter(letter_title, letter_content, to_user_id, to_status, from_user_id,
                              from_status, created_at)
     VALUES (#{letterTitle}, #{letterContent}, #{toUserId}, #{toStatus}, #{fromUserId},
-            #{fromStatuas}, #{createdAt})
+            #{fromStatus}, #{createdAt})
   </insert>
 
   <!--읽은상태와 읽지 않은 상태에 대해서 배열로 전달해야 하기 떄문-->
-  <select id="selectLetterListByLetterIdAndTypeTo" parameterType="LetterSearchDto"
+  <select id="selectLetterListByUserIdAndTypeTo" parameterType="LetterSearchDto"
     resultType="LetterDto">
     SELECT letter_id,
     letter_title,
@@ -30,7 +30,7 @@
     LIMIT #{pageNum}, #{limitNum}
   </select>
 
-  <select id="selectLetterListByLetterIdAndTypeFrom" parameterType="LetterSearchDto"
+  <select id="selectLetterListByUserIdAndTypeFrom" parameterType="LetterSearchDto"
     resultType="LetterDto">
     SELECT letter_id,
     letter_title,

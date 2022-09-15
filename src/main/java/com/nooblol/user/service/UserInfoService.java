@@ -1,5 +1,6 @@
 package com.nooblol.user.service;
 
+import com.nooblol.user.dto.UserDto;
 import com.nooblol.user.dto.UserInfoUpdateDto;
 import com.nooblol.user.dto.UserLoginDto;
 import com.nooblol.global.dto.ResponseDto;
@@ -12,4 +13,6 @@ public interface UserInfoService {
   ResponseDto userLogin(UserLoginDto userLoginDto, HttpServletRequest request);
 
   ResponseDto userLogout(HttpServletRequest request);
+
+  UserDto selectUserInfoByUserId(String userId);
 }

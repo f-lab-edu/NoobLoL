@@ -11,4 +11,6 @@ public interface UserInfoMapper {
   int updateUserInfo(UserInfoUpdateDto userInfoUpdateDto);
 
   UserDto selectUser(UserLoginDto userLoginDto);
+
+  UserDto selectUserByUserId(String userId);
 }

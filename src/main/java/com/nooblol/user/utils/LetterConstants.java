@@ -30,8 +30,8 @@ public class LetterConstants {
       LETTER_STATUS_READ, LETTER_STATUS_UNREAD
   };
 
-  public static final int[] LETTER_LIST_STATUS_ARR = {
-      LETTER_STATUS_READ, LETTER_STATUS_UNREAD
+  public static final int[] LETTER_LIST_STATUS_ALL_ARR = {
+      LETTER_STATUS_READ, LETTER_STATUS_UNREAD, LETTER_STATUS_DELETE
   };
 
 }

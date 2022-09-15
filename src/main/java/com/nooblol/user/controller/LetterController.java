@@ -4,6 +4,7 @@ import com.nooblol.global.annotation.LetterTypeValidation;
 import com.nooblol.global.annotation.UserLoginCheck;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.utils.CommonUtils;
+import com.nooblol.global.utils.ResponseEnum;
 import com.nooblol.global.utils.SessionUtils;
 import com.nooblol.user.dto.LetterDto;
 import com.nooblol.user.dto.LetterInsertRequestDto;
@@ -78,12 +79,14 @@ public class LetterController {
       HttpSession session
   ) {
     LetterSearchDto searchParameterDto = makeLetterListSearchDto(
-        SessionUtils.getSessionUserId(session), pageNum, limitNum, type
+        SessionUtils.getSessionUserId(session), pageNum, limitNum, type.toUpperCase()
     );
 
-    return CommonUtils.makeToResponseOkDto(
-        letterService.getLetterListByLetterId(searchParameterDto)
-    );
+    //Data 가 Null인경우 CommonUtils에선 NotFound로 보내버려서 직접 설정함.
+    ResponseDto result = ResponseEnum.OK.getResponse();
+    result.setResult(letterService.getLetterListByUserId(searchParameterDto));
+
+    return result;
   }
 
   /**

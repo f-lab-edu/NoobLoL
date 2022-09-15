@@ -7,9 +7,13 @@ import com.nooblol.user.dto.LetterInsertRequestDto;
 import com.nooblol.user.dto.LetterSearchDto;
 import com.nooblol.user.mapper.LetterMapper;
 import com.nooblol.user.service.LetterService;
+import com.nooblol.user.service.UserInfoService;
 import com.nooblol.user.utils.LetterConstants;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +27,8 @@ public class LetterServiceImpl implements LetterService {
 
   private final LetterMapper letterMapper;
 
+  private final UserInfoService userInfoService;
+
   @Override
   public LetterDto getLetter(int letterId, HttpSession session) {
     LetterDto letterDto = letterMapper.selectLetterByLetterId(letterId);
@@ -32,30 +38,43 @@ public class LetterServiceImpl implements LetterService {
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
+    if (!ObjectUtils.isEmpty(letterDto) &&
+        !(letterReqUserId.equals(letterDto.getToUserId()) ||
+            letterReqUserId.equals(letterDto.getFromUserId()))
+    ) {
+      throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
+    }
+
     //발송자인 경우에는 먼저 return
     if (letterReqUserId.equals(letterDto.getFromUserId())) {
       return letterDto;
     }
-
-    //수신자의 경우에만 Update
-    updateLetterStatus(
-        letterDto.getLetterId(),
-        LetterConstants.LETTER_STATUS_READ,
-        LetterConstants.LETTER_TYPE_TO,
-        session
-    );
+    //수신자의 경우 읽지 않았으면 Update
+    if (letterDto.getToStatus() == LetterConstants.LETTER_STATUS_UNREAD) {
+      letterDto.setToStatus(LetterConstants.LETTER_STATUS_READ);
+      updateLetterStatus(
+          letterDto.getLetterId(),
+          LetterConstants.LETTER_STATUS_READ,
+          LetterConstants.LETTER_TYPE_TO,
+          session
+      );
+    }
 
     return letterDto;
   }
 
   @Override
-  public List<LetterDto> getLetterListByLetterId(LetterSearchDto letterSearchDto) {
+  public List<LetterDto> getLetterListByUserId(LetterSearchDto letterSearchDto) {
     if (LetterConstants.LETTER_TYPE_TO.equals(letterSearchDto.getLetterType())) {
-      return letterMapper.selectLetterListByLetterIdAndTypeTo(letterSearchDto);
+      return Optional.ofNullable(
+          letterMapper.selectLetterListByUserIdAndTypeTo(letterSearchDto)
+      ).orElse(new ArrayList<LetterDto>());
     }
 
     if (LetterConstants.LETTER_TYPE_FROM.equals(letterSearchDto.getLetterType())) {
-      return letterMapper.selectLetterListByLetterIdAndTypeFrom(letterSearchDto);
+      return Optional.ofNullable(
+          letterMapper.selectLetterListByUserIdAndTypeFrom(letterSearchDto)
+      ).orElse(new ArrayList<LetterDto>());
     }
 
     throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
@@ -68,6 +87,10 @@ public class LetterServiceImpl implements LetterService {
       throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
 
+    if (isNotExistsUserId(requestDto.getToUserId())) {
+      throw new IllegalArgumentException(ExceptionMessage.NOT_FOUND);
+    }
+
     LetterDto insertLetter = new LetterDto().builder()
         .letterTitle(requestDto.getLetterTitle())
         .letterContent(requestDto.getLetterContent())
@@ -75,6 +98,7 @@ public class LetterServiceImpl implements LetterService {
         .toStatus(LetterConstants.LETTER_STATUS_UNREAD)
         .fromUserId(fromUserId)
         .fromStatus(LetterConstants.LETTER_STATUS_READ)
+        .createdAt(LocalDateTime.now())
         .build();
 
     return letterMapper.insertLetter(insertLetter) > 0;
@@ -134,12 +158,22 @@ public class LetterServiceImpl implements LetterService {
 
   /**
    * Status의 값이 실제 Constants에 존재하는지 여부 확인
+   *
    * @param status
    * @return
    */
   private boolean statusValid(int status) {
-    return Arrays.stream(LetterConstants.LETTER_LIST_STATUS_ARR)
+    return Arrays.stream(LetterConstants.LETTER_LIST_STATUS_ALL_ARR)
         .anyMatch(arrStatusVal -> arrStatusVal == status);
   }
 
+  /**
+   * 수신자가 실제 Users테이블에 존재하는지 여부 확인
+   *
+   * @param userId
+   * @return
+   */
+  private boolean isNotExistsUserId(String userId) {
+    return Optional.ofNullable(userInfoService.selectUserInfoByUserId(userId)).isEmpty();
+  }
 }

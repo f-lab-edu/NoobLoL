@@ -112,5 +112,10 @@ public class UserInfoServiceImpl implements UserInfoService {
     return ResponseEnum.OK.getResponse();
   }
 
+  @Override
+  public UserDto selectUserInfoByUserId(String userId) {
+    return userInfoMapper.selectUserByUserId(userId);
+  }
+
 }
 

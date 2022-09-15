@@ -12,9 +12,9 @@ public interface LetterMapper {
 
   LetterDto selectLetterByLetterId(int letterId);
 
-  List<LetterDto> selectLetterListByLetterIdAndTypeTo(LetterSearchDto letterSearchDto);
+  List<LetterDto> selectLetterListByUserIdAndTypeTo(LetterSearchDto letterSearchDto);
 
-  List<LetterDto> selectLetterListByLetterIdAndTypeFrom(LetterSearchDto letterSearchDto);
+  List<LetterDto> selectLetterListByUserIdAndTypeFrom(LetterSearchDto letterSearchDto);
 
   int updateLetterToStatusByLetterIdAndToUserId(LetterDto letterDto);
 
