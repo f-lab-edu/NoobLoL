@@ -1,8 +1,8 @@
 #Setting DB
 spring:
   datasource:
-    url: jdbc:h2:~/h2/nooblol;MODE=MYSQL;DATABASE_TO_LOWER=TRUE
-    #url: jdbc:h2:tcp://localhost/~/h2/nooblol;MODE=MYSQL;DATABASE_TO_LOWER=TRUE
+    #url: jdbc:h2:~/h2/nooblol;MODE=MYSQL;DATABASE_TO_LOWER=TRUE
+    url: jdbc:h2:tcp://localhost/~/h2/nooblol;MODE=MYSQL;DATABASE_TO_LOWER=TRUE
     username: sa
     password: sa
     driver-class-name: org.h2.Driver
@@ -19,6 +19,13 @@ spring:
   redis: #redis
     host: 127.0.0.1
     port: 6379
+    lettuce:
+      pool:
+        #min-Idle 1로 설정한 이유는 0인 경우 다시 커넥션을 맺어야 하나, 한개이상 맺고있으면 통신없이 바로 사용이 가능하기에
+        min-idle: 1
+        max-idle: 8
+        max-active: 8
+    password: test
 
 server:
   port: 8080
