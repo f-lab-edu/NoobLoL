@@ -32,9 +32,8 @@ dependencies {
 //    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.3'
+    testImplementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
 }
-
 
 //Build FileName Change app.jar
 bootJar {
