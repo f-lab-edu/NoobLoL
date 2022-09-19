@@ -15,7 +15,6 @@ public class PartyServiceImpl implements PartyService {
 
   private final RedisTemplate redisTemplate;
 
-
   @Override
   public PartyArticleDto getPartyArticleByPartyId(int partyId) {
     return null;

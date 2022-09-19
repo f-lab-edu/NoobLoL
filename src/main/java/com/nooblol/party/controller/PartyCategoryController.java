@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,8 +32,8 @@ public class PartyCategoryController {
    *
    * @return
    */
-  @GetMapping("/")
-  public ResponseDto getPartyCategory() {
+  @GetMapping("/{categoryId}")
+  public ResponseDto getPartyCategory(@PathVariable int categoryId) {
     return null;
   }
 
@@ -59,6 +60,8 @@ public class PartyCategoryController {
 
   /**
    * 카테고리 정보 수정
+   *
+   * @return
    */
   //TODO [22. 09. 15] : 관리자 권한 확인하는 Annotation 추후 추가
   @PutMapping("/")
@@ -67,7 +70,9 @@ public class PartyCategoryController {
   }
 
   /**
-   * 카테고리의 삭제 - 실제로 삭제하진 않고 Status만
+   * 카테고리의 삭제 - 실제로 삭제하진 않고 Status를 Update만 한다
+   *
+   * @return
    */
   //TODO [22. 09. 15] : 관리자 권한 확인하는 Annotation 추후 추가
   @DeleteMapping("/")

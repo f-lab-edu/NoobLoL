@@ -7,6 +7,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 
@@ -38,12 +39,24 @@ public class RedisConfig {
     return new LettuceConnectionFactory(redisStandaloneConfiguration);
   }
 
+  /**
+   * 기존에 웹상의 사람들의 예제를 보고 일단 그대로 셋팅을 진행하였으나, 나의 경우 Value에 대해서 Dto타입으로 저장이 필요한 경우였슴. 즉 Class Type으로의
+   * 저장이 필요한 시점이며 불러올때 역시 클래스타입으로 불러올 예정이었기에 타입에 대해서 수정함.
+   * <p>
+   * 타입에 대해서 https://loosie.tistory.com/807 해당 포스트의 하단부분의 RedisTemplate에 대한 설정을 재참고 함.
+   *
+   * @return
+   */
   @Bean
   public RedisTemplate<String, Object> redisTemplate() {
     RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
     redisTemplate.setConnectionFactory(redisConnectionFactory());
     redisTemplate.setKeySerializer(new StringRedisSerializer());
-    redisTemplate.setValueSerializer(new StringRedisSerializer());
+
+    //redisTemplate.setValueSerializer(new StringRedisSerializer());
+    GenericJackson2JsonRedisSerializer genericJackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
+    redisTemplate.setValueSerializer(genericJackson2JsonRedisSerializer);
+
     return redisTemplate;
   }
 }

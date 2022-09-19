@@ -198,12 +198,14 @@ CREATE TABLE `party_category`
     `updated_at`      datetime
 );
 
+//해당 글이 모집 완료가 되었는지, 구인구직중인지를 알기 위해서 Status 제작
 CREATE TABLE `party_list`
 (
-    `party_id`      int PRIMARY KEY AUTO_INCREMENT,
+    `id`            int PRIMARY KEY AUTO_INCREMENT,
     `category_id`   int,
-    `party_title`   varchar(255),
-    `party_content` text,
+    `title`         varchar(255),
+    `content`       text,
+    `status`        varchar(255),
     `character_id`  varchar(255),
     `password_hash` varchar(255),
     `created_at`    datetime DEFAULT (now())
