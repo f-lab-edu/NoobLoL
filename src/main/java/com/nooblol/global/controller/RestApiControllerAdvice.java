@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -38,15 +39,13 @@ public class RestApiControllerAdvice {
                 + ", ErrorContent : " + error.getMessage()
         );
       });
-      log.warn("Exception Trace : ", e);
     }
     return ResponseEnum.BAD_REQUEST.getResponse();
   }
 
   @ExceptionHandler({IllegalArgumentException.class})
   public ResponseDto illegalArgumentException(
-      IllegalArgumentException e,
-      HttpServletRequest request
+      IllegalArgumentException e, HttpServletRequest request
   ) {
     if (!ObjectUtils.isEmpty(e)) {
       log.warn(
@@ -58,6 +57,7 @@ public class RestApiControllerAdvice {
     }
     switch (e.getMessage()) {
       case ExceptionMessage.NO_DATA:
+      case ExceptionMessage.NOT_FOUND:
         return ResponseEnum.NOT_FOUND.getResponse();
 
       case ExceptionMessage.SERVER_ERROR:
@@ -67,6 +67,9 @@ public class RestApiControllerAdvice {
         ResponseDto rtn = ResponseEnum.CONFLICT.getResponse();
         rtn.setResult("이미 존재하는 데이터 입니다");
         return rtn;
+
+      case ExceptionMessage.UNAUTHORIZED:
+        return ResponseEnum.UNAUTHORIZED.getResponse();
 
       default:
         return ResponseEnum.BAD_REQUEST.getResponse();
@@ -99,17 +102,36 @@ public class RestApiControllerAdvice {
     return ResponseEnum.BAD_REQUEST.getResponse();
   }
 
-  /*
-  TODO : [22. 08. 25] NoHandlerFoundException 설정을 진행하여 Parameter가 없는 경우 해당 Exception으로 Return 할 수 있도록 계획함.
-    <p>
-    테스트는 두가지로 진행 해봄
-    1. DispatcherServlet Bean을 가져와 dispatcherServlet.setThrowExceptionIfNoHandlerFound의 설정을 바꾸는 방법 → Fail
-    2. application.yml에서 `spring.mvc.throw-exception-if-no-handler-found`의 설정과, `dispatch-options-request`을 진행하고서
-     해당 메소드로 Handling하려 하였으나 안됨. 추후 다른 방법을 찾아봐야 한다.
-   */
+  //PathVariable의 파라미터가 없는경우 해당 Exception이 실행 된다.
   @ExceptionHandler({NoHandlerFoundException.class})
   public ResponseDto noHandlerFoundExceptionHandling(NoHandlerFoundException e) {
     log.warn("[NoHandlerFoundExceptionHandling]", e);
+    return ResponseEnum.BAD_REQUEST.getResponse();
+  }
+
+  /**
+   * DELETE를 사용하며 PathVariable을 같이 사용하는 경우 PathVariable의 값이 없는채로 들어오는 경우 , 405 - MethodNowAllowed가
+   * 발생함. 해당 Exception에 대한 Handler
+   *
+   * @param e
+   * @return
+   */
+  @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
+  public ResponseDto methodNotAllowedExceptionHandling(HttpRequestMethodNotSupportedException e) {
+    log.warn("[HttpRequestMethodNotSupportedException]", e);
+    return ResponseEnum.BAD_REQUEST.getResponse();
+  }
+
+
+  /**
+   * Optinal을 사용하게 될 경우 발생하는 NPE에 대하여 Handling하기 위한 추가
+   *
+   * @param e
+   * @return
+   */
+  @ExceptionHandler({NullPointerException.class})
+  public ResponseDto nullPointerExceptionHandling(NullPointerException e) {
+    log.warn("[NullPointerException]", e);
     return ResponseEnum.BAD_REQUEST.getResponse();
   }
 }
