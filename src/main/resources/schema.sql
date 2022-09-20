@@ -153,8 +153,8 @@ CREATE TABLE `bbs_articles`
 CREATE TABLE `bbs_articles_status`
 (
     `article_id` int,
-    `bbs_id`     varchar(255),
-    `user_id`    varchar(255),
+    `bbs_id`     int,
+    `user_id`    int,
     `type`       tinyint,
     `created_at` datetime DEFAULT (now())
 );
