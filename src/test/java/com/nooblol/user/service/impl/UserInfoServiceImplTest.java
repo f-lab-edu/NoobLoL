@@ -12,6 +12,7 @@ import com.nooblol.user.utils.UserRoleStatus;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.exception.ExceptionMessage;
 import java.util.UUID;
+import javax.servlet.http.HttpSession;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.util.ObjectUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -96,7 +97,7 @@ class UserInfoServiceImplTest {
   @DisplayName("로그인시 DB에 존재하지 않는 사용자 라면 BAD_REQUEST Exception이 발생한다.")
   void userLogin_WhenNotUserThenBadrequestException() {
     //given
-    MockHttpServletRequest request = new MockHttpServletRequest();
+    HttpSession session = new MockHttpSession();
 
     UserLoginDto mockUserLoginDto = new UserLoginDto();
     mockUserLoginDto.setUserEmail("test@Email.com");
@@ -107,7 +108,7 @@ class UserInfoServiceImplTest {
 
     //when
     Exception e = assertThrows(IllegalArgumentException.class, () -> {
-      userInfoService.userLogin(mockUserLoginDto, request);
+      userInfoService.userLogin(mockUserLoginDto, session);
     });
 
     //then
@@ -118,7 +119,7 @@ class UserInfoServiceImplTest {
   @DisplayName("로그인 시 해당 사용자가 활동정지인 경우, OK 상태값과 SUSPENSION_USER라는 사용자문구를 받는다.")
   void userLogin_WhenSuspensionUserThenOkAndGetStringSuspensionUser() {
     //given
-    MockHttpServletRequest request = new MockHttpServletRequest();
+    HttpSession session = new MockHttpSession();
 
     UserLoginDto mockUserLoginDto = new UserLoginDto();
     mockUserLoginDto.setUserEmail("test@Email.com");
@@ -131,18 +132,18 @@ class UserInfoServiceImplTest {
     when(userInfoMapper.selectUser(mockUserLoginDto)).thenReturn(mockReturnDto);
 
     //when
-    ResponseDto result = userInfoService.userLogin(mockUserLoginDto, request);
+    ResponseDto result = userInfoService.userLogin(mockUserLoginDto, session);
 
     //then
     assertEquals(result.getResultCode(), HttpStatus.OK.value());
-    assertEquals(result.getResult(), "SUSPENSION_USER");
+    assertEquals(result.getResult(), UserRoleStatus.SUSPENSION_USER);
   }
 
   @Test
   @DisplayName("로그인 시 해당 사용자가 인증되지 않은 경우, OK 상태값과 UNAUTH_USER라는 사용자문구를 받는다.")
   void userLogin_WhenUnAuthUserThenOkAndGetStringSuspensionUser() {
     //given
-    MockHttpServletRequest request = new MockHttpServletRequest();
+    HttpSession session = new MockHttpSession();
 
     UserLoginDto mockUserLoginDto = new UserLoginDto();
     mockUserLoginDto.setUserEmail("test@Email.com");
@@ -155,18 +156,18 @@ class UserInfoServiceImplTest {
     when(userInfoMapper.selectUser(mockUserLoginDto)).thenReturn(mockReturnDto);
 
     //when
-    ResponseDto result = userInfoService.userLogin(mockUserLoginDto, request);
+    ResponseDto result = userInfoService.userLogin(mockUserLoginDto, session);
 
     //then
     assertEquals(result.getResultCode(), HttpStatus.OK.value());
-    assertEquals(result.getResult(), "UNAUTH_USER");
+    assertEquals(result.getResult(), UserRoleStatus.UNAUTH_USER);
   }
 
   @Test
   @DisplayName("로그인 시 정상사용이 가능한 사용자인 경우, OK 상태값과 User정보를 획득한다.")
   void userLogin_WhenAuthUserThenOkAndUserInfo() {
     //given
-    MockHttpServletRequest request = new MockHttpServletRequest();
+    HttpSession session = new MockHttpSession();
 
     UserLoginDto mockUserLoginDto = new UserLoginDto();
     mockUserLoginDto.setUserEmail("test@Email.com");
@@ -181,7 +182,7 @@ class UserInfoServiceImplTest {
     when(userInfoMapper.selectUser(mockUserLoginDto)).thenReturn(mockReturnDto);
 
     //when
-    ResponseDto result = userInfoService.userLogin(mockUserLoginDto, request);
+    ResponseDto result = userInfoService.userLogin(mockUserLoginDto, session);
 
     //then
     assertEquals(result.getResultCode(), HttpStatus.OK.value());
@@ -192,10 +193,10 @@ class UserInfoServiceImplTest {
   @DisplayName("로그아웃을 진행할 경우 무조건 OK 상태값을 획득한다.")
   void userLogout_WhenDoLogoutThenOk() {
     //given
-    MockHttpServletRequest request = new MockHttpServletRequest();
+    HttpSession session = new MockHttpSession();
 
     //when
-    ResponseDto result = userInfoService.userLogout(request);
+    ResponseDto result = userInfoService.userLogout(session);
 
     //then
     assertEquals(result.getResultCode(), HttpStatus.OK.value());
