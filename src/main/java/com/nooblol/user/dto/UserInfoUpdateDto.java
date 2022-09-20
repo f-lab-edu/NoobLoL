@@ -12,6 +12,9 @@ import javax.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
+/*
+ * newUserName,  newPassword의 경우 빈값이 들어와도 상관이 없다.
+ */
 @Getter
 @Setter
 public class UserInfoUpdateDto {
