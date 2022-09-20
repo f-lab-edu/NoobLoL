@@ -22,7 +22,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpSession;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -52,7 +51,7 @@ class AdminServiceImplTest {
 
     //TODO : 추후 로그인 정보를 담는 부분 추가
     //when
-    ResponseDto result = adminService.addAdminMember(mockUserDto, new MockHttpSession());
+    ResponseDto result = adminService.addAdminMember(mockUserDto);
 
     //then
     assertEquals(result.getResultCode(), HttpStatus.OK.value());
@@ -74,7 +73,7 @@ class AdminServiceImplTest {
 
     //TODO : 추후 로그인 정보를 담는 부분 추가
     //when
-    ResponseDto result = adminService.addAdminMember(mockUserDto, new MockHttpSession());
+    ResponseDto result = adminService.addAdminMember(mockUserDto);
 
     //then
     assertEquals(result.getResultCode(), HttpStatus.OK.value());
@@ -97,7 +96,7 @@ class AdminServiceImplTest {
     //when
     Exception e = assertThrows(IllegalArgumentException.class, () -> {
       //TODO : 추후 로그인 정보를 담는 부분 추가
-      adminService.addAdminMember(mockUserDto, new MockHttpSession());
+      adminService.addAdminMember(mockUserDto);
     });
 
     //then
@@ -115,7 +114,7 @@ class AdminServiceImplTest {
     when(adminMapper.forcedDeleteUser(deleteUser)).thenReturn(1);
 
     //when
-    ResponseDto result = adminService.forceDeleteUser(deleteUser, null);
+    ResponseDto result = adminService.forceDeleteUser(deleteUser);
 
     //then
     assertEquals(result.getResultCode(), HttpStatus.OK.value());
@@ -148,7 +147,7 @@ class AdminServiceImplTest {
     when(adminMapper.getAllUserList(0, 30)).thenReturn(mockReturnList);
 
     //when
-    ResponseDto result = adminService.getAllUserList(0, 30, null);
+    ResponseDto result = adminService.getAllUserList(0, 30);
 
     //then
     assertEquals(result.getResultCode(), HttpStatus.OK.value());
@@ -165,7 +164,7 @@ class AdminServiceImplTest {
     when(adminMapper.changeUserRole(any())).thenReturn(1);
 
     //when
-    ResponseDto result = adminService.changeToActiveUser(changeUserId, new MockHttpSession());
+    ResponseDto result = adminService.changeToActiveUser(changeUserId);
 
     //then
     assertEquals(result.getResultCode(), HttpStatus.OK.value());

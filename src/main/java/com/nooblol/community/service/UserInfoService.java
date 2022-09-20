@@ -1,7 +1,9 @@
 package com.nooblol.community.service;
 
 import com.nooblol.community.dto.UserInfoUpdateDto;
+import com.nooblol.community.dto.UserLoginDto;
 import com.nooblol.global.dto.ResponseDto;
+import javax.servlet.http.HttpSession;
 
 public interface UserInfoService {
 
@@ -12,4 +14,8 @@ public interface UserInfoService {
    * @return
    */
   ResponseDto updateUserInfo(UserInfoUpdateDto userUpdateInfoDto);
+
+  ResponseDto userLogin(UserLoginDto userLoginDto, HttpSession session);
+
+  ResponseDto userLogout(HttpSession session);
 }

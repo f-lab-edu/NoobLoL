@@ -24,6 +24,12 @@ spring:
           starttls:
             enable: true
 
+#Embedded Tomcat Session TimeOut
+server:
+  servlet:
+    session:
+      timeout: 3600
+
 #Setting MyBatis
 mybatis:
   configuration:
