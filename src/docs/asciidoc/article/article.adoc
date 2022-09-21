@@ -8,7 +8,7 @@ Creator : https://devjong12.tistory.com , Jong1
 :sectlinks:
 
 ifndef::snippets[]
-:snippets: ../../../build/generated-snippets
+:snippets: ../../../../build/generated-snippets
 endif::[]
 
 
@@ -45,16 +45,22 @@ include::{snippets}/article/addArticle/http-response.adoc[]
 [[Article_조회]]
 === Article 조회
 
-[[공통_Reuqest]]
-==== 공통 Request
+[[Field]]
+==== Field
+
+include::{snippets}/article/getArticle/guest/path-parameters.adoc[]
+
+[[Reuqest]]
+==== Request
 
 include::{snippets}/article/getArticle/guest/curl-request.adoc[]
 include::{snippets}/article/getArticle/guest/httpie-request.adoc[]
 
-[[공통_Field]]
-==== 공통 Field
+[[Response]]
+==== Response
 
-include::{snippets}/article/getArticle/guest/path-parameters.adoc[]
+include::{snippets}/article/getArticle/guest/response-headers.adoc[]
+include::{snippets}/article/getArticle/guest/response-fields.adoc[]
 
 [[Guest_조회]]
 ==== Guest 조회
