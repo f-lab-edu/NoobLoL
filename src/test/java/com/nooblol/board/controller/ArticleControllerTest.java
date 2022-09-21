@@ -254,8 +254,6 @@ class ArticleControllerTest {
             .andDo(
                 document(
                     "article/deleteArticle",
-                    ApiDocumentUtils.getDocumentRequest(),
-                    ApiDocumentUtils.getDocumentResponse(),
                     pathParameters(
                         parameterWithName("articleId").description("삭제할 Article(게시물) ID")
                     ),
@@ -299,8 +297,6 @@ class ArticleControllerTest {
           ).andExpect(status().isOk())
           .andExpect(jsonPath("$.resultCode", Is.is(HttpStatus.OK.value())))
           .andDo(document("article/status/getLikeAndNotLike",
-                  ApiDocumentUtils.getDocumentRequest(),
-                  ApiDocumentUtils.getDocumentResponse(),
                   pathParameters(
                       parameterWithName("articleId").description("존재하는 Article(게시물) ID")
                   ),
@@ -363,8 +359,6 @@ class ArticleControllerTest {
     private RestDocumentationResultHandler getStatusDocument(String docsPathValue) {
       return document(
           docsPathValue,
-          ApiDocumentUtils.getDocumentRequest(),
-          ApiDocumentUtils.getDocumentResponse(),
           pathParameters(
               parameterWithName("articleId").description("존재하는 Article(게시물) ID")
           ), responseHeaders(
