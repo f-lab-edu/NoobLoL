@@ -1,0 +1,26 @@
+= Rest API Index Docs
+Creator : https://devjong12.tistory.com , Jong1
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+
+[[공통_Response_Body]]
+= 공통 Response Body
+
+|===
+| field | value | description
+.6+| `resultCode`
+| 200 | OK
+| 400 | Bad Request 잘못된 요청
+| 401 | 사용자 권한 부족
+| 404 | Not Found, 실제로 존재하지가 않음
+| 409 | 데이터가 이미 존재하는 경우
+| 500 | Server Error
+|===
