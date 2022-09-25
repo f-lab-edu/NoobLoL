@@ -4,14 +4,7 @@ import com.nooblol.global.dto.ResponseDto;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 
-public class CommonUtils {
-
-  public static String summonerNameWhiteSpaceReplace(String name) {
-    if (name == null) {
-      return null;
-    }
-    return name.replaceAll(" ", "");
-  }
+public class ResponseUtils {
 
   /**
    * List를 받아 공백여부를 확인한 이후 Return할 객체를 가공한다.
@@ -28,3 +21,4 @@ public class CommonUtils {
   }
 
 }
+

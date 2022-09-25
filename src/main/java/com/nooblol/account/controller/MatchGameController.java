@@ -3,7 +3,7 @@ package com.nooblol.account.controller;
 import com.nooblol.account.service.MatchGameAddInfoService;
 import com.nooblol.account.service.MatchGameInfoService;
 import com.nooblol.global.dto.ResponseDto;
-import com.nooblol.global.utils.CommonUtils;
+import com.nooblol.global.utils.ResponseUtils;
 import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +64,7 @@ public class MatchGameController {
   public ResponseDto getMatchAllParticipants(
       @RequestParam(value = "matchId", required = false) @NotBlank String matchId
   ) {
-    return CommonUtils.makeListToResponseDto(
+    return ResponseUtils.makeListToResponseDto(
         matchGameAddInfoService.getMatchAllParticipantsList(matchId)
     );
   }
@@ -79,7 +79,7 @@ public class MatchGameController {
   public ResponseDto getMatchBan(
       @RequestParam(value = "matchId", required = false) @NotBlank String matchId
   ) {
-    return CommonUtils.makeListToResponseDto(matchGameAddInfoService.getMatchBanList(matchId));
+    return ResponseUtils.makeListToResponseDto(matchGameAddInfoService.getMatchBanList(matchId));
   }
 
   /**
@@ -94,7 +94,7 @@ public class MatchGameController {
       @RequestParam(value = "matchId", required = false) @NotBlank String matchId,
       @RequestParam(value = "puuid", required = false) @NotBlank String puuid
   ) {
-    return CommonUtils.makeListToResponseDto(
+    return ResponseUtils.makeListToResponseDto(
         matchGameAddInfoService.getMatchUseRunList(matchId, puuid)
     );
   }

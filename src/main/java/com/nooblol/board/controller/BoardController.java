@@ -3,7 +3,7 @@ package com.nooblol.board.controller;
 import com.nooblol.board.utils.BoardStatusEnum;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.board.service.CategoryService;
-import com.nooblol.global.utils.CommonUtils;
+import com.nooblol.global.utils.ResponseUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ObjectUtils;
@@ -31,7 +31,7 @@ public class BoardController {
   @GetMapping("/categoryList")
   public ResponseDto getCategoryList(
       @RequestParam(value = "status", defaultValue = "1") int status) {
-    return CommonUtils.makeListToResponseDto(categoryService.getCategoryList(status));
+    return ResponseUtils.makeListToResponseDto(categoryService.getCategoryList(status));
   }
 
   /**
@@ -49,7 +49,7 @@ public class BoardController {
     if (ObjectUtils.isEmpty(status)) {
       status = BoardStatusEnum.ACTIVE.getStatus();
     }
-    return CommonUtils.makeListToResponseDto(
+    return ResponseUtils.makeListToResponseDto(
         categoryService.getBbsList(categoryId, status)
     );
   }
@@ -57,6 +57,6 @@ public class BoardController {
 
   @GetMapping("/bbsAllList")
   public ResponseDto getAllBbsList() {
-    return CommonUtils.makeListToResponseDto(categoryService.getAllBbsList());
+    return ResponseUtils.makeListToResponseDto(categoryService.getAllBbsList());
   }
 }
