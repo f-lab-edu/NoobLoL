@@ -324,8 +324,8 @@ class CategoryServiceImplTest {
             .status(BoardStatusEnum.ACTIVE.getStatus())
             .categoryId(haveCategoryId)
             .createdUserId("test1").updatedUserId("test1")
-            .createdAt(new Timestamp(System.currentTimeMillis()))
-            .updatedAt(new Timestamp(System.currentTimeMillis()))
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
             .build();
 
         BbsDto mockBbsDto2 = new BbsDto().builder()
@@ -334,8 +334,8 @@ class CategoryServiceImplTest {
             .status(BoardStatusEnum.ACTIVE.getStatus())
             .categoryId(haveCategoryId)
             .createdUserId("test1").updatedUserId("test1")
-            .createdAt(new Timestamp(System.currentTimeMillis()))
-            .updatedAt(new Timestamp(System.currentTimeMillis()))
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
             .build();
 
         mockBbsList.add(mockBbsDto1);

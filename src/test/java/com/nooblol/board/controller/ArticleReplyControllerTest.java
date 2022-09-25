@@ -1,6 +1,5 @@
 package com.nooblol.board.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -11,19 +10,14 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nooblol.board.dto.ReplyDto;
-import com.nooblol.board.dto.ReplyRequestDto;
 import com.nooblol.board.dto.ReplyRequestDto.ReplyInsertDto;
 import com.nooblol.board.dto.ReplyRequestDto.ReplyUpdateDto;
-import com.nooblol.board.mapper.ArticleReplyMapper;
 import com.nooblol.board.service.ArticleReplyService;
-import com.nooblol.board.service.ArticleService;
 import com.nooblol.board.utils.BoardStatusEnum;
 import com.nooblol.global.utils.RestDocConfiguration;
 import com.nooblol.global.utils.SessionSampleObject;
@@ -32,7 +26,6 @@ import javax.servlet.http.HttpSession;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -44,7 +37,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 @WebMvcTest(ArticleReplyController.class)
 @Import(RestDocConfiguration.class)

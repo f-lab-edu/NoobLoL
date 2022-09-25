@@ -1,6 +1,6 @@
 package com.nooblol.board.dto;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,8 +19,8 @@ public class BbsDto {
   private String bbsName;
   private int status;
   private String createdUserId;
-  private Timestamp createdAt;
+  private LocalDateTime createdAt;
   private String updatedUserId;
-  private Timestamp updatedAt;
+  private LocalDateTime updatedAt;
 
 }
