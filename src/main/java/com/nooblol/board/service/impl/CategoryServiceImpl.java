@@ -22,10 +22,8 @@ public class CategoryServiceImpl implements CategoryService {
   @Override
   @Transactional(readOnly = true)
   public List<CategoryDto> getCategoryList(int status) {
-    for (BoardStatusEnum enumObj : BoardStatusEnum.values()) {
-      if (enumObj.getStatus() == status) {
-        return categoryMapper.selectCategory(enumObj.getStatus());
-      }
+    if (BoardStatusEnum.isExistStatus(status)) {
+      return categoryMapper.selectCategory(status);
     }
     return null;
   }
@@ -33,17 +31,14 @@ public class CategoryServiceImpl implements CategoryService {
   @Override
   @Transactional(readOnly = true)
   public List<BbsDto> getBbsList(int categoryId, int status) {
-    for (BoardStatusEnum enumObj : BoardStatusEnum.values()) {
-      if (enumObj.getStatus() == status) {
-        SearchBbsListDto searchParamDto =
-            new SearchBbsListDto().builder()
-                .categoryId(categoryId)
-                .status(status)
-                .build();
-        return categoryMapper.selectBbsList(searchParamDto);
-      }
+    if (BoardStatusEnum.isExistStatus(status)) {
+      SearchBbsListDto searchParamDto =
+          new SearchBbsListDto().builder()
+              .categoryId(categoryId)
+              .status(status)
+              .build();
+      return categoryMapper.selectBbsList(searchParamDto);
     }
-
     return null;
   }
 

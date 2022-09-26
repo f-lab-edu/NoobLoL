@@ -1,12 +1,11 @@
 package com.nooblol.board.controller;
 
-import com.nooblol.board.utils.BoardStatusEnum;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.board.service.CategoryService;
 import com.nooblol.global.utils.ResponseUtils;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +30,9 @@ public class BoardController {
   @GetMapping("/categoryList")
   public ResponseDto getCategoryList(
       @RequestParam(value = "status", defaultValue = "1") int status) {
-    return ResponseUtils.makeListToResponseDto(categoryService.getCategoryList(status));
+    return ResponseUtils.makeListToResponseDto(
+        Optional.of(categoryService.getCategoryList(status)).get()
+    );
   }
 
   /**
@@ -44,13 +45,10 @@ public class BoardController {
   @GetMapping("/bbsList")
   public ResponseDto getBbsList(
       @RequestParam(value = "categoryId") int categoryId,
-      @RequestParam(value = "status", required = false) Integer status
+      @RequestParam(value = "status", required = false, defaultValue = "1") int status
   ) {
-    if (ObjectUtils.isEmpty(status)) {
-      status = BoardStatusEnum.ACTIVE.getStatus();
-    }
     return ResponseUtils.makeListToResponseDto(
-        categoryService.getBbsList(categoryId, status)
+        Optional.of(categoryService.getBbsList(categoryId, status)).get()
     );
   }
 
