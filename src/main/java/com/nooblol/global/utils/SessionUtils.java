@@ -1,6 +1,6 @@
 package com.nooblol.global.utils;
 
-import com.nooblol.community.dto.UserDto;
+import com.nooblol.user.dto.UserDto;
 import javax.servlet.http.HttpSession;
 import org.springframework.util.ObjectUtils;
 

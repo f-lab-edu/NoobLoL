@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nooblol.user.mapper.UserSignUpMapper">
+  <!--회원가입 유저 DB Insert-->
+  <insert id="insertSignUpUser" parameterType="UserSignUpRequestDto">
+    INSERT INTO USERS(user_id, user_email, user_name, user_password_hash, user_role, created_at,
+                      updated_at)
+    VALUES (#{userId}, #{userEmail}, #{userName}, #{password}, #{userRole}, #{createdAt},
+            #{updatedAt})
+  </insert>
+
+  <!--Email을 통하여 User정보 획득-->
+  <select id="selectUserInfoByEmail" parameterType="String" resultType="UserSignUpRequestDto">
+    SELECT user_id, user_email, user_name, user_role
+    FROM USERS
+    WHERE user_email = #{email}
+  </select>
+
+  <!--UserId를 통하여 User정보 획득-->
+  <select id="selectUserInfoByUserId" parameterType="String" resultType="UserSignUpRequestDto">
+    SELECT user_id, user_email, user_name, user_role
+    FROM USERS
+    WHERE user_id = #{userId}
+  </select>
+
+  <!--UserRole 변경-->
+  <update id="updateUserRole" parameterType="UserSignUpRequestDto">
+    UPDATE USERS
+    SET user_role  = #{userRole},
+        updated_at = now()
+    WHERE user_id = #{userId}
+  </update>
+
+</mapper>

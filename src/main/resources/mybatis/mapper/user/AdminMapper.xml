@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nooblol.user.mapper.UserSignOutMapper">
+
+  <select id="selectAdminDto" parameterType="AdminUserDto">
+    SELECt user_id,
+           user_email,
+           user_name,
+           user_password_hash,
+           user_role,
+           created_at,
+           updated_at
+    FROM users
+    WHERE user_id = #{adminUserId}
+      AND user_password_hash = #{adminUserPassword}
+  </select>
+
+  <select id="getAllUserList" parameterType="int">
+    SELECt user_id,
+           user_email,
+           user_name,
+           user_role,
+           level,
+           exp,
+           created_at,
+           updated_at
+    FROM users
+    ORDER BY created_at DESC
+      LIMIT #{pageNum}, #{limitNum}
+  </select>
+
+
+  <delete id="forcedDeleteUser" parameterType="String">
+    DELETE
+    FROM users
+    WHERE user_id = #{deleteUserId}
+  </delete>
+
+  <update id="changeUserRole" parameterType="UserDto">
+    UPDATE USERS
+    SET user_role  = #{userRole},
+        updated_at = now()
+    WHERE user_id = #{userId}
+  </update>
+</mapper>

@@ -1,6 +1,6 @@
 package com.nooblol.global.config;
 
-import com.nooblol.community.utils.UserRoleStatus;
+import com.nooblol.user.utils.UserRoleStatus;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionUtils;
 import java.util.Optional;

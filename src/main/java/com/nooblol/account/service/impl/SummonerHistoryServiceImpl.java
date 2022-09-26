@@ -7,7 +7,6 @@ import com.nooblol.account.mapper.SummonerHistoryMapper;
 import com.nooblol.account.service.SummonerHistoryService;
 import com.nooblol.global.config.RiotConfiguration;
 import com.nooblol.global.dto.ResponseDto;
-import com.nooblol.global.utils.CommonUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +20,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -73,7 +73,7 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
     } catch (Exception e) {
       log.error(e.getMessage());
     } finally {
-      if (CommonUtils.objectIsNull(rtnDto)) {
+      if (ObjectUtils.isEmpty(rtnDto)) {
         rtnDto = new ResponseDto(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND);
       }
     }
@@ -128,7 +128,7 @@ public class SummonerHistoryServiceImpl implements SummonerHistoryService {
     SummonerHistoryDto existDataByDB =
         summonerHistoryMapper.selectSummonerHistoryByLeagueAndId(leagueId, summonerId);
 
-    if (CommonUtils.objectIsNotNull(existDataByDB)) {
+    if (!ObjectUtils.isEmpty(existDataByDB)) {
       summonerHistoryMapper.updateSummonerHistory(summonerHistoryDto);
     } else {
       summonerHistoryMapper.insertSummonerHistory(summonerHistoryDto);
