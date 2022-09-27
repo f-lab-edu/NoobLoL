@@ -56,4 +56,10 @@
     WHERE article_id = #{articleId}
   </select>
 
+  <delete id="deleteArticleByArticleId" parameterType="int">
+    DELETE
+    FROM bbs_articles
+    WHERE article_id = #{articleId}
+  </delete>
+
 </mapper>

@@ -78,6 +78,29 @@ public class ArticleServiceImpl implements ArticleService {
     return articleMapper.selectMaxArticleId();
   }
 
+  @Override
+  public boolean deleteArticle(int articleId, HttpSession session) {
+    ArticleDto haveArticleData = articleMapper.selectArticleByArticleId(articleId);
+
+    if (ObjectUtils.isEmpty(haveArticleData)) {
+      throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
+    }
+
+    if (isUserAdmin(SessionUtils.getSessionUserRole(session))) {
+      return isArticleDeleteSuccess(articleId);
+    }
+
+    boolean isNotCreatedUser = isNotArticleCreatedUser(
+        haveArticleData.getCreatedUserId(), SessionUtils.getSessionUserId(session)
+    );
+
+    if (isNotCreatedUser) {
+      throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
+    }
+
+    return isArticleDeleteSuccess(articleId);
+  }
+
   /**
    * Upsert가 정상적으로 진행된 경우 True를 Return한다.
    *
@@ -102,5 +125,15 @@ public class ArticleServiceImpl implements ArticleService {
 
   private boolean isUserAdmin(int userRole) {
     return userRole == UserRoleStatus.ADMIN.getRoleValue();
+  }
+
+  /**
+   * 게시글을 삭제하며, 정상적으로 삭제가 되면 True, 삭제된 건수가 없으면 False를 Return한다
+   *
+   * @param articleId
+   * @return
+   */
+  private boolean isArticleDeleteSuccess(int articleId) {
+    return articleMapper.deleteArticleByArticleId(articleId) == 0 ? false : true;
   }
 }

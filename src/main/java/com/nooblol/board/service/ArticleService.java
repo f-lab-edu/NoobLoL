@@ -45,4 +45,13 @@ public interface ArticleService {
    * @return
    */
   int getNewArticleId();
+
+  /**
+   * 게시물 삭제, 요청자가 관리자인 경우 또는 글 작성자인 경우에만 삭제를 진행한다.
+   *
+   * @param articleId
+   * @param session
+   * @return
+   */
+  boolean deleteArticle(int articleId, HttpSession session);
 }

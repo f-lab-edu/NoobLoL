@@ -6,6 +6,7 @@ import com.nooblol.board.dto.ArticleUpdateRequestDto;
 import com.nooblol.board.service.ArticleService;
 import com.nooblol.global.annotation.UserLoginCheck;
 import com.nooblol.global.dto.ResponseDto;
+import com.nooblol.global.utils.CommonUtils;
 import com.nooblol.global.utils.ResponseEnum;
 import com.nooblol.global.utils.SessionUtils;
 import javax.servlet.http.HttpSession;
@@ -42,9 +43,7 @@ public class ArticleController {
         articleId, SessionUtils.getSessionUserId(session)
     );
 
-    ResponseDto result = ResponseEnum.OK.getResponse();
-    result.setResult(article);
-    return result;
+    return CommonUtils.makeToResponseOkDto(article);
   }
 
   /**
@@ -72,9 +71,7 @@ public class ArticleController {
 
     boolean upsertResult = articleService.upsertArticle(upsertArticle, session, true);
 
-    ResponseDto result = ResponseEnum.OK.getResponse();
-    result.setResult(upsertResult);
-    return result;
+    return CommonUtils.makeToResponseOkDto(upsertResult);
   }
 
   /**
@@ -99,8 +96,22 @@ public class ArticleController {
 
     boolean upsertResult = articleService.upsertArticle(upsertArticle, session, false);
 
-    ResponseDto result = ResponseEnum.OK.getResponse();
-    result.setResult(upsertResult);
-    return result;
+    return CommonUtils.makeToResponseOkDto(upsertResult);
   }
+
+  /**
+   * @param articleId
+   * @param session
+   * @return
+   */
+  @UserLoginCheck
+  @GetMapping("/delete/{articleId}")
+  public ResponseDto deleteArticle(
+      @PathVariable int articleId, HttpSession session
+  ) {
+    boolean deleteResult = articleService.deleteArticle(articleId, session);
+
+    return CommonUtils.makeToResponseOkDto(deleteResult);
+  }
+
 }

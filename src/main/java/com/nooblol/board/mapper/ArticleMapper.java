@@ -17,4 +17,6 @@ public interface ArticleMapper {
   int selectMaxArticleId();
 
   String selectCreatedUserId(int articleId);
+
+  int deleteArticleByArticleId(int articleId);
 }
