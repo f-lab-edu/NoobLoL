@@ -44,11 +44,6 @@ public class RestApiControllerAdvice {
     return ResponseEnum.BAD_REQUEST.getResponse();
   }
 
-  /*
-  TODO : [22. 09. 08]
-  지금 현재 전부 IllegalArgumentException으로 방향을 잡고있는데 그러면 이 Exception을 처리하는 메소드가
-  혼자서 모든 부하를 담당하는게 되는데 처리에 있어서 분산을 하는게 맞지 않을까? 하는 고민이 든다.
-   */
   @ExceptionHandler({IllegalArgumentException.class})
   public ResponseDto illegalArgumentException(
       IllegalArgumentException e, HttpServletRequest request
@@ -131,6 +126,7 @@ public class RestApiControllerAdvice {
 
   /**
    * Optinal을 사용하게 될 경우 발생하는 NPE에 대하여 Handling하기 위한 추가
+   *
    * @param e
    * @return
    */

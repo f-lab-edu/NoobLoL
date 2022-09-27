@@ -1,5 +1,7 @@
 package com.nooblol.user.dto;
 
+import com.nooblol.user.utils.UserConstants;
+import com.nooblol.global.utils.RegexConstants;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -13,10 +15,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserLoginDto {
 
-  @NotBlank(message = "이메일이 입력되지 않았습니다.")
-  @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$", message = "이메일 형식에 맞지 않습니다.")
+  @NotBlank(message = UserConstants.USER_EMAIL_NULL)
+  @Pattern(regexp = RegexConstants.MAIL_REGEX, message = UserConstants.USER_EMAIL_NOT_REGEX)
   private String userEmail;
 
-  @NotBlank(message = "패스워드가 입력되지 않았습니다.")
+  @NotBlank(message = UserConstants.USER_PASSWORD_NULL)
   private String userPassword;
 }

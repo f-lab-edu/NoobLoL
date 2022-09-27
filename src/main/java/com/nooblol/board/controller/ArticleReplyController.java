@@ -5,7 +5,7 @@ import com.nooblol.board.dto.ReplyRequestDto.ReplyUpdateDto;
 import com.nooblol.board.service.ArticleReplyService;
 import com.nooblol.global.annotation.UserLoginCheck;
 import com.nooblol.global.dto.ResponseDto;
-import com.nooblol.global.utils.CommonUtils;
+import com.nooblol.global.utils.ResponseUtils;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class ArticleReplyController {
   public ResponseDto addReply(
       @Valid @RequestBody ReplyInsertDto replyInsertDto, HttpSession session
   ) {
-    return CommonUtils.makeToResponseOkDto(
+    return ResponseUtils.makeToResponseOkDto(
         articleReplyService.insertReply(replyInsertDto, session)
     );
   }
@@ -41,7 +41,7 @@ public class ArticleReplyController {
   public ResponseDto updateReply(
       @Valid @RequestBody ReplyUpdateDto replyUpdateDto, HttpSession session
   ) {
-    return CommonUtils.makeToResponseOkDto(
+    return ResponseUtils.makeToResponseOkDto(
         articleReplyService.updateReply(replyUpdateDto, session)
     );
   }
@@ -49,7 +49,7 @@ public class ArticleReplyController {
   @UserLoginCheck
   @DeleteMapping("/delete/{replyId}")
   public ResponseDto deleteReply(@PathVariable int replyId, HttpSession session) {
-    return CommonUtils.makeToResponseOkDto(
+    return ResponseUtils.makeToResponseOkDto(
         articleReplyService.deleteReplyByReplyId(replyId, session)
     );
   }

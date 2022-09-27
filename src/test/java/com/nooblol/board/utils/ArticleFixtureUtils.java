@@ -81,8 +81,6 @@ public class ArticleFixtureUtils {
     result.setArticleContent("Sample Article Content");
     result.setStatus(ArticleStatusEnum.ACTIVE.getStatus());
     result.setCreatedUserId(createdUserId);
-    result.setCreatedAt(LocalDateTime.now());
-    result.setUpdatedAt(LocalDateTime.now());
     return result;
   }
 }

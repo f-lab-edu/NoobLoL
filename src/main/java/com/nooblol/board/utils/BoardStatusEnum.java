@@ -1,5 +1,6 @@
 package com.nooblol.board.utils;
 
+import java.util.Arrays;
 import lombok.Getter;
 
 @Getter
@@ -13,5 +14,9 @@ public enum BoardStatusEnum {
 
   int status;
 
+  public static boolean isExistStatus(int statusType) {
+    return Arrays.stream(BoardStatusEnum.values())
+        .anyMatch(status -> status.getStatus() == statusType);
+  }
 
 }

@@ -13,14 +13,12 @@ import com.nooblol.board.mapper.CategoryMapper;
 import com.nooblol.board.utils.BoardStatusEnum;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionSampleObject;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpSession;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -54,9 +52,8 @@ class CategoryServiceImplTest {
     @Nested
     @DisplayName("조회 테스트")
     class SelectTest {
-
       @Test
-      @DisplayName("카테고리를 조회시 Enum에 없는 값인 경우 Null이 반환된다")
+      @DisplayName("카테고리를 조회시 Enum에 없는 값인 경우 BadRequest Exception이 발생한다")
       void getCategoryList_WhenNoHaveEnumThenReturnNull() {
         //given
         int noHaveStatus = 999;
@@ -64,9 +61,11 @@ class CategoryServiceImplTest {
         //mock
 
         //when
-
+        Exception e = assertThrows(IllegalArgumentException.class, () -> {
+          categoryService.getCategoryList(noHaveStatus);
+        });
         //then
-        assertEquals(categoryService.getCategoryList(noHaveStatus), null);
+        assertEquals(e.getMessage(), ExceptionMessage.BAD_REQUEST);
       }
 
       @Test
@@ -97,8 +96,8 @@ class CategoryServiceImplTest {
         mockCategoryList.add(mockCategoryDto1);
         mockCategoryList.add(mockCategoryDto2);
 
-        //mock
-        when(categoryMapper.selectCategoryList(haveStatus)).thenReturn(mockCategoryList);
+      //mock
+      when(categoryMapper.selectCategoryList(haveStatus)).thenReturn(mockCategoryList);
 
         //when
         List<CategoryDto> result = categoryService.getCategoryList(haveStatus);
@@ -106,6 +105,7 @@ class CategoryServiceImplTest {
         //then
         assertEquals(result, mockCategoryList);
       }
+
 
     }
 
@@ -295,7 +295,7 @@ class CategoryServiceImplTest {
     class SelectTest {
 
       @Test
-      @DisplayName("게시판리스트 조회시 Enum에 없는 값인 경우 Null이 반환된다")
+      @DisplayName("게시판리스트 조회시 Enum에 없는 값인 경우 BadRequestException이 발생한다")
       void getBbsList_WhenNoHaveEnumThenReturnNull() {
         //given
         int noHaveCategoryId = 999;
@@ -304,9 +304,11 @@ class CategoryServiceImplTest {
         //mock
 
         //when
-
+        Exception e = assertThrows(IllegalArgumentException.class, () ->
+            categoryService.getBbsList(noHaveCategoryId, noHaveStatus)
+        );
         //then
-        assertEquals(categoryService.getBbsList(noHaveCategoryId, noHaveStatus), null);
+        assertEquals(e.getMessage(), ExceptionMessage.BAD_REQUEST);
       }
 
       @Test

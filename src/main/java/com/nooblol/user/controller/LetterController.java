@@ -3,8 +3,8 @@ package com.nooblol.user.controller;
 import com.nooblol.global.annotation.LetterTypeValidation;
 import com.nooblol.global.annotation.UserLoginCheck;
 import com.nooblol.global.dto.ResponseDto;
-import com.nooblol.global.utils.CommonUtils;
 import com.nooblol.global.utils.ResponseEnum;
+import com.nooblol.global.utils.ResponseUtils;
 import com.nooblol.global.utils.SessionUtils;
 import com.nooblol.user.dto.LetterDto;
 import com.nooblol.user.dto.LetterInsertRequestDto;
@@ -57,7 +57,7 @@ public class LetterController {
       @PathVariable @NotNull(message = LetterConstants.LETTER_ID_NULL) int letterId,
       HttpSession session
   ) {
-    return CommonUtils.makeToResponseOkDto(letterService.getLetter(letterId, session));
+    return ResponseUtils.makeToResponseOkDto(letterService.getLetter(letterId, session));
   }
 
   /**
@@ -100,7 +100,7 @@ public class LetterController {
   public ResponseDto insertLetter(
       @Valid @RequestBody LetterInsertRequestDto letterInsertRequestDto, HttpSession session
   ) {
-    return CommonUtils.makeToResponseOkDto(
+    return ResponseUtils.makeToResponseOkDto(
         letterService.insertLetter(letterInsertRequestDto, session)
     );
   }
@@ -124,7 +124,7 @@ public class LetterController {
         .type(type)
         .build();
 
-    return CommonUtils.makeToResponseOkDto(
+    return ResponseUtils.makeToResponseOkDto(
         letterService.deleteLetter(letterDto, session)
     );
   }
