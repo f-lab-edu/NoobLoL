@@ -137,9 +137,10 @@ CREATE TABLE `bbs`
     `updated_at`      datetime
 );
 
+/* Upsert시 자동증가인 경우 Update도 값을 증기사키는 문제로 인한 수정*/
 CREATE TABLE `bbs_articles`
 (
-    `article_id`         int PRIMARY KEY AUTO_INCREMENT,
+    `article_id`         int PRIMARY KEY,
     `bbs_id`             int,
     `article_title`      varchar(255),
     `article_read_count` int,

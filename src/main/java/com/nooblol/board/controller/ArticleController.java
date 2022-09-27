@@ -1,15 +1,21 @@
 package com.nooblol.board.controller;
 
 import com.nooblol.board.dto.ArticleDto;
+import com.nooblol.board.dto.ArticleInsertRequestDto;
+import com.nooblol.board.dto.ArticleUpdateRequestDto;
 import com.nooblol.board.service.ArticleService;
+import com.nooblol.global.annotation.UserLoginCheck;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.utils.ResponseEnum;
 import com.nooblol.global.utils.SessionUtils;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,6 +44,63 @@ public class ArticleController {
 
     ResponseDto result = ResponseEnum.OK.getResponse();
     result.setResult(article);
+    return result;
+  }
+
+  /**
+   * 게시물 등록
+   *
+   * @param articleDto
+   * @return
+   */
+  @UserLoginCheck
+  @PostMapping("/insert")
+  public ResponseDto insertArticle(
+      @Valid @RequestBody ArticleInsertRequestDto articleDto, HttpSession session
+  ) {
+    ArticleDto upsertArticle = new ArticleDto().builder()
+        .articleId(articleService.getNewArticleId())
+        .bbsId(articleDto.getBbsId())
+        .articleTitle(articleDto.getArticleTitle())
+        .articleContent(articleDto.getArticleContent())
+        .articleReadCount(articleDto.getArticleReadCount())
+        .status(articleDto.getStatus())
+        .createdUserId(SessionUtils.getSessionUserId(session))
+        .createdAt(articleDto.getCreatedAt())
+        .updatedAt(articleDto.getUpdatedAt())
+        .build();
+
+    boolean upsertResult = articleService.upsertArticle(upsertArticle, session, true);
+
+    ResponseDto result = ResponseEnum.OK.getResponse();
+    result.setResult(upsertResult);
+    return result;
+  }
+
+  /**
+   * 게시물 수정
+   *
+   * @param articleDto
+   * @return
+   */
+  @UserLoginCheck
+  @PostMapping("/update")
+  public ResponseDto updateArticle(
+      @Valid @RequestBody ArticleUpdateRequestDto articleDto, HttpSession session
+  ) {
+    ArticleDto upsertArticle = new ArticleDto().builder()
+        .articleId(articleDto.getArticleId())
+        .bbsId(articleDto.getBbsId())
+        .articleTitle(articleDto.getArticleTitle())
+        .articleContent(articleDto.getArticleContent())
+        .status(articleDto.getStatus())
+        .updatedAt(articleDto.getUpdatedAt())
+        .build();
+
+    boolean upsertResult = articleService.upsertArticle(upsertArticle, session, false);
+
+    ResponseDto result = ResponseEnum.OK.getResponse();
+    result.setResult(upsertResult);
     return result;
   }
 }

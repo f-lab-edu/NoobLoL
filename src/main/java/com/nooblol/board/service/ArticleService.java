@@ -1,6 +1,7 @@
 package com.nooblol.board.service;
 
 import com.nooblol.board.dto.ArticleDto;
+import javax.servlet.http.HttpSession;
 
 public interface ArticleService {
 
@@ -27,4 +28,21 @@ public interface ArticleService {
    * @param articleId
    */
   void addReadCount(int articleId);
+
+  /**
+   * 게시물의 삽입 또는 수정을 진행한다.
+   *
+   * @param articleDto
+   * @param session
+   * @param isInsert   삽입인 경우 True, Update인 경우 False
+   * @return
+   */
+  boolean upsertArticle(ArticleDto articleDto, HttpSession session, boolean isInsert);
+
+  /**
+   * 현재 DB에서 사용주인 ArticleId의 최대값에 + 1을 하여 return한다. 만약 ArticleId가 없는 경우에는 1을 반환한다.
+   *
+   * @return
+   */
+  int getNewArticleId();
 }

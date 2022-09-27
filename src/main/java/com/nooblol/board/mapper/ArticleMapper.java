@@ -11,4 +11,10 @@ public interface ArticleMapper {
   void addReadCount(int articleId);
 
   int selectUserAuth(String userId);
+
+  int upsertArticle(ArticleDto articleDto);
+
+  int selectMaxArticleId();
+
+  String selectCreatedUserId(int articleId);
 }
