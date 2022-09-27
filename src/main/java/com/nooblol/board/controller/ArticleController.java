@@ -6,8 +6,7 @@ import com.nooblol.board.dto.ArticleUpdateRequestDto;
 import com.nooblol.board.service.ArticleService;
 import com.nooblol.global.annotation.UserLoginCheck;
 import com.nooblol.global.dto.ResponseDto;
-import com.nooblol.global.utils.CommonUtils;
-import com.nooblol.global.utils.ResponseEnum;
+import com.nooblol.global.utils.ResponseUtils;
 import com.nooblol.global.utils.SessionUtils;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -43,7 +42,7 @@ public class ArticleController {
         articleId, SessionUtils.getSessionUserId(session)
     );
 
-    return CommonUtils.makeToResponseOkDto(article);
+    return ResponseUtils.makeToResponseOkDto(article);
   }
 
   /**
@@ -71,7 +70,7 @@ public class ArticleController {
 
     boolean upsertResult = articleService.upsertArticle(upsertArticle, session, true);
 
-    return CommonUtils.makeToResponseOkDto(upsertResult);
+    return ResponseUtils.makeToResponseOkDto(upsertResult);
   }
 
   /**
@@ -96,7 +95,7 @@ public class ArticleController {
 
     boolean upsertResult = articleService.upsertArticle(upsertArticle, session, false);
 
-    return CommonUtils.makeToResponseOkDto(upsertResult);
+    return ResponseUtils.makeToResponseOkDto(upsertResult);
   }
 
   /**
@@ -111,7 +110,7 @@ public class ArticleController {
   ) {
     boolean deleteResult = articleService.deleteArticle(articleId, session);
 
-    return CommonUtils.makeToResponseOkDto(deleteResult);
+    return ResponseUtils.makeToResponseOkDto(deleteResult);
   }
 
 
@@ -123,7 +122,7 @@ public class ArticleController {
    */
   @GetMapping("/status/{articleId}")
   public ResponseDto likeAndNotLikeArticle(@PathVariable int articleId) {
-    return CommonUtils.makeToResponseOkDto(articleService.likeAndNotListStatus(articleId));
+    return ResponseUtils.makeToResponseOkDto(articleService.likeAndNotListStatus(articleId));
   }
 
   /**
@@ -136,7 +135,7 @@ public class ArticleController {
   @UserLoginCheck
   @GetMapping("/like/{articleId}")
   public ResponseDto likeArticle(@PathVariable int articleId, HttpSession session) {
-    return CommonUtils.makeToResponseOkDto(articleService.likeArticle(articleId, session));
+    return ResponseUtils.makeToResponseOkDto(articleService.likeArticle(articleId, session));
   }
 
   /**
@@ -149,6 +148,6 @@ public class ArticleController {
   @UserLoginCheck
   @GetMapping("/notLike/{articleId}")
   public ResponseDto notLikeArticle(@PathVariable int articleId, HttpSession session) {
-    return CommonUtils.makeToResponseOkDto(articleService.notLikeArticle(articleId, session));
+    return ResponseUtils.makeToResponseOkDto(articleService.notLikeArticle(articleId, session));
   }
 }
