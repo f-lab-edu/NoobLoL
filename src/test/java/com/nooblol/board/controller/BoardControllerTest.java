@@ -103,8 +103,12 @@ class BoardControllerTest {
       when(categoryService.getCategoryList(status)).thenReturn(returnList);
 
       //when & then
-      mockMvc.perform(MockMvcRequestBuilders.get("/board/category/list")
-              .param("status", String.valueOf(status))).andExpect(status().isOk())
+      mockMvc.perform(
+              MockMvcRequestBuilders
+                  .get("/board/categoryList")
+                  .param("status", String.valueOf(status))
+          )
+          .andExpect(status().isOk())
           .andExpect(jsonPath("$.resultCode", Is.is(HttpStatus.OK.value()))).andDo(
               document("board/category/getList", requestParameters(
                       parameterWithName("status").description(
@@ -274,15 +278,22 @@ class BoardControllerTest {
 
       //when & then
       mockMvc.perform(
-              RestDocumentationRequestBuilders.get("/board/bbsList/{categoryId}/{status}", categoryId,
-                  status)).andExpect(status().isOk())
+              MockMvcRequestBuilders.get("/board/bbsList")
+                  .param("categoryId", String.valueOf(categoryId))
+                  .param("status", String.valueOf(status)))
+          .andExpect(status().isOk())
           .andExpect(jsonPath("$.resultCode", Is.is(HttpStatus.OK.value())))
           .andDo(
-              document("board/bbs/getList", pathParameters(
+              document("board/bbs/getList",
+                  requestParameters(
                       parameterWithName("categoryId").description("게시판리스트를 조회하고자 하는 Category Id"),
-                      parameterWithName("status").description("조회하고자 하는 게시판 리스트의 상태값")),
+                      parameterWithName("status").description("조회하고자 하는 게시판 리스트의 상태값")
+                  )
+                  ,
                   DocumentSnippetsUtils.responseHeaders_ContentTypeApplicationJsonValue(),
-                  boardResponseFields()));
+                  boardResponseFields()
+              )
+          );
 
     }
 

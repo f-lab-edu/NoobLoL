@@ -178,7 +178,7 @@ public class ArticleServiceImpl implements ArticleService {
     articleMapper.deleteArticleStatue(
         new ArticleStatusDto().builder().articleId(articleId).build()
     );
-
+    articleReplyMapper.deleteReplyByArticleId(articleId);
     return articleMapper.deleteArticleByArticleId(articleId) > 0;
   }
 

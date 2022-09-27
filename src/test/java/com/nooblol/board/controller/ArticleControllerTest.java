@@ -86,7 +86,7 @@ class ArticleControllerTest {
         ).thenReturn(true);
 
         //then & when
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/article/insert")
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/article/")
                 .content(objectMapper.writeValueAsBytes(requestDto))
                 .session(session).contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -245,7 +245,7 @@ class ArticleControllerTest {
 
         mockMvc.perform(
                 RestDocumentationRequestBuilders.delete(
-                    "/article/delete/{articleId}", articleId
+                    "/article/{articleId}", articleId
                 ).session(session)
             ).andExpect(status().isOk())
             .andExpect(
@@ -326,7 +326,7 @@ class ArticleControllerTest {
 
       //when & then
       mockMvc.perform(
-              RestDocumentationRequestBuilders.get(
+              RestDocumentationRequestBuilders.post(
                   "/article/like/{articleId}", articleId).session(session)
           ).andExpect(status().isOk())
           .andExpect(jsonPath("$.resultCode", Is.is(HttpStatus.OK.value())))
@@ -347,7 +347,7 @@ class ArticleControllerTest {
 
       //when & then
       mockMvc.perform(
-              RestDocumentationRequestBuilders.get(
+              RestDocumentationRequestBuilders.post(
                   "/article/notLike/{articleId}", articleId).session(session)
           ).andExpect(status().isOk())
           .andExpect(jsonPath("$.resultCode", Is.is(HttpStatus.OK.value())))
