@@ -93,7 +93,6 @@ public class ArticleController {
         .articleTitle(articleDto.getArticleTitle())
         .articleContent(articleDto.getArticleContent())
         .status(articleDto.getStatus())
-        .updatedAt(articleDto.getUpdatedAt())
         .build();
 
     boolean upsertResult = articleService.upsertArticle(upsertArticle, session, false);

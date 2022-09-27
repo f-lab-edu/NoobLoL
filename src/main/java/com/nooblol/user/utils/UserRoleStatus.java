@@ -25,7 +25,6 @@ public enum UserRoleStatus {
   }
 
   public static boolean isUserRoleAdmin(int roleValue) {
-    return Arrays.stream(UserRoleStatus.values())
-        .anyMatch(userRole -> userRole.getRoleValue() == roleValue);
+    return ADMIN.getRoleValue() == roleValue;
   }
 }

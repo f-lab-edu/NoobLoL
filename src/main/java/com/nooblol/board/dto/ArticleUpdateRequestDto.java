@@ -19,6 +19,7 @@ public class ArticleUpdateRequestDto extends ArticleRequestBaseDto {
   @NotNull(message = ArticleMessage.ARTICLE_ID_NULL)
   private Integer articleId;
 
-  private LocalDateTime updatedAt = LocalDateTime.now();
+
+  private final LocalDateTime updatedAt = LocalDateTime.now();
 }
 
