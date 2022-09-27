@@ -1,5 +1,6 @@
 package com.nooblol.user.dto;
 
+import com.nooblol.user.utils.AdminConstants;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,8 +13,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AdminUserDto {
 
-  @NotBlank(message = "관리자의 UserId가 입력되지 않았습니다.")
+  @NotBlank(message = AdminConstants.ADMIN_USERID_NULL)
   private String adminUserId;
-  @NotBlank(message = "관리자의 패스워드가 입력되지 않았습니다.")
+
+  @NotBlank(message = AdminConstants.ADMIN_PASSWORD_NULL)
   private String adminUserPassword;
 }

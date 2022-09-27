@@ -6,9 +6,11 @@ import com.nooblol.board.dto.SearchBbsListDto;
 import com.nooblol.board.mapper.CategoryMapper;
 import com.nooblol.board.service.CategoryService;
 import com.nooblol.board.utils.BoardStatusEnum;
+import com.nooblol.global.exception.ExceptionMessage;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,33 +23,32 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   @Transactional(readOnly = true)
+  @Cacheable(cacheNames = "category", key = "#status")
   public List<CategoryDto> getCategoryList(int status) {
-    for (BoardStatusEnum enumObj : BoardStatusEnum.values()) {
-      if (enumObj.getStatus() == status) {
-        return categoryMapper.selectCategory(enumObj.getStatus());
-      }
+    if (BoardStatusEnum.isExistStatus(status)) {
+      return categoryMapper.selectCategory(status);
     }
-    return null;
+    throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
   }
 
   @Override
   @Transactional(readOnly = true)
+  @Cacheable(cacheNames = "bbs", key = "#categoryId")
   public List<BbsDto> getBbsList(int categoryId, int status) {
-    for (BoardStatusEnum enumObj : BoardStatusEnum.values()) {
-      if (enumObj.getStatus() == status) {
-        SearchBbsListDto searchParamDto =
-            new SearchBbsListDto().builder()
-                .categoryId(categoryId)
-                .status(status)
-                .build();
-        return categoryMapper.selectBbsList(searchParamDto);
-      }
+    if (BoardStatusEnum.isExistStatus(status)) {
+      return categoryMapper.selectBbsList(
+          new SearchBbsListDto().builder()
+              .categoryId(categoryId)
+              .status(status)
+              .build()
+      );
     }
-
-    return null;
+    throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
   }
 
   @Override
+  @Transactional(readOnly = true)
+  @Cacheable(cacheNames = "allBbs")
   public List<BbsDto> getAllBbsList() {
     return categoryMapper.selectAllBbsList();
   }
