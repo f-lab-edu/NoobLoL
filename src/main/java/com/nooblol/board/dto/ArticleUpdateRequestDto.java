@@ -20,6 +20,6 @@ public class ArticleUpdateRequestDto extends ArticleRequestBaseDto {
   private Integer articleId;
 
 
-  private final LocalDateTime updatedAt = LocalDateTime.now();
+  private LocalDateTime updatedAt = LocalDateTime.now();
 }
 
