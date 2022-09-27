@@ -12,9 +12,11 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +31,7 @@ public class ArticleController {
 
   /**
    * articleId의 게시물 정보와 현재 요청한 사용자의 권한을 같이 Return한다
+   * Session에 로그인정보가 없는 경우에는 게시물에 대한 정보 수정을 주는 권한을 Guest로 설정한다
    *
    * @param articleId
    * @param session
@@ -52,7 +55,7 @@ public class ArticleController {
    * @return
    */
   @UserLoginCheck
-  @PostMapping("/insert")
+  @PostMapping("/")
   public ResponseDto insertArticle(
       @Valid @RequestBody ArticleInsertRequestDto articleDto, HttpSession session
   ) {
@@ -80,7 +83,7 @@ public class ArticleController {
    * @return
    */
   @UserLoginCheck
-  @PostMapping("/update")
+  @PutMapping("/")
   public ResponseDto updateArticle(
       @Valid @RequestBody ArticleUpdateRequestDto articleDto, HttpSession session
   ) {
@@ -99,18 +102,16 @@ public class ArticleController {
   }
 
   /**
+   * 게시물 삭제
+   *
    * @param articleId
    * @param session
    * @return
    */
   @UserLoginCheck
-  @GetMapping("/delete/{articleId}")
-  public ResponseDto deleteArticle(
-      @PathVariable int articleId, HttpSession session
-  ) {
-    boolean deleteResult = articleService.deleteArticle(articleId, session);
-
-    return ResponseUtils.makeToResponseOkDto(deleteResult);
+  @DeleteMapping("/{articleId}")
+  public ResponseDto deleteArticle(@PathVariable int articleId, HttpSession session) {
+    return ResponseUtils.makeToResponseOkDto(articleService.deleteArticle(articleId, session));
   }
 
 
@@ -133,7 +134,7 @@ public class ArticleController {
    * @return
    */
   @UserLoginCheck
-  @GetMapping("/like/{articleId}")
+  @PostMapping("/like/{articleId}")
   public ResponseDto likeArticle(@PathVariable int articleId, HttpSession session) {
     return ResponseUtils.makeToResponseOkDto(articleService.likeArticle(articleId, session));
   }
@@ -146,7 +147,7 @@ public class ArticleController {
    * @return
    */
   @UserLoginCheck
-  @GetMapping("/notLike/{articleId}")
+  @PostMapping("/notLike/{articleId}")
   public ResponseDto notLikeArticle(@PathVariable int articleId, HttpSession session) {
     return ResponseUtils.makeToResponseOkDto(articleService.notLikeArticle(articleId, session));
   }

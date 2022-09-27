@@ -60,7 +60,11 @@ public class ArticleServiceImpl implements ArticleService {
   @Override
   public boolean upsertArticle(ArticleDto articleDto, HttpSession session, boolean isInsert) {
     //UserLoginCheck의 Annotation을 통해 무조건 Session로그인이 확인된 상황이기에, Role이 Null이 올 수 없음
-    if (isUserAdmin(SessionUtils.getSessionUserRole(session)) || isInsert) {
+
+    boolean isUserAdminOrInsertArticle =
+        UserRoleStatus.isUserRoleAdmin(SessionUtils.getSessionUserRole(session)) || isInsert;
+
+    if (isUserAdminOrInsertArticle) {
       return isArticleUpsertSuccess(articleDto);
     }
 
@@ -91,7 +95,8 @@ public class ArticleServiceImpl implements ArticleService {
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
-    if (isUserAdmin(SessionUtils.getSessionUserRole(session))) {
+    boolean isUserAdmin = UserRoleStatus.isUserRoleAdmin(SessionUtils.getSessionUserRole(session));
+    if (isUserAdmin) {
       return isArticleDeleteSuccess(articleId);
     }
 
@@ -142,7 +147,7 @@ public class ArticleServiceImpl implements ArticleService {
    * @return
    */
   private boolean isArticleUpsertSuccess(ArticleDto articleDto) {
-    return articleMapper.upsertArticle(articleDto) == 0 ? false : true;
+    return articleMapper.upsertArticle(articleDto) > 0;
   }
 
   /**
@@ -157,10 +162,6 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
 
-  private boolean isUserAdmin(int userRole) {
-    return userRole == UserRoleStatus.ADMIN.getRoleValue();
-  }
-
   /**
    * 먼저 추천, 비추천에 대한 기록도 모두 삭제하며,
    * <p>
@@ -174,7 +175,7 @@ public class ArticleServiceImpl implements ArticleService {
         new ArticleStatusDto().builder().articleId(articleId).build()
     );
 
-    return articleMapper.deleteArticleByArticleId(articleId) == 0 ? false : true;
+    return articleMapper.deleteArticleByArticleId(articleId) > 0;
   }
 
 
@@ -212,14 +213,14 @@ public class ArticleServiceImpl implements ArticleService {
         requestArticleStatusDto);
 
     if (ObjectUtils.isEmpty(IsHaveStatusData)) {
-      return articleMapper.insertArticleStatus(requestArticleStatusDto) > 0 ? true : false;
+      return articleMapper.insertArticleStatus(requestArticleStatusDto) > 0;
     }
 
     if (IsHaveStatusData.isType() != requestArticleStatusDto.isType()) {
       throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
 
-    return articleMapper.deleteArticleStatue(requestArticleStatusDto) > 0 ? true : false;
+    return articleMapper.deleteArticleStatue(requestArticleStatusDto) > 0;
   }
 
 
