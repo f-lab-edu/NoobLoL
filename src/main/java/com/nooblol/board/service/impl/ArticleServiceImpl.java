@@ -84,11 +84,6 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
-  public int getNewArticleId() {
-    return articleMapper.selectMaxArticleId();
-  }
-
-  @Override
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public boolean deleteArticle(int articleId, HttpSession session) {
     ArticleDto haveArticleData = articleMapper.selectArticleByArticleId(articleId);

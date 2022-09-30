@@ -16,8 +16,6 @@ public interface ArticleMapper {
 
   int upsertArticle(ArticleDto articleDto);
 
-  int selectMaxArticleId();
-
   String selectCreatedUserId(int articleId);
 
   int deleteArticleByArticleId(int articleId);

@@ -60,13 +60,14 @@ public class ArticleController {
       @Valid @RequestBody ArticleInsertRequestDto articleDto, HttpSession session
   ) {
     ArticleDto upsertArticle = new ArticleDto().builder()
-        .articleId(articleService.getNewArticleId())
         .bbsId(articleDto.getBbsId())
         .articleTitle(articleDto.getArticleTitle())
         .articleContent(articleDto.getArticleContent())
         .articleReadCount(articleDto.getArticleReadCount())
         .status(articleDto.getStatus())
         .createdUserId(SessionUtils.getSessionUserId(session))
+        .createdAt(articleDto.getCreatedAt())
+        .updatedAt(articleDto.getUpdatedAt())
         .build();
 
     boolean upsertResult = articleService.upsertArticle(upsertArticle, session, true);

@@ -40,12 +40,6 @@ public interface ArticleService {
    */
   boolean upsertArticle(ArticleDto articleDto, HttpSession session, boolean isInsert);
 
-  /**
-   * 현재 DB에서 사용주인 ArticleId의 최대값에 + 1을 하여 return한다. 만약 ArticleId가 없는 경우에는 1을 반환한다.
-   *
-   * @return
-   */
-  int getNewArticleId();
 
   /**
    * 게시물 삭제, 요청자가 관리자인 경우 또는 글 작성자인 경우에만 삭제를 진행한다. Delete를 진행하는 경우 관련 테이블에 대해서도 삭제가 이뤄지다 보니,

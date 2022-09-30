@@ -35,7 +35,11 @@
   <insert id="upsertArticle" parameterType="ArticleDto">
     INSERT INTO bbs_articles(article_id, bbs_id, article_title, article_read_count, article_content,
                              status, created_user_id, created_at, updated_at)
-    VALUES (#{articleId}, #{bbsId}, #{articleTitle}, #{articleReadCount}, #{articleContent},
+    VALUES (IFNULL(#{articleId}, IFNULL((SELECT article_id + 1
+                                         FROM bbs_articles
+                                         ORDER BY article_id DESC limit 1), 1)),
+            #{bbsId}, #{articleTitle},
+            #{articleReadCount}, #{articleContent},
             #{status}, #{createdUserId}, #{createdAt}, #{updatedAt}) ON DUPLICATE KEY
     UPDATE
       updated_at = IFNULL(VALUES (updated_at), updated_at)
@@ -44,11 +48,6 @@
       , article_content = IFNULL(VALUES (article_content), article_content)
       , status = IFNULL(VALUES (status), status)
   </insert>
-
-  <select id="selectMaxArticleId" resultType="int">
-    SELECT COALESCE(MAX(article_id) + 1, 1)
-    FROM bbs_articles
-  </select>
 
   <select id="selectCreatedUserId" parameterType="int" resultType="String">
     SELECT created_user_id
