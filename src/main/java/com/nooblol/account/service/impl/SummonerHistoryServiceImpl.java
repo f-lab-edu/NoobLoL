@@ -7,7 +7,6 @@ import com.nooblol.account.mapper.SummonerHistoryMapper;
 import com.nooblol.account.service.SummonerHistoryService;
 import com.nooblol.global.config.RiotConfiguration;
 import com.nooblol.global.dto.ResponseDto;
-import com.nooblol.global.utils.CommonUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

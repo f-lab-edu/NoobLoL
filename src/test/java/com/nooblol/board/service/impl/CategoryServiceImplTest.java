@@ -7,6 +7,7 @@ import com.nooblol.board.dto.BbsDto;
 import com.nooblol.board.dto.CategoryDto;
 import com.nooblol.board.mapper.CategoryMapper;
 import com.nooblol.board.utils.BoardStatusEnum;
+import com.nooblol.global.exception.ExceptionMessage;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ class CategoryServiceImplTest {
   private CategoryMapper categoryMapper;
 
   @Test
-  @DisplayName("카테고리를 조회시 Enum에 없는 값인 경우 Null이 반환된다")
+  @DisplayName("카테고리를 조회시 Enum에 없는 값인 경우 BadRequest Exception이 발생한다")
   void getCategoryList_WhenNoHaveEnumThenReturnNull() {
     //given
     int noHaveStatus = 999;
@@ -35,9 +36,11 @@ class CategoryServiceImplTest {
     //mock
 
     //when
-
+    Exception e = assertThrows(IllegalArgumentException.class, () -> {
+      categoryService.getCategoryList(noHaveStatus);
+    });
     //then
-    assertEquals(categoryService.getCategoryList(noHaveStatus), null);
+    assertEquals(e.getMessage(), ExceptionMessage.BAD_REQUEST);
   }
 
   @Test
@@ -79,7 +82,7 @@ class CategoryServiceImplTest {
   }
 
   @Test
-  @DisplayName("게시판리스트 조회시 Enum에 없는 값인 경우 Null이 반환된다")
+  @DisplayName("게시판리스트 조회시 Enum에 없는 값인 경우 BadRequestException이 발생한다")
   void getBbsList_WhenNoHaveEnumThenReturnNull() {
     //given
     int noHaveCategoryId = 999;
@@ -88,9 +91,12 @@ class CategoryServiceImplTest {
     //mock
 
     //when
+    Exception e = assertThrows(IllegalArgumentException.class, () ->
+        categoryService.getBbsList(noHaveCategoryId, noHaveStatus)
+    );
 
     //then
-    assertEquals(categoryService.getBbsList(noHaveCategoryId, noHaveStatus), null);
+    assertEquals(e.getMessage(), ExceptionMessage.BAD_REQUEST);
   }
 
   @Test

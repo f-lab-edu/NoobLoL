@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -38,7 +39,6 @@ public class RestApiControllerAdvice {
                 + ", ErrorContent : " + error.getMessage()
         );
       });
-      log.warn("Exception Trace : ", e);
     }
     return ResponseEnum.BAD_REQUEST.getResponse();
   }
@@ -62,6 +62,7 @@ public class RestApiControllerAdvice {
     }
     switch (e.getMessage()) {
       case ExceptionMessage.NO_DATA:
+      case ExceptionMessage.NOT_FOUND:
         return ResponseEnum.NOT_FOUND.getResponse();
 
       case ExceptionMessage.SERVER_ERROR:
@@ -110,6 +111,32 @@ public class RestApiControllerAdvice {
   @ExceptionHandler({NoHandlerFoundException.class})
   public ResponseDto noHandlerFoundExceptionHandling(NoHandlerFoundException e) {
     log.warn("[NoHandlerFoundExceptionHandling]", e);
+    return ResponseEnum.BAD_REQUEST.getResponse();
+  }
+
+  /**
+   * DELETE를 사용하며 PathVariable을 같이 사용하는 경우 PathVariable의 값이 없는채로 들어오는 경우 , 405 - MethodNowAllowed가
+   * 발생함. 해당 Exception에 대한 Handler
+   *
+   * @param e
+   * @return
+   */
+  @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
+  public ResponseDto methodNotAllowedExceptionHandling(HttpRequestMethodNotSupportedException e) {
+    log.warn("[HttpRequestMethodNotSupportedException]", e);
+    return ResponseEnum.BAD_REQUEST.getResponse();
+  }
+
+
+  /**
+   * Optinal을 사용하게 될 경우 발생하는 NPE에 대하여 Handling하기 위한 추가
+   *
+   * @param e
+   * @return
+   */
+  @ExceptionHandler({NullPointerException.class})
+  public ResponseDto nullPointerExceptionHandling(NullPointerException e) {
+    log.warn("[NullPointerException]", e);
     return ResponseEnum.BAD_REQUEST.getResponse();
   }
 }
