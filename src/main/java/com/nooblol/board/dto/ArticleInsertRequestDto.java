@@ -16,7 +16,7 @@ import lombok.Setter;
 public class ArticleInsertRequestDto extends ArticleRequestBaseDto {
 
   private String createdUserId;
-  private Integer articleReadCount = 0;
+  private int articleReadCount;
   private LocalDateTime createdAt = LocalDateTime.now();
   private LocalDateTime updatedAt = LocalDateTime.now();
 }

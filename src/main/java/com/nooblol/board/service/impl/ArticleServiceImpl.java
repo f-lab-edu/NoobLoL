@@ -108,6 +108,11 @@ public class ArticleServiceImpl implements ArticleService {
     return isArticleDeleteSuccess(articleId);
   }
 
+  @Override
+  public boolean isNotArticleInDb(int articleId) {
+    return ObjectUtils.isEmpty(articleMapper.selectArticleByArticleId(articleId));
+  }
+
   /**
    * Upsert가 정상적으로 진행된 경우 True를 Return한다.
    *

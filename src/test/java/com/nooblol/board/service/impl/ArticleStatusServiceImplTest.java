@@ -26,10 +26,10 @@ import org.springframework.mock.web.MockHttpSession;
 class ArticleStatusServiceImplTest {
 
   @Mock
-  private ArticleMapper articleMapper;
+  private ArticleStatusMapper articleStatusMapper;
 
   @Mock
-  private ArticleStatusMapper articleStatusMapper;
+  private ArticleServiceImpl articleService;
 
   @InjectMocks
   private ArticleStatusServiceImpl articleStatusService;
@@ -42,7 +42,7 @@ class ArticleStatusServiceImplTest {
     int testArticleId = 3;
 
     //mock
-    when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(null);
+    when(articleService.isNotArticleInDb(testArticleId)).thenReturn(true);
 
     //when
     Exception e = assertThrows(IllegalArgumentException.class, () -> {
@@ -72,7 +72,7 @@ class ArticleStatusServiceImplTest {
     session.setAttribute(SessionEnum.USER_LOGIN.getValue(), mockUserDto);
 
     //mock
-    when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(new ArticleDto());
+    when(articleService.isNotArticleInDb(testArticleId)).thenReturn(false);
     when(articleStatusMapper.selectArticleStatusByArticleIdAndUserId(any())).thenReturn(null);
     when(articleStatusMapper.insertArticleStatus(any())).thenReturn(1);
 
@@ -107,7 +107,7 @@ class ArticleStatusServiceImplTest {
         .build();
 
     //mock
-    when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(new ArticleDto());
+    when(articleService.isNotArticleInDb(testArticleId)).thenReturn(false);
     when(articleStatusMapper.selectArticleStatusByArticleIdAndUserId(any())).thenReturn(
         mockArticleStatusDto);
 
@@ -145,7 +145,7 @@ class ArticleStatusServiceImplTest {
         .build();
 
     //mock
-    when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(new ArticleDto());
+    when(articleService.isNotArticleInDb(testArticleId)).thenReturn(false);
     when(articleStatusMapper.selectArticleStatusByArticleIdAndUserId(any())).thenReturn(
         mockArticleStatusDto);
     when(articleStatusMapper.deleteArticleStatus(any())).thenReturn(1);

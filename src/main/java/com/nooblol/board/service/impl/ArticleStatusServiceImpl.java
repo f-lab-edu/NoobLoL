@@ -5,6 +5,7 @@ import com.nooblol.board.dto.ArticleStatusDto;
 import com.nooblol.board.dto.LikeAndNotLikeResponseDto;
 import com.nooblol.board.mapper.ArticleMapper;
 import com.nooblol.board.mapper.ArticleStatusMapper;
+import com.nooblol.board.service.ArticleService;
 import com.nooblol.board.service.ArticleStatusService;
 import com.nooblol.board.utils.ArticleLikeStatusEnum;
 import com.nooblol.global.exception.ExceptionMessage;
@@ -20,9 +21,9 @@ import org.springframework.util.ObjectUtils;
 @RequiredArgsConstructor
 public class ArticleStatusServiceImpl implements ArticleStatusService {
 
-  private final ArticleMapper articleMapper;
-
   private final ArticleStatusMapper articleStatusMapper;
+
+  private final ArticleService articleService;
 
   @Override
   public boolean likeArticle(int articleId, HttpSession session) {
@@ -53,12 +54,8 @@ public class ArticleStatusServiceImpl implements ArticleStatusService {
     return articleStatusMapper.selectArticleAllStatusByArticleId(articleId);
   }
 
-  private boolean isNotArticleInDb(int articleId) {
-    return ObjectUtils.isEmpty(articleMapper.selectArticleByArticleId(articleId));
-  }
-
   private void validatedNotHaveArticle(int articleId) {
-    if (isNotArticleInDb(articleId)) {
+    if (articleService.isNotArticleInDb(articleId)) {
       throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
   }
