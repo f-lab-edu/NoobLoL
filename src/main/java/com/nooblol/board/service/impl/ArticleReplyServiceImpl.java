@@ -85,14 +85,14 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
   }
 
   private boolean isNotReplyCreatedUser(int replyId, HttpSession session) {
-    return EncryptUtils.isNotCreatedUser(
+    return SessionUtils.isNotCreatedUser(
         Optional.of(articleReplyMapper.selectCreatedUserIdByReplyId(replyId)).get(),
         Optional.of(SessionUtils.getSessionUserId(session)).get()
     );
   }
 
   private boolean isNotSessionUserAdmin(HttpSession session) {
-    return EncryptUtils.isNotUserAdmin(
+    return SessionUtils.isNotUserAdmin(
         Optional.of(SessionUtils.getSessionUserRole(session)).get()
     );
   }
