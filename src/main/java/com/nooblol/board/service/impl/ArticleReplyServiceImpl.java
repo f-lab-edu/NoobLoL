@@ -39,7 +39,9 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
     validHaveArticleInDb(updateDto.getArticleId());
 
     boolean isNotCreatedUser = isNotReplyCreatedUser(updateDto.getReplyId(), session);
-    boolean isNotUserAdmin = isNotSessionUserAdmin(session);
+    boolean isNotUserAdmin = UserRoleStatus.isNotUserAdmin(
+        SessionUtils.getSessionUserRole(session)
+    );
 
     if (isNotCreatedUser && isNotUserAdmin) {
       throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
@@ -56,7 +58,9 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
   @Override
   public boolean deleteReplyByReplyId(int replyId, HttpSession session) {
     boolean isNotCreatedUser = isNotReplyCreatedUser(replyId, session);
-    boolean isNotUserAdmin = isNotSessionUserAdmin(session);
+    boolean isNotUserAdmin = UserRoleStatus.isNotUserAdmin(
+        SessionUtils.getSessionUserRole(session)
+    );
 
     if (isNotCreatedUser && isNotUserAdmin) {
       throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
@@ -88,12 +92,6 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
     Optional<String> createdUserId =
         Optional.of(articleReplyMapper.selectCreatedUserIdByReplyId(replyId));
     return !createdUserId.get().equals(SessionUtils.getSessionUserId(session));
-  }
-
-  private boolean isNotSessionUserAdmin(HttpSession session) {
-    return UserRoleStatus.isNotUserAdmin(
-        SessionUtils.getSessionUserRole(session)
-    );
   }
 
   private ReplyDto makeInsertReplyDto(ReplyInsertDto insertDto, String userId) {
