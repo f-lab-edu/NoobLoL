@@ -2,14 +2,12 @@ package com.nooblol.board.service.impl;
 
 import com.nooblol.board.dto.ArticleDto;
 import com.nooblol.board.dto.ArticleStatusDto;
-import com.nooblol.board.dto.LikeAndNotLikeResponseDto;
-import com.nooblol.board.mapper.ArticleReplyMapper;
+import com.nooblol.board.mapper.ArticleStatusMapper;
 import com.nooblol.board.service.ArticleService;
 import com.nooblol.board.mapper.ArticleMapper;
 import com.nooblol.board.utils.ArticleAuthMessage;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionUtils;
-import com.nooblol.global.utils.UserUtils;
 import com.nooblol.user.utils.UserRoleStatus;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +25,7 @@ public class ArticleServiceImpl implements ArticleService {
 
   private final ArticleMapper articleMapper;
 
-  private final ArticleReplyMapper articleReplyMapper;
+  private final ArticleStatusMapper articleStatusMapper;
 
   @Override
   public ArticleDto getArticleInfo(int articleId, String userId) {
@@ -64,12 +62,16 @@ public class ArticleServiceImpl implements ArticleService {
   @Override
   public boolean upsertArticle(ArticleDto articleDto, HttpSession session, boolean isInsert) {
     //UserLoginCheck의 Annotation을 통해 무조건 Session로그인이 확인된 상황이기에, Role이 Null이 올 수 없음
-    if (UserUtils.isUserAdmin((SessionUtils.getSessionUserRole(session))) || isInsert) {
+
+    boolean isUserAdminOrInsertArticle =
+        UserRoleStatus.isUserRoleAdmin(SessionUtils.getSessionUserRole(session)) || isInsert;
+
+    if (isUserAdminOrInsertArticle) {
       return isArticleUpsertSuccess(articleDto);
     }
 
     //일반 사용자이면서, 게시물의 원작자 여부 확인
-    boolean isNotCreatedUser = UserUtils.isNotCreatedUser(
+    boolean isNotCreatedUser = isNotArticleCreatedUser(
         articleMapper.selectCreatedUserId(articleDto.getArticleId()),
         SessionUtils.getSessionUserId(session)
     );
@@ -82,11 +84,6 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
-  public int getNewArticleId() {
-    return articleMapper.selectMaxArticleId();
-  }
-
-  @Override
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public boolean deleteArticle(int articleId, HttpSession session) {
     ArticleDto haveArticleData = articleMapper.selectArticleByArticleId(articleId);
@@ -95,11 +92,12 @@ public class ArticleServiceImpl implements ArticleService {
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
-    if (UserUtils.isUserAdmin(SessionUtils.getSessionUserRole(session))) {
+    boolean isUserAdmin = UserRoleStatus.isUserRoleAdmin(SessionUtils.getSessionUserRole(session));
+    if (isUserAdmin) {
       return isArticleDeleteSuccess(articleId);
     }
 
-    boolean isNotCreatedUser = UserUtils.isNotCreatedUser(
+    boolean isNotCreatedUser = isNotArticleCreatedUser(
         haveArticleData.getCreatedUserId(), SessionUtils.getSessionUserId(session)
     );
 
@@ -110,40 +108,6 @@ public class ArticleServiceImpl implements ArticleService {
     return isArticleDeleteSuccess(articleId);
   }
 
-  @Override
-  public boolean likeArticle(int articleId, HttpSession session) {
-    validatedNotHaveArticle(articleId);
-
-    ArticleStatusDto requestArticleStatusDto =
-        createArticleStatusDto(
-            articleId, SessionUtils.getSessionUserId(session), true
-        );
-
-    return statusProcess(requestArticleStatusDto);
-  }
-
-  @Override
-  public boolean notLikeArticle(int articleId, HttpSession session) {
-    validatedNotHaveArticle(articleId);
-
-    ArticleStatusDto requestArticleStatusDto =
-        createArticleStatusDto(
-            articleId, SessionUtils.getSessionUserId(session), false
-        );
-
-    return statusProcess(requestArticleStatusDto);
-  }
-
-  @Override
-  public LikeAndNotLikeResponseDto likeAndNotListStatus(int articleId) {
-    return articleMapper.selectArticleAllStatusByArticleId(articleId);
-  }
-
-  @Override
-  public boolean isNotArticleInDb(int articleId) {
-    return ObjectUtils.isEmpty(articleMapper.selectArticleByArticleId(articleId));
-  }
-
   /**
    * Upsert가 정상적으로 진행된 경우 True를 Return한다.
    *
@@ -151,7 +115,18 @@ public class ArticleServiceImpl implements ArticleService {
    * @return
    */
   private boolean isArticleUpsertSuccess(ArticleDto articleDto) {
-    return articleMapper.upsertArticle(articleDto) == 0 ? false : true;
+    return articleMapper.upsertArticle(articleDto) > 0;
+  }
+
+  /**
+   * 게시글을 작성한 사용자가 Session에 저장된 사용자가 아닌 경우 True를 Return한다.
+   *
+   * @param dbCreatedUserId 데이터가 없는 경우 빈값이 올 수 있기에 무조건 첫번쨰 파라미터는 DB의 CreatedUserId를 넣어야 한다.
+   * @param sessionUserId   Session에 존재하는 로그인된 사용자 Id
+   * @return
+   */
+  private boolean isNotArticleCreatedUser(String dbCreatedUserId, String sessionUserId) {
+    return StringUtils.isBlank(dbCreatedUserId) || !dbCreatedUserId.equals(sessionUserId);
   }
 
 
@@ -164,53 +139,10 @@ public class ArticleServiceImpl implements ArticleService {
    * @return
    */
   private boolean isArticleDeleteSuccess(int articleId) {
-    articleMapper.deleteArticleStatue(
+    articleStatusMapper.deleteArticleStatus(
         new ArticleStatusDto().builder().articleId(articleId).build()
     );
-    articleReplyMapper.deleteReplyByArticleId(articleId);
 
-    return articleMapper.deleteArticleByArticleId(articleId) == 0 ? false : true;
+    return articleMapper.deleteArticleByArticleId(articleId) > 0;
   }
-
-  private void validatedNotHaveArticle(int articleId) {
-    if (isNotArticleInDb(articleId)) {
-      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
-    }
-  }
-
-  private ArticleStatusDto createArticleStatusDto(int articleId, String userId, boolean type) {
-    ArticleStatusDto articleStatusDto = new ArticleStatusDto().builder()
-        .articleId(articleId)
-        .userId(userId)
-        .type(type)
-        .build();
-
-    articleStatusDto.setCreatedAtNow();
-
-    return articleStatusDto;
-  }
-
-  /**
-   * 추천, 비추천에 대한 프로세스, 해당 게시물에 대해 사용자가 좋아요가 없는 경우 Insert 이미 같은 타입(추천, 비추천)을 한경우는 삭제, 다른 타입인 경우는
-   * Exception이 발생한다
-   *
-   * @param requestArticleStatusDto
-   * @return
-   */
-  private boolean statusProcess(ArticleStatusDto requestArticleStatusDto) {
-    ArticleStatusDto IsHaveStatusData = articleMapper.selectArticleStatusByArticleIdAndUserId(
-        requestArticleStatusDto);
-
-    if (ObjectUtils.isEmpty(IsHaveStatusData)) {
-      return articleMapper.insertArticleStatus(requestArticleStatusDto) > 0 ? true : false;
-    }
-
-    if (IsHaveStatusData.isType() != requestArticleStatusDto.isType()) {
-      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
-    }
-
-    return articleMapper.deleteArticleStatue(requestArticleStatusDto) > 0 ? true : false;
-  }
-
-
 }
