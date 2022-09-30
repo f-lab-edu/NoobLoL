@@ -99,11 +99,9 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
 
   private ReplyDto makeInsertReplyDto(ReplyInsertDto insertDto, String userId) {
     return new ReplyDto().builder()
-        .replyId(articleReplyMapper.selectMaxReplyId())
         .articleId(insertDto.getArticleId())
         .replyContent(insertDto.getReplyContent())
         .status(insertDto.getStatus())
-        .sortNo(articleReplyMapper.selectMaxSortNoByArticleId(insertDto.getArticleId()))
         .createdUserId(userId)
         .createdAt(insertDto.getCreatedAt())
         .build();

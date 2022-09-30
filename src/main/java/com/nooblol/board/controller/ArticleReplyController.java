@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,7 +55,7 @@ public class ArticleReplyController {
 
 
   @UserLoginCheck
-  @PostMapping("/add")
+  @PostMapping("/")
   public ResponseDto addReply(
       @Valid @RequestBody ReplyInsertDto replyInsertDto, HttpSession session
   ) {
@@ -64,7 +65,7 @@ public class ArticleReplyController {
   }
 
   @UserLoginCheck
-  @PostMapping("/update")
+  @PutMapping("/")
   public ResponseDto updateReply(
       @Valid @RequestBody ReplyUpdateDto replyUpdateDto, HttpSession session
   ) {
@@ -74,7 +75,7 @@ public class ArticleReplyController {
   }
 
   @UserLoginCheck
-  @DeleteMapping("/delete/{replyId}")
+  @DeleteMapping("/{replyId}")
   public ResponseDto deleteReply(@PathVariable int replyId, HttpSession session) {
     return ResponseUtils.makeToResponseOkDto(
         articleReplyService.deleteReplyByReplyId(replyId, session)

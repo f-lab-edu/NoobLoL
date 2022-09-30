@@ -9,10 +9,6 @@ public interface ArticleReplyMapper {
 
   int upsertReply(ReplyDto insertDto);
 
-  int selectMaxReplyId();
-
-  int selectMaxSortNoByArticleId(int articleId);
-
   String selectCreatedUserIdByReplyId(int replyId);
 
   int deleteReplyByReplyId(int replyId);

@@ -5,23 +5,20 @@
   <insert id="upsertReply" parameterType="ReplyDto">
     INSERT INTO bbs_articles_reply(reply_id, article_id, reply_content, status, sort_no,
                                    created_user_id, created_at)
-    VALUES (#{replyId}, #{articleId}, #{replyContent}, #{status}, #{sortNo}, #{createdUserId},
+    VALUES (IFNULL(#{replyId}, IFNULL((SELECT reply_id + 1
+                                       FROM bbs_articles_reply
+                                       ORDER BY reply_id DESC limit 1),1)),
+            #{articleId}, #{replyContent}, #{status},
+            IFNULL((SELECT sort_no + 1
+                    FROM bbs_articles_reply
+                    WHERE article_id = #{articleId}
+                    ORDER BY sort_no DESC limit 1), 1),
+            #{createdUserId},
             #{createdAt}) ON DUPLICATE KEY
     UPDATE
       reply_content = IFNULL(VALUES (reply_content), reply_content)
       , status = IFNULL(VALUES (status), status)
   </insert>
-
-  <select id="selectMaxReplyId" resultType="int">
-    SELECT COALESCE(MAX(reply_id) + 1, 1)
-    FROM bbs_articles_reply
-  </select>
-
-  <select id="selectMaxSortNoByArticleId" parameterType="int" resultType="int">
-    SELECT COALESCE(MAX(sort_no) + 1, 1)
-    FROM bbs_articles_reply
-    WHERE article_id = #{articleId}
-  </select>
 
   <select id="selectCreatedUserIdByReplyId" parameterType="int" resultType="String">
     SELECT created_user_id

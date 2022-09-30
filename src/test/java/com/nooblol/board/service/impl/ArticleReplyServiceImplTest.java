@@ -111,9 +111,6 @@ class ArticleReplyServiceImplTest {
     //mock
     when(articleService.isNotArticleInDb(testArticleId)).thenReturn(false);
     when(articleReplyMapper.upsertReply(any())).thenReturn(1);
-    when(articleReplyMapper.selectMaxReplyId()).thenReturn(1);
-    when(articleReplyMapper.selectMaxSortNoByArticleId(replyInsertDto.getArticleId()))
-        .thenReturn(1);
 
     //when
     boolean result = articleReplyService.insertReply(replyInsertDto, authUserSession);

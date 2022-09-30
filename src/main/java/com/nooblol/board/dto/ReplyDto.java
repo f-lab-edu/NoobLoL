@@ -14,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ReplyDto {
 
-  private int replyId;
+  private Integer replyId;
 
   private int articleId;
 
