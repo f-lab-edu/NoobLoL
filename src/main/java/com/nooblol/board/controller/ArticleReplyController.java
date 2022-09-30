@@ -1,7 +1,7 @@
 package com.nooblol.board.controller;
 
-import com.nooblol.board.dto.ReplyRequestDto.ReplyInsertDto;
-import com.nooblol.board.dto.ReplyRequestDto.ReplyUpdateDto;
+import com.nooblol.board.dto.ReplyInsertDto;
+import com.nooblol.board.dto.ReplyUpdateDto;
 import com.nooblol.board.service.ArticleReplyService;
 import com.nooblol.global.annotation.UserLoginCheck;
 import com.nooblol.global.dto.ResponseDto;

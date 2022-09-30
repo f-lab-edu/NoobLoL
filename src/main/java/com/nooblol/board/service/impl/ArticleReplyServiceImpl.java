@@ -1,8 +1,8 @@
 package com.nooblol.board.service.impl;
 
 import com.nooblol.board.dto.ReplyDto;
-import com.nooblol.board.dto.ReplyRequestDto.ReplyInsertDto;
-import com.nooblol.board.dto.ReplyRequestDto.ReplyUpdateDto;
+import com.nooblol.board.dto.ReplyInsertDto;
+import com.nooblol.board.dto.ReplyUpdateDto;
 import com.nooblol.board.mapper.ArticleReplyMapper;
 import com.nooblol.board.service.ArticleReplyService;
 import com.nooblol.board.service.ArticleService;
