@@ -27,12 +27,4 @@ public class DocsResourceConfig implements WebMvcConfigurer {
         .addResourceLocations("classpath:/static/docs/");
   }
 
-  @Bean
-  public InternalResourceViewResolver internalResourceViewResolver() {
-    InternalResourceViewResolver internalResourceViewResolver = new InternalResourceViewResolver();
-    internalResourceViewResolver.setPrefix("/static/");
-    internalResourceViewResolver.setSuffix(".html");
-    return internalResourceViewResolver;
-  }
-
 }
