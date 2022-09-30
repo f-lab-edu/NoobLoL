@@ -27,4 +27,8 @@ public enum UserRoleStatus {
   public static boolean isUserRoleAdmin(int roleValue) {
     return ADMIN.getRoleValue() == roleValue;
   }
+
+  public static boolean isNotUserAdmin(int roleValue) {
+    return ADMIN.getRoleValue() != roleValue;
+  }
 }

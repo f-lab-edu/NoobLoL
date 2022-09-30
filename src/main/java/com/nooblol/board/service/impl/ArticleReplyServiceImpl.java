@@ -7,8 +7,8 @@ import com.nooblol.board.mapper.ArticleReplyMapper;
 import com.nooblol.board.service.ArticleReplyService;
 import com.nooblol.board.service.ArticleService;
 import com.nooblol.global.exception.ExceptionMessage;
-import com.nooblol.global.utils.EncryptUtils;
 import com.nooblol.global.utils.SessionUtils;
+import com.nooblol.user.utils.UserRoleStatus;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
@@ -85,15 +85,14 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
   }
 
   private boolean isNotReplyCreatedUser(int replyId, HttpSession session) {
-    return SessionUtils.isNotCreatedUser(
-        Optional.of(articleReplyMapper.selectCreatedUserIdByReplyId(replyId)).get(),
-        Optional.of(SessionUtils.getSessionUserId(session)).get()
-    );
+    Optional<String> createdUserId =
+        Optional.of(articleReplyMapper.selectCreatedUserIdByReplyId(replyId));
+    return !createdUserId.get().equals(SessionUtils.getSessionUserId(session));
   }
 
   private boolean isNotSessionUserAdmin(HttpSession session) {
-    return SessionUtils.isNotUserAdmin(
-        Optional.of(SessionUtils.getSessionUserRole(session)).get()
+    return UserRoleStatus.isNotUserAdmin(
+        SessionUtils.getSessionUserRole(session)
     );
   }
 
