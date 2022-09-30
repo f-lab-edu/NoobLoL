@@ -6,7 +6,6 @@ import com.nooblol.global.utils.SessionUtils;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -21,6 +20,7 @@ public class AuthCheckAspect {
 
   /**
    * 사용자로그인이 필요한 기능에서 AOP를 활용하여 사전에 로그인이 안된 사용자를 거름
+   * <p>
    *
    * @param jp
    */
@@ -49,7 +49,12 @@ public class AuthCheckAspect {
     HttpSession session = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest()
         .getSession();
 
-    if (Optional.ofNullable(SessionUtils.getSessionUserRole(session)).isEmpty()) {
+    //사용자 정보가 존재하지 않는 경우 GUEST로 설정
+    Integer userRole = Optional
+        .ofNullable(SessionUtils.getSessionUserRole(session))
+        .orElse(UserRoleStatus.GUEST.getRoleValue());
+
+    if (userRole.equals(UserRoleStatus.ADMIN.getRoleValue())) {
       throw new IllegalArgumentException(ExceptionMessage.UNAUTHORIZED);
     }
   }

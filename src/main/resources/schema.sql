@@ -137,9 +137,10 @@ CREATE TABLE `bbs`
     `updated_at`      datetime
 );
 
+/* Upsert시 자동증가인 경우 Update도 값을 증기사키는 문제로 인한 수정*/
 CREATE TABLE `bbs_articles`
 (
-    `article_id`         int PRIMARY KEY AUTO_INCREMENT,
+    `article_id`         int PRIMARY KEY,
     `bbs_id`             int,
     `article_title`      varchar(255),
     `article_read_count` int,
@@ -150,12 +151,14 @@ CREATE TABLE `bbs_articles`
     `updated_at`         datetime
 );
 
+/*
+  22. 09. 09 BBSID컬럼 삭제 : articleId로 추적이 가능하기 떄문에 해당 테이블에서는 꼭 필요하지 않다 판단.
+ */
 CREATE TABLE `bbs_articles_status`
 (
     `article_id` int,
-    `bbs_id`     int,
-    `user_id`    int,
-    `type`       tinyint,
+    `user_id`    varchar(255),
+    `type`       tinyint(1),
     `created_at` datetime DEFAULT (now())
 );
 

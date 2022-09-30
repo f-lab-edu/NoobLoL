@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nooblol.board.mapper.ArticleMapper">
+  <select id="selectArticleByArticleId" parameterType="int" resultType="ArticleDto">
+    SELECT article_id,
+           bbs_id,
+           article_title,
+           article_read_count,
+           article_content,
+           status,
+           created_user_id,
+           created_at,
+           updated_at
+    FROM bbs_articles
+    WHERE article_id = #{articleId}
+  </select>
+
+  <select id="selectUserAuth" parameterType="String" resultType="int">
+    SELECT user_role
+    FROM users
+    WHERE user_id = #{userId}
+  </select>
+
+  <update id="addReadCount" parameterType="int">
+    UPDATE bbs_articles
+    SET article_read_count = article_read_count + 1
+    WHERE article_id = #{articleId}
+  </update>
+
+  <!--
+  Upsert를 통한 DB입력을 진행하려 하였으나, Update를 진행하는 경우에도 auto-increment값이 증가한다는 포스트를 보게되어 자동증가대신 무조건 articleId를 넣어주는 방식으로 제작
+  해당 포스트를 본 Reference : https://stuffdrawers.tistory.com/11
+  -->
+  <insert id="upsertArticle" parameterType="ArticleDto">
+    INSERT INTO bbs_articles(article_id, bbs_id, article_title, article_read_count, article_content,
+                             status, created_user_id, created_at, updated_at)
+    VALUES (IFNULL(#{articleId}, IFNULL((SELECT article_id + 1
+                                         FROM bbs_articles
+                                         ORDER BY article_id DESC limit 1), 1)),
+            #{bbsId}, #{articleTitle},
+            #{articleReadCount}, #{articleContent},
+            #{status}, #{createdUserId}, #{createdAt}, #{updatedAt}) ON DUPLICATE KEY
+    UPDATE
+      updated_at = IFNULL(VALUES (updated_at), updated_at)
+      , bbs_id = IFNULL(VALUES (bbs_id), bbs_id)
+      , article_title = IFNULL(VALUES (article_title), article_title)
+      , article_content = IFNULL(VALUES (article_content), article_content)
+      , status = IFNULL(VALUES (status), status)
+  </insert>
+
+  <select id="selectCreatedUserId" parameterType="int" resultType="String">
+    SELECT created_user_id
+    FROM bbs_articles
+    WHERE article_id = #{articleId}
+  </select>
+
+  <delete id="deleteArticleByArticleId" parameterType="int">
+    DELETE
+    FROM bbs_articles
+    WHERE article_id = #{articleId}
+  </delete>
+</mapper>

@@ -7,12 +7,12 @@ import lombok.Getter;
 public enum BoardStatusEnum {
   ACTIVE(1), DEACTIVE(2);
 
+
   BoardStatusEnum(int status) {
     this.status = status;
   }
 
   int status;
-
 
   public static boolean isExistStatus(int statusType) {
     return Arrays.stream(BoardStatusEnum.values())

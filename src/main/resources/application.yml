@@ -24,6 +24,13 @@ spring:
           starttls:
             enable: true
 
+  #NoHandlerException Setting
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
 #Embedded Tomcat Session TimeOut
 server:
   servlet:
@@ -37,6 +44,7 @@ mybatis:
     jdbc-type-for-null: null
     call-setters-on-nulls: true
     multiple-result-sets-enabled: false
+    default-enum-type-handler: com.nooblol.board.utils.ArticleLikeStatusEnumTypeHandler
   type-aliases-package: com.nooblol.*.*
   mapper-locations: classpath:mybatis/mapper/*/*.xml
 

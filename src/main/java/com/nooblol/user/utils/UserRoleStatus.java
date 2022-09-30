@@ -1,5 +1,7 @@
 package com.nooblol.user.utils;
 
+import java.util.Arrays;
+
 /**
  * Value 분류
  * <p>
@@ -20,5 +22,9 @@ public enum UserRoleStatus {
 
   public int getRoleValue() {
     return roleValue;
+  }
+
+  public static boolean isUserRoleAdmin(int roleValue) {
+    return ADMIN.getRoleValue() == roleValue;
   }
 }
