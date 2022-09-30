@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import com.nooblol.board.dto.ArticleDto;
-import com.nooblol.board.dto.ArticleStatusDto;
 import com.nooblol.board.mapper.ArticleMapper;
+import com.nooblol.board.mapper.ArticleStatusMapper;
 import com.nooblol.board.utils.ArticleAuthMessage;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionEnum;
@@ -25,6 +25,9 @@ class ArticleServiceImplTest {
 
   @Mock
   private ArticleMapper articleMapper;
+
+  @Mock
+  private ArticleStatusMapper articleStatusMapper;
 
   @InjectMocks
   private ArticleServiceImpl articleService;
@@ -273,6 +276,7 @@ class ArticleServiceImplTest {
     //mock
     when(articleMapper.deleteArticleByArticleId(testArticleId)).thenReturn(1);
     when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(mockReturnDto);
+    when(articleStatusMapper.deleteArticleStatus(any())).thenReturn(1);
 
     //when
     boolean result = articleService.deleteArticle(testArticleId, session);
@@ -305,6 +309,7 @@ class ArticleServiceImplTest {
     //mock
     when(articleMapper.deleteArticleByArticleId(testArticleId)).thenReturn(1);
     when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(mockReturnDto);
+    when(articleStatusMapper.deleteArticleStatus(any())).thenReturn(1);
 
     //when
     boolean result = articleService.deleteArticle(testArticleId, session);
@@ -344,129 +349,5 @@ class ArticleServiceImplTest {
 
     //then
     assertEquals(e.getMessage(), ExceptionMessage.FORBIDDEN);
-  }
-
-  @Test
-  @DisplayName("게시글을 추천 또는 비추천 할 때, DB에 게시물이 존재하지 않으면 BadRequest Exception이 발생한다")
-  void likeArticle_WhenHaveNotInDbThenBadRequestException() {
-    //given
-    int testArticleId = 3;
-
-    //mock
-    when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(null);
-
-    //when
-    Exception e = assertThrows(IllegalArgumentException.class, () -> {
-      articleService.likeArticle(testArticleId, null);
-    });
-
-    //then
-    assertEquals(e.getMessage(), ExceptionMessage.BAD_REQUEST);
-  }
-
-  @Test
-  @DisplayName("게시글을 추천 또는 비추천 하려고 할 때, 추천했던 적이 없으면 결과값으로 true를 획득한다")
-  void likeArticle_WhenArticleFirstLikeThenReturnTrue() {
-    //given
-    int testArticleId = 1;
-
-    UserDto mockUserDto = new UserDto().builder()
-        .userId("test")
-        .userEmail("test@test.com")
-        .userName("test")
-        .userRole(UserRoleStatus.AUTH_USER.getRoleValue())
-        .level(1)
-        .exp(0)
-        .build();
-
-    HttpSession session = new MockHttpSession();
-    session.setAttribute(SessionEnum.USER_LOGIN.getValue(), mockUserDto);
-
-    //mock
-    when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(new ArticleDto());
-    when(articleMapper.selectArticleStatusByArticleIdAndUserId(any())).thenReturn(null);
-    when(articleMapper.insertArticleStatus(any())).thenReturn(1);
-
-    //then
-    boolean result = articleService.likeArticle(testArticleId, session);
-
-    assertEquals(result, true);
-  }
-
-  @Test
-  @DisplayName("게시글을 추천할떄, 이미 비추천을 한상황이면 BadRequest Exception이 발생한다.")
-  void likeArticle_WhenArticleLikeAndHistoryIsNotLikeThenBadRequestException() {
-    //given
-    int testArticleId = 1;
-
-    UserDto mockUserDto = new UserDto().builder()
-        .userId("test")
-        .userEmail("test@test.com")
-        .userName("test")
-        .userRole(UserRoleStatus.AUTH_USER.getRoleValue())
-        .level(1)
-        .exp(0)
-        .build();
-
-    HttpSession session = new MockHttpSession();
-    session.setAttribute(SessionEnum.USER_LOGIN.getValue(), mockUserDto);
-
-    ArticleStatusDto mockArticleStatusDto = new ArticleStatusDto().builder()
-        .articleId(testArticleId)
-        .userId(mockUserDto.getUserId())
-        .type(false)
-        .build();
-    mockArticleStatusDto.setCreatedAtNow();
-
-    //mock
-    when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(new ArticleDto());
-    when(articleMapper.selectArticleStatusByArticleIdAndUserId(any())).thenReturn(
-        mockArticleStatusDto);
-
-    //when
-    Exception result = assertThrows(IllegalArgumentException.class, () -> {
-      articleService.likeArticle(testArticleId, session);
-    });
-
-    //then
-    assertEquals(result.getMessage(), ExceptionMessage.BAD_REQUEST);
-  }
-
-  @Test
-  @DisplayName("게시글을 추천할떄, 이미 추천을 한상황이면 추천했던 이력을 삭제후 Return값으로 True를 획득한다")
-  void likeArticle_WhenArticleLikeAndHistoryIsLikeThenReturnTrue() {
-    //given
-    int testArticleId = 1;
-
-    UserDto mockUserDto = new UserDto().builder()
-        .userId("test")
-        .userEmail("test@test.com")
-        .userName("test")
-        .userRole(UserRoleStatus.AUTH_USER.getRoleValue())
-        .level(1)
-        .exp(0)
-        .build();
-
-    HttpSession session = new MockHttpSession();
-    session.setAttribute(SessionEnum.USER_LOGIN.getValue(), mockUserDto);
-
-    ArticleStatusDto mockArticleStatusDto = new ArticleStatusDto().builder()
-        .articleId(testArticleId)
-        .userId(mockUserDto.getUserId())
-        .type(true)
-        .build();
-    mockArticleStatusDto.setCreatedAtNow();
-
-    //mock
-    when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(new ArticleDto());
-    when(articleMapper.selectArticleStatusByArticleIdAndUserId(any())).thenReturn(
-        mockArticleStatusDto);
-    when(articleMapper.deleteArticleStatue(any())).thenReturn(1);
-
-    //when
-    boolean result = articleService.likeArticle(testArticleId, session);
-
-    //then
-    assertEquals(result, true);
   }
 }
