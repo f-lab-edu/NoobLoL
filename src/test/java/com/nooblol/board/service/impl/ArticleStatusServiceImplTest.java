@@ -2,6 +2,7 @@ package com.nooblol.board.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import com.nooblol.board.dto.ArticleDto;
@@ -42,7 +43,8 @@ class ArticleStatusServiceImplTest {
     int testArticleId = 3;
 
     //mock
-    when(articleService.isNotArticleInDb(testArticleId)).thenReturn(true);
+    doThrow(new IllegalArgumentException(ExceptionMessage.BAD_REQUEST))
+        .when(articleService).isNotExistsArticleByArticleId(testArticleId);
 
     //when
     Exception e = assertThrows(IllegalArgumentException.class, () -> {
@@ -72,7 +74,6 @@ class ArticleStatusServiceImplTest {
     session.setAttribute(SessionEnum.USER_LOGIN.getValue(), mockUserDto);
 
     //mock
-    when(articleService.isNotArticleInDb(testArticleId)).thenReturn(false);
     when(articleStatusMapper.selectArticleStatusByArticleIdAndUserId(any())).thenReturn(null);
     when(articleStatusMapper.insertArticleStatus(any())).thenReturn(1);
 
@@ -107,7 +108,6 @@ class ArticleStatusServiceImplTest {
         .build();
 
     //mock
-    when(articleService.isNotArticleInDb(testArticleId)).thenReturn(false);
     when(articleStatusMapper.selectArticleStatusByArticleIdAndUserId(any())).thenReturn(
         mockArticleStatusDto);
 
@@ -145,7 +145,6 @@ class ArticleStatusServiceImplTest {
         .build();
 
     //mock
-    when(articleService.isNotArticleInDb(testArticleId)).thenReturn(false);
     when(articleStatusMapper.selectArticleStatusByArticleIdAndUserId(any())).thenReturn(
         mockArticleStatusDto);
     when(articleStatusMapper.deleteArticleStatus(any())).thenReturn(1);

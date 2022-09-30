@@ -53,8 +53,9 @@ public interface ArticleService {
 
   /**
    * DB에 실제 해당 게시물이 존재하는지 여부 확인
+   *
    * @param articleId
    * @return
    */
-  boolean isNotArticleInDb(int articleId);
+  void isNotExistsArticleByArticleId(int articleId);
 }

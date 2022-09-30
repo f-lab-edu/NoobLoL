@@ -27,7 +27,7 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
 
   @Override
   public boolean insertReply(ReplyInsertDto insertDto, HttpSession session) {
-    validHaveArticleInDb(insertDto.getArticleId());
+    articleService.isNotExistsArticleByArticleId(insertDto.getArticleId());
 
     Optional<String> userId = Optional.of(SessionUtils.getSessionUserId(session));
 
@@ -36,7 +36,7 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
 
   @Override
   public boolean updateReply(ReplyUpdateDto updateDto, HttpSession session) {
-    validHaveArticleInDb(updateDto.getArticleId());
+    articleService.isNotExistsArticleByArticleId(updateDto.getArticleId());
 
     boolean isNotCreatedUser = isNotReplyCreatedUser(updateDto.getReplyId(), session);
     boolean isNotUserAdmin = UserRoleStatus.isNotUserAdmin(
@@ -76,16 +76,9 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
 
   @Override
   public List<ReplyDto> selectReplyListByArticleId(int articleId) {
-    validHaveArticleInDb(articleId);
+    articleService.isNotExistsArticleByArticleId(articleId);
 
     return articleReplyMapper.selectReplyListByArticleId(articleId);
-  }
-
-
-  private void validHaveArticleInDb(int articleId) {
-    if (articleService.isNotArticleInDb(articleId)) {
-      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
-    }
   }
 
   private boolean isNotReplyCreatedUser(int replyId, HttpSession session) {

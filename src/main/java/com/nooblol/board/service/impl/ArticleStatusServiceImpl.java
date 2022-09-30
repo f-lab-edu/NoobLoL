@@ -27,7 +27,7 @@ public class ArticleStatusServiceImpl implements ArticleStatusService {
 
   @Override
   public boolean likeArticle(int articleId, HttpSession session) {
-    validatedNotHaveArticle(articleId);
+    articleService.isNotExistsArticleByArticleId(articleId);
 
     ArticleStatusDto requestArticleStatusDto =
         createArticleStatusDto(
@@ -39,7 +39,7 @@ public class ArticleStatusServiceImpl implements ArticleStatusService {
 
   @Override
   public boolean notLikeArticle(int articleId, HttpSession session) {
-    validatedNotHaveArticle(articleId);
+    articleService.isNotExistsArticleByArticleId(articleId);
 
     ArticleStatusDto requestArticleStatusDto =
         createArticleStatusDto(
@@ -52,12 +52,6 @@ public class ArticleStatusServiceImpl implements ArticleStatusService {
   @Override
   public LikeAndNotLikeResponseDto likeAndNotListStatus(int articleId) {
     return articleStatusMapper.selectArticleAllStatusByArticleId(articleId);
-  }
-
-  private void validatedNotHaveArticle(int articleId) {
-    if (articleService.isNotArticleInDb(articleId)) {
-      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
-    }
   }
 
   private ArticleStatusDto createArticleStatusDto(int articleId, String userId, boolean type) {

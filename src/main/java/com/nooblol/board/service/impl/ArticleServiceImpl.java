@@ -109,8 +109,10 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
-  public boolean isNotArticleInDb(int articleId) {
-    return ObjectUtils.isEmpty(articleMapper.selectArticleByArticleId(articleId));
+  public void isNotExistsArticleByArticleId(int articleId) {
+    if (ObjectUtils.isEmpty(articleMapper.selectArticleByArticleId(articleId))) {
+      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
+    }
   }
 
   /**

@@ -86,7 +86,8 @@ class ArticleReplyServiceImplTest {
         .articleId(testArticleId)
         .build();
     //mock
-    when(articleService.isNotArticleInDb(testArticleId)).thenReturn(true);
+    doThrow(new IllegalArgumentException(ExceptionMessage.BAD_REQUEST))
+        .when(articleService).isNotExistsArticleByArticleId(testArticleId);
 
     //when
     Exception e = assertThrows(IllegalArgumentException.class, () -> {
@@ -109,7 +110,6 @@ class ArticleReplyServiceImplTest {
         .build();
 
     //mock
-    when(articleService.isNotArticleInDb(testArticleId)).thenReturn(false);
     when(articleReplyMapper.upsertReply(any())).thenReturn(1);
 
     //when
@@ -131,7 +131,8 @@ class ArticleReplyServiceImplTest {
         .replyId(testReplyId)
         .build();
     //mock
-    when(articleService.isNotArticleInDb(testArticleId)).thenReturn(true);
+    doThrow(new IllegalArgumentException(ExceptionMessage.BAD_REQUEST))
+        .when(articleService).isNotExistsArticleByArticleId(testArticleId);
 
     //when
     Exception e = assertThrows(IllegalArgumentException.class, () -> {
@@ -155,7 +156,6 @@ class ArticleReplyServiceImplTest {
         .build();
 
     //mock
-    when(articleService.isNotArticleInDb(testArticleId)).thenReturn(false);
     when(articleReplyMapper.selectCreatedUserIdByReplyId(testReplyId)).thenReturn("NoUserId");
 
     //when
@@ -181,7 +181,6 @@ class ArticleReplyServiceImplTest {
         .build();
 
     //mock
-    when(articleService.isNotArticleInDb(testArticleId)).thenReturn(false);
     when(articleReplyMapper.selectCreatedUserIdByReplyId(testReplyId)).thenReturn("NoUserId");
     when(articleReplyMapper.upsertReply(any())).thenReturn(1);
 
@@ -206,7 +205,6 @@ class ArticleReplyServiceImplTest {
         .build();
 
     //mock
-    when(articleService.isNotArticleInDb(testArticleId)).thenReturn(false);
     when(articleReplyMapper.selectCreatedUserIdByReplyId(testReplyId)).thenReturn("NoUserId");
     when(articleReplyMapper.upsertReply(any())).thenReturn(0);
 
@@ -231,7 +229,6 @@ class ArticleReplyServiceImplTest {
         .build();
 
     //mock
-    when(articleService.isNotArticleInDb(testArticleId)).thenReturn(false);
     when(articleReplyMapper.selectCreatedUserIdByReplyId(testReplyId)).thenReturn(
         SessionUtils.getSessionUserId(authUserSession));
     when(articleReplyMapper.upsertReply(any())).thenReturn(1);
@@ -257,7 +254,6 @@ class ArticleReplyServiceImplTest {
         .build();
 
     //mock
-    when(articleService.isNotArticleInDb(testArticleId)).thenReturn(false);
     when(articleReplyMapper.selectCreatedUserIdByReplyId(testReplyId)).thenReturn(
         SessionUtils.getSessionUserId(authUserSession));
     when(articleReplyMapper.upsertReply(any())).thenReturn(0);
@@ -423,8 +419,8 @@ class ArticleReplyServiceImplTest {
         int nullArticleId = 999999;
 
         //mock
-        when(articleService.isNotArticleInDb(nullArticleId)).thenReturn(true);
-
+        doThrow(new IllegalArgumentException(ExceptionMessage.BAD_REQUEST))
+            .when(articleService).isNotExistsArticleByArticleId(nullArticleId);
         //when
         Exception e = assertThrows(IllegalArgumentException.class,
             () -> articleReplyService.selectReplyListByArticleId(nullArticleId));
@@ -440,7 +436,6 @@ class ArticleReplyServiceImplTest {
         int existsArticleId = 1;
 
         //mock
-        when(articleService.isNotArticleInDb(existsArticleId)).thenReturn(false);
         when(articleReplyMapper.selectReplyListByArticleId(existsArticleId)).thenReturn(null);
 
         //when
@@ -467,7 +462,6 @@ class ArticleReplyServiceImplTest {
         mockReturnList.add(sampleReply);
 
         //mock
-        when(articleService.isNotArticleInDb(existsArticleId)).thenReturn(false);
         when(articleReplyMapper.selectReplyListByArticleId(existsArticleId)).thenReturn(
             mockReturnList);
 
