@@ -24,4 +24,9 @@ public enum ResponseEnum {
     this.response = new ResponseDto(resultCode, result);
   }
 
+  public static ResponseDto getResponseOkDto(Object result) {
+    ResponseDto dto = OK.getResponse();
+    dto.setResult(result);
+    return dto;
+  }
 }
