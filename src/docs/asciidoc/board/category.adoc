@@ -1,0 +1,96 @@
+= Category API Docs
+Creator : https://devjong12.tistory.com , Jong1
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ../../../../build/generated-snippets
+endif::[]
+
+
+== introduction
+
+해당 API는 카테고리의 추가, 삭제, 수정, 조회에 API문서입니다.
+
+== Category API
+
+=== 등록
+
+해당 기능은 관리자 계정으로 로그인한 정보가 세션에 존재해야 사용이 가능합니다.
+
+==== Request
+
+include::{snippets}/board/category/add/request-headers.adoc[]
+include::{snippets}/board/category/add//request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/board/category/add/response-headers.adoc[]
+include::{snippets}/board/category/add/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/board/category/add/curl-request.adoc[]
+include::{snippets}/board/category/add/http-request.adoc[]
+include::{snippets}/board/category/add/http-response.adoc[]
+
+=== 삭제
+
+해당 기능은 관리자 계정으로 로그인한 정보가 세션에 존재해야 사용이 가능합니다.
+
+==== Request
+
+include::{snippets}/board/category/delete/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/board/category/delete/response-headers.adoc[]
+include::{snippets}/board/category/delete/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/board/category/delete/curl-request.adoc[]
+include::{snippets}/board/category/delete/http-request.adoc[]
+include::{snippets}/board/category/delete/http-response.adoc[]
+
+=== 수정
+
+해당 기능은 관리자 계정으로 로그인한 정보가 세션에 존재해야 사용이 가능합니다.
+
+==== Request
+
+include::{snippets}/board/category/update/request-headers.adoc[]
+include::{snippets}/board/category/update/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/board/category/update/response-headers.adoc[]
+include::{snippets}/board/category/update/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/board/category/update/curl-request.adoc[]
+include::{snippets}/board/category/update/http-request.adoc[]
+include::{snippets}/board/category/update/http-response.adoc[]
+
+=== 조회
+
+==== Request
+
+include::{snippets}/board/category/getList/request-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/board/category/getList/response-headers.adoc[]
+include::{snippets}/board/category/getList/response-fields.adoc[]
+
+==== Example
+
+include::{snippets}/board/category/getList/curl-request.adoc[]
+include::{snippets}/board/category/getList/http-request.adoc[]
+include::{snippets}/board/category/getList/http-response.adoc[]
+
