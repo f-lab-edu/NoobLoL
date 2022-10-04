@@ -75,7 +75,7 @@ class AdminControllerTest {
         .andExpect(jsonPath("$.result", Is.is(true)))
         .andDo(
             document(
-                "admin/signup",
+                "user/admin/signup",
                 DocumentSnippetsUtils.requestHeaders_ContentTypeApplicationJsonValue(),
                 requestFields(
                     fieldWithPath("userId").ignored(),
@@ -150,7 +150,7 @@ class AdminControllerTest {
         .andExpect(jsonPath("$.result", Is.is(true)))
         .andDo(
             document(
-                "admin/forceUserDelete",
+                "user/admin/forceUserDelete",
                 pathParameters(
                     parameterWithName("deleteUserId")
                         .description("강제 삭제하고자 하는 사용자 ID")
@@ -186,7 +186,7 @@ class AdminControllerTest {
         .andExpect(jsonPath("$.resultCode", Is.is(HttpStatus.OK.value())))
         .andDo(
             document(
-                "admin/userList",
+                "user/admin/userList",
                 requestParameters(
                     parameterWithName("page").description("요청하려는 Page"),
                     parameterWithName("limit").description("최대 limit 갯수만큼의 사용자 정보 반환")

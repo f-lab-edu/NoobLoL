@@ -318,7 +318,7 @@ class UserControllerTest {
         .andExpect(jsonPath("$.result", Is.is(true)))
         .andDo(
             document(
-                "user/resendAuthMail",
+                "user/auth",
                 pathParameters(
                     parameterWithName("userId").description("인증권한을 일반 사용자로 변경하려는 사용자ID")
                 ),
