@@ -38,7 +38,7 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
   public boolean updateReply(ReplyUpdateDto updateDto, HttpSession session) {
     articleService.checkNotExistsArticleByArticleId(updateDto.getArticleId());
 
-    if (isNotReplyCreatedUser(updateDto.getReplyId(), session) &&
+    if (isNotReplyCreatedUserOptional(updateDto.getReplyId(), session) &&
         UserRoleStatus.isNotUserAdmin(SessionUtils.getSessionUserRole(session))) {
       throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
     }
@@ -53,7 +53,7 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
 
   @Override
   public boolean deleteReplyByReplyId(int replyId, HttpSession session) {
-    if (isNotReplyCreatedUser(replyId, session) &&
+    if (isNotReplyCreatedUserOptional(replyId, session) &&
         UserRoleStatus.isNotUserAdmin(SessionUtils.getSessionUserRole(session))) {
       throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
     }
@@ -73,7 +73,7 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
     return articleReplyMapper.selectReplyListByArticleId(articleId);
   }
 
-  private boolean isNotReplyCreatedUser(int replyId, HttpSession session) {
+  private boolean isNotReplyCreatedUserOptional(int replyId, HttpSession session) {
     Optional<String> createdUserId =
         Optional.of(articleReplyMapper.selectCreatedUserIdByReplyId(replyId));
     return !createdUserId.get().equals(SessionUtils.getSessionUserId(session));
