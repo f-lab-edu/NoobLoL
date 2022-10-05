@@ -79,4 +79,42 @@
         updated_at      = #{updatedAt}
     WHERE category_id = #{categoryId}
   </update>
+
+  <select id="selectBbsByBbsId" parameterType="int" resultType="BbsDto">
+    SELECT bbs_id,
+           category_id,
+           bbs_name,
+           status,
+           created_user_id,
+           created_at,
+           updated_user_id,
+           updated_at
+    FROM bbs
+    WHERE bbs_id = #{bbsId}
+  </select>
+
+  <insert id="insertBbs" parameterType="com.nooblol.board.dto.BbsRequestDto$BbsInsertDto">
+    INSERT INTO BBS(category_id, bbs_name, status, created_user_id, created_at, updated_user_id,
+                    updated_at)
+    VALUES (#{categoryId}, #{bbsName}, #{status}, #{createdUserId}, #{cratedAt}, #{updatedUserId},
+            #{updatedAt})
+  </insert>
+
+  <update id="updateBbs" parameterType="com.nooblol.board.dto.BbsRequestDto$BbsUpdateDto">
+    UPDATE bbs
+    SET category_id     = #{categoryId},
+        bbs_name        = #{bbsName},
+        status          = #{status},
+        updated_user_id = #{updatedUserId},
+        updated_at      = #{updatedAt}
+    WHERE bbsId = #{bbsId}
+  </update>
+
+  <update id="deleteBbs" parameterType="com.nooblol.board.dto.BbsRequestDto$BbsDeleteDto">
+    UPDATE bbs
+    SET status          = #{status},
+        updated_user_id = #{updatedUserId},
+        updated_at      = #{updatedAt}
+    WHERE bbs_id = #{bbsId}
+  </update>
 </mapper>
