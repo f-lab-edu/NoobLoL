@@ -42,7 +42,6 @@ class CategoryServiceImplTest {
   @Mock
   CategoryMapper categoryMapper;
 
-
   HttpSession authUserSession = SessionSampleObject.authUserLoginSession;
   HttpSession adminSession = SessionSampleObject.adminUserLoginSession;
 
@@ -56,21 +55,23 @@ class CategoryServiceImplTest {
     class SelectTest {
 
       @Test
-      @DisplayName("카테고리를 조회시 Enum에 없는 값인 경우 Null이 반환된다")
-      void getCategoryList_WhenNoHaveEnumThenReturnNull() {
+      @DisplayName("카테고리를 조회시 Enum에 없는 값인 경우 BadRequest Exception이 발생한다")
+      void getCategoryList_WhenNoHaveEnum_ThenBadRequestException() {
         //given
         int noHaveStatus = 999;
 
         //mock
 
         //when
-
+        Exception e = assertThrows(IllegalArgumentException.class, () -> {
+          categoryService.getCategoryList(noHaveStatus);
+        });
         //then
-        assertEquals(categoryService.getCategoryList(noHaveStatus), null);
+        assertEquals(e.getMessage(), ExceptionMessage.BAD_REQUEST);
       }
 
       @Test
-      @DisplayName("카테고리를 조회시 Enum에 없는 값인 경우 Null이 반환된다")
+      @DisplayName("카테고리를 조회시 상태값이 Enum에 존재하는 값인 경우에는 해당 Status와 일치하는 카테고리 리스트를 획득한다")
       void getCategoryList_WhenNoHaveEnumThenReturnListCategory() {
         //given
         int haveStatus = BoardStatusEnum.ACTIVE.getStatus();
@@ -98,7 +99,7 @@ class CategoryServiceImplTest {
         mockCategoryList.add(mockCategoryDto2);
 
         //mock
-        when(categoryMapper.selectCategoryList(haveStatus)).thenReturn(mockCategoryList);
+        when(categoryMapper.selectCategory(haveStatus)).thenReturn(mockCategoryList);
 
         //when
         List<CategoryDto> result = categoryService.getCategoryList(haveStatus);
@@ -295,8 +296,8 @@ class CategoryServiceImplTest {
     class SelectTest {
 
       @Test
-      @DisplayName("게시판리스트 조회시 Enum에 없는 값인 경우 Null이 반환된다")
-      void getBbsList_WhenNoHaveEnumThenReturnNull() {
+      @DisplayName("게시판리스트 조회시 Enum에 없는 값인 경우 BadRequestException이 발생한다")
+      void getBbsList_WhenNoHaveEnum_ThenBadRequestException() {
         //given
         int noHaveCategoryId = 999;
         int noHaveStatus = 999;
@@ -304,14 +305,17 @@ class CategoryServiceImplTest {
         //mock
 
         //when
+        Exception e = assertThrows(IllegalArgumentException.class, () ->
+            categoryService.getBbsList(noHaveCategoryId, noHaveStatus)
+        );
 
         //then
-        assertEquals(categoryService.getBbsList(noHaveCategoryId, noHaveStatus), null);
+        assertEquals(e.getMessage(), ExceptionMessage.BAD_REQUEST);
       }
 
       @Test
-      @DisplayName("게시판리스트 조회시 Enum에 존재하는 값인 경우 게시판 리스트가 반환된다")
-      void getBbsList_WhenNoHaveEnumThenReturnListCategory() {
+      @DisplayName("게시판리스트 조회시 조회하고자 하는 Status가 Enum에 존재하고, 카테고리Id도 존재하는 경우, 해당 항목과 일치하는 값을 가진 게시판 리스트를 획득한다.")
+      void getBbsList_WhenNoHaveEnum_ThenReturnListCategory() {
         //given
         int haveStatus = BoardStatusEnum.ACTIVE.getStatus();
         int haveCategoryId = 1;
@@ -350,151 +354,151 @@ class CategoryServiceImplTest {
         //then
         assertEquals(result, mockBbsList);
       }
-    }
 
-    @Nested
-    @DisplayName("생성 테스트")
-    class InsertTest {
+      @Nested
+      @DisplayName("생성 테스트")
+      class InsertTest {
+
+        @Test
+        @DisplayName("게시판의 생성시, 정상적으로 데이터가 삽입이 되었다면 결과값으로 True를 획득한다")
+        void insertBbs_WhenInsertSuccessThenReturnTrue() {
+          //given
+          BbsInsertDto bbsInsertDto = new BbsInsertDto();
+
+          //mock
+          when(categoryMapper.insertBbs(bbsInsertDto)).thenReturn(1);
+
+          //when
+          boolean result = categoryService.insertBbs(bbsInsertDto, adminSession);
+
+          //then
+          assertTrue(result);
+        }
+      }
+
+      @Nested
+      @DisplayName("수정 테스트")
+      class UpdateTest {
+
+        @Test
+        @DisplayName("게시판의 정보를 수정하고자 할 때, 해당 게시판정보가 DB에 없는 경우 NPE가 발생한다.")
+        void updateBbs_WhenDbNoHaveBbsDataThenNullPointerException() {
+          //given
+          int nullBbsId = 99999;
+          BbsUpdateDto mockBbsUpdateDto = new BbsUpdateDto().builder().bbsId(nullBbsId).build();
+
+          //mock
+          when(categoryMapper.selectBbsByBbsId(nullBbsId)).thenReturn(null);
+
+          //when
+          Exception e = assertThrows(NullPointerException.class, () -> {
+            categoryService.updateBbs(mockBbsUpdateDto, adminSession);
+          });
+
+          assertEquals(e.getClass(), NullPointerException.class);
+        }
+
+        @Test
+        @DisplayName("게시판의 정보 수정시 할 때, 해당 정보와 DB의 게시판정보가 동일한 경우 BadRequest Exception이 발생한다")
+        void updateBbs_WhenDbEqualsUpdateDataThenBadRequestException() {
+          //given
+          int bbsId = 1;
+          BbsUpdateDto bbsUpdateDto = new BbsUpdateDto().builder()
+              .bbsId(bbsId)
+              .categoryId(1)
+              .bbsName("test")
+              .status(BoardStatusEnum.ACTIVE.getStatus())
+              .build();
+
+          BbsDto mockBbsDto = new BbsDto().builder()
+              .bbsId(bbsId)
+              .categoryId(1)
+              .bbsName("test")
+              .status(BoardStatusEnum.ACTIVE.getStatus())
+              .build();
+
+          //mock
+          when(categoryMapper.selectBbsByBbsId(bbsId)).thenReturn(mockBbsDto);
+
+          //when
+          Exception e = assertThrows(IllegalArgumentException.class, () -> {
+            categoryService.updateBbs(bbsUpdateDto, adminSession);
+          });
+
+          //then
+          assertEquals(e.getMessage(), ExceptionMessage.BAD_REQUEST);
+        }
+
+        @Test
+        @DisplayName("게시판의 정보 수정시, 수정된 데이터가 존재하는 경우 Return으로 True를 획득한다")
+        void updateBbs_WhenDbDataUpdateSuccessThenReturnTrue() {
+          //given
+          int bbsId = 1;
+          BbsUpdateDto bbsUpdateDto = new BbsUpdateDto().builder()
+              .bbsId(bbsId)
+              .categoryId(1)
+              .bbsName("test")
+              .status(BoardStatusEnum.ACTIVE.getStatus())
+              .build();
+
+          BbsDto mockBbsDto = new BbsDto().builder()
+              .bbsId(bbsId)
+              .categoryId(5)
+              .bbsName("sample")
+              .status(BoardStatusEnum.ACTIVE.getStatus())
+              .build();
+
+          //mock
+          when(categoryMapper.selectBbsByBbsId(bbsId)).thenReturn(mockBbsDto);
+          when(categoryMapper.updateBbs(bbsUpdateDto)).thenReturn(1);
+
+          //when
+          boolean result = categoryService.updateBbs(bbsUpdateDto, adminSession);
+
+          //then
+          assertTrue(result);
+        }
+      }
+
+      @Nested
+      @DisplayName("삭제 테스트")
+      class DeleteTest {
+
+        @Test
+        @DisplayName("파라미터로 받은 게시판ID가 DB에 데이터가 없는 경우 NotFoundException이 발생한다")
+        void deleteBbs_WhenDbNotFoundBbsThenNotFoundException() {
+          //given
+          int noBbsId = 99999;
+
+          //mock
+          when(categoryMapper.selectBbsByBbsId(noBbsId)).thenReturn(null);
+
+          //when
+          Exception e = assertThrows(IllegalArgumentException.class, () -> {
+            categoryService.deleteBbs(noBbsId, adminSession);
+          });
+
+          //then
+          assertEquals(e.getMessage(), ExceptionMessage.NO_DATA);
+        }
+      }
 
       @Test
-      @DisplayName("게시판의 생성시, 정상적으로 데이터가 삽입이 되었다면 결과값으로 True를 획득한다")
-      void insertBbs_WhenInsertSuccessThenReturnTrue() {
+      @DisplayName("파라미터로 받은 게시판ID가 DB에 존재하고, Status값을 정상적으로 Update한 경우 결과값으로 True를 획득한다.")
+      void deleteBbs_WhenDeleteBbsSuccessThenReturnTrue() {
         //given
-        BbsInsertDto bbsInsertDto = new BbsInsertDto();
+        int bbsId = 1;
 
         //mock
-        when(categoryMapper.insertBbs(bbsInsertDto)).thenReturn(1);
+        when(categoryMapper.selectBbsByBbsId(bbsId)).thenReturn(new BbsDto());
+        when(categoryMapper.deleteBbs(any())).thenReturn(1);
 
         //when
-        boolean result = categoryService.insertBbs(bbsInsertDto, adminSession);
+        boolean result = categoryService.deleteBbs(bbsId, adminSession);
 
         //then
         assertTrue(result);
       }
-    }
-
-    @Nested
-    @DisplayName("수정 테스트")
-    class UpdateTest {
-
-      @Test
-      @DisplayName("게시판의 정보를 수정하고자 할 때, 해당 게시판정보가 DB에 없는 경우 NPE가 발생한다.")
-      void updateBbs_WhenDbNoHaveBbsDataThenNullPointerException() {
-        //given
-        int nullBbsId = 99999;
-        BbsUpdateDto mockBbsUpdateDto = new BbsUpdateDto().builder().bbsId(nullBbsId).build();
-
-        //mock
-        when(categoryMapper.selectBbsByBbsId(nullBbsId)).thenReturn(null);
-
-        //when
-        Exception e = assertThrows(NullPointerException.class, () -> {
-          categoryService.updateBbs(mockBbsUpdateDto, adminSession);
-        });
-
-        assertEquals(e.getClass(), NullPointerException.class);
-      }
-
-      @Test
-      @DisplayName("게시판의 정보 수정시 할 때, 해당 정보와 DB의 게시판정보가 동일한 경우 BadRequest Exception이 발생한다")
-      void updateBbs_WhenDbEqualsUpdateDataThenBadRequestException() {
-        //given
-        int bbsId = 1;
-        BbsUpdateDto bbsUpdateDto = new BbsUpdateDto().builder()
-            .bbsId(bbsId)
-            .categoryId(1)
-            .bbsName("test")
-            .status(BoardStatusEnum.ACTIVE.getStatus())
-            .build();
-
-        BbsDto mockBbsDto = new BbsDto().builder()
-            .bbsId(bbsId)
-            .categoryId(1)
-            .bbsName("test")
-            .status(BoardStatusEnum.ACTIVE.getStatus())
-            .build();
-
-        //mock
-        when(categoryMapper.selectBbsByBbsId(bbsId)).thenReturn(mockBbsDto);
-
-        //when
-        Exception e = assertThrows(IllegalArgumentException.class, () -> {
-          categoryService.updateBbs(bbsUpdateDto, adminSession);
-        });
-
-        //then
-        assertEquals(e.getMessage(), ExceptionMessage.BAD_REQUEST);
-      }
-
-      @Test
-      @DisplayName("게시판의 정보 수정시, 수정된 데이터가 존재하는 경우 Return으로 True를 획득한다")
-      void updateBbs_WhenDbDataUpdateSuccessThenReturnTrue() {
-        //given
-        int bbsId = 1;
-        BbsUpdateDto bbsUpdateDto = new BbsUpdateDto().builder()
-            .bbsId(bbsId)
-            .categoryId(1)
-            .bbsName("test")
-            .status(BoardStatusEnum.ACTIVE.getStatus())
-            .build();
-
-        BbsDto mockBbsDto = new BbsDto().builder()
-            .bbsId(bbsId)
-            .categoryId(5)
-            .bbsName("sample")
-            .status(BoardStatusEnum.ACTIVE.getStatus())
-            .build();
-
-        //mock
-        when(categoryMapper.selectBbsByBbsId(bbsId)).thenReturn(mockBbsDto);
-        when(categoryMapper.updateBbs(bbsUpdateDto)).thenReturn(1);
-
-        //when
-        boolean result = categoryService.updateBbs(bbsUpdateDto, adminSession);
-
-        //then
-        assertTrue(result);
-      }
-    }
-
-    @Nested
-    @DisplayName("삭제 테스트")
-    class DeleteTest {
-
-      @Test
-      @DisplayName("파라미터로 받은 게시판ID가 DB에 데이터가 없는 경우 NotFoundException이 발생한다")
-      void deleteBbs_WhenDbNotFoundBbsThenNotFoundException() {
-        //given
-        int noBbsId = 99999;
-
-        //mock
-        when(categoryMapper.selectBbsByBbsId(noBbsId)).thenReturn(null);
-
-        //when
-        Exception e = assertThrows(IllegalArgumentException.class, () -> {
-          categoryService.deleteBbs(noBbsId, adminSession);
-        });
-
-        //then
-        assertEquals(e.getMessage(), ExceptionMessage.NO_DATA);
-      }
-    }
-
-    @Test
-    @DisplayName("파라미터로 받은 게시판ID가 DB에 존재하고, Status값을 정상적으로 Update한 경우 결과값으로 True를 획득한다.")
-    void deleteBbs_WhenDeleteBbsSuccessThenReturnTrue() {
-      //given
-      int bbsId = 1;
-
-      //mock
-      when(categoryMapper.selectBbsByBbsId(bbsId)).thenReturn(new BbsDto());
-      when(categoryMapper.deleteBbs(any())).thenReturn(1);
-
-      //when
-      boolean result = categoryService.deleteBbs(bbsId, adminSession);
-
-      //then
-      assertTrue(result);
     }
   }
 }

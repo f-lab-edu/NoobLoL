@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nooblol.board.mapper.ArticleStatusMapper">
+
+  <select id="selectArticleStatusByArticleIdAndUserId" parameterType="ArticleStatusDto"
+    resultType="ArticleStatusDto">
+    SELECT article_id, user_id, type as likeType, created_at
+    FROM bbs_articles_status
+    WHERE article_id = #{articleId}
+      AND user_id = #{userId}
+  </select>
+
+  <select id="selectArticleAllStatusByArticleId" parameterType="int"
+    resultType="LikeAndNotLikeResponseDto">
+    SELECT (SELECT count(user_id)
+            FROM bbs_articles_status
+            WHERE article_id = #{articleId}
+              AND type = 1) as likeCnt,
+           (SELECT count(user_id)
+            FROM bbs_articles_status
+            WHERE article_id = #{articleId}
+              AND type = 0) as notLikeCnt
+    FROM DUAL;
+
+  </select>
+
+  <insert id="insertArticleStatus" parameterType="ArticleStatusDto">
+    INSERT INTO bbs_articles_status(article_id, user_id, type, created_at)
+    VALUES (#{articleId}, #{userId}, #{likeType},#{createdAt})
+  </insert>
+
+
+  <delete id="deleteArticleStatus" parameterType="ArticleStatusDto">
+    DELETE
+    FROM bbs_articles_status
+    WHERE article_id = #{articleId}
+    <if test="userId != null and userId != ''">
+      AND user_id = #{userId}
+    </if>
+  </delete>
+
+</mapper>

@@ -8,8 +8,7 @@ import com.nooblol.board.utils.BoardStatusEnum;
 import com.nooblol.global.annotation.UserLoginCheck;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.board.service.CategoryService;
-import com.nooblol.global.exception.ExceptionMessage;
-import com.nooblol.global.utils.CommonUtils;
+import com.nooblol.global.utils.ResponseUtils;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -42,10 +41,12 @@ public class BoardController {
    * @param status Category의 상태값
    * @return
    */
-  @GetMapping("/category/list")
+  @GetMapping("/categoryList")
   public ResponseDto getCategoryList(
       @RequestParam(value = "status", defaultValue = "1") int status) {
-    return CommonUtils.makeListToResponseDto(categoryService.getCategoryList(status));
+    return ResponseUtils.makeListToResponseDto(
+        Optional.of(categoryService.getCategoryList(status)).get()
+    );
   }
 
   /**
@@ -55,26 +56,19 @@ public class BoardController {
    * @param status     희망하는 상태값을 받는다. 없는 경우 DefaultValue로 Active상태값이 주어진다.
    * @return
    */
-  @GetMapping({"/bbsList/{categoryId}/{status}", "/bbsList/{categoryId}", "/bbsList"})
+  @GetMapping("/bbsList")
   public ResponseDto getBbsList(
-      @PathVariable(required = false) Optional<Integer> categoryId,
-      @PathVariable(required = false) Optional<Integer> status
+      @RequestParam(value = "categoryId") int categoryId,
+      @RequestParam(value = "status", required = false, defaultValue = "1") int status
   ) {
-    if (categoryId.isEmpty()) {
-      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
-    }
-
-    //객체가 빈경우 DefaultValue로 Active값
-    Integer statusValue = status.orElse(BoardStatusEnum.ACTIVE.getStatus()).intValue();
-    Integer categoryIdValue = categoryId.get().intValue();
-    return CommonUtils.makeListToResponseDto(
-        categoryService.getBbsList(categoryIdValue, statusValue)
+    return ResponseUtils.makeListToResponseDto(
+        Optional.of(categoryService.getBbsList(categoryId, status)).get()
     );
   }
 
   @GetMapping("/bbsAllList")
   public ResponseDto getAllBbsList() {
-    return CommonUtils.makeListToResponseDto(categoryService.getAllBbsList());
+    return ResponseUtils.makeListToResponseDto(categoryService.getAllBbsList());
   }
 
 
@@ -91,7 +85,7 @@ public class BoardController {
       @Valid @RequestBody CategoryRequestDto.CategoryInsertDto categoryInsertDto,
       HttpSession session
   ) {
-    return CommonUtils.makeToResponseOkDto(
+    return ResponseUtils.makeToResponseOkDto(
         categoryService.insertCategory(categoryInsertDto, session)
     );
   }
@@ -107,7 +101,7 @@ public class BoardController {
       @Valid @RequestBody CategoryRequestDto.CategoryUpdateDto categoryUpdateDto,
       HttpSession session
   ) {
-    return CommonUtils.makeToResponseOkDto(
+    return ResponseUtils.makeToResponseOkDto(
         categoryService.updateCategory(categoryUpdateDto, session)
     );
   }
@@ -124,7 +118,7 @@ public class BoardController {
   public ResponseDto deleteCategory(
       @PathVariable @NotNull(message = ArticleMessage.CATEGORY_ID_NULL) Integer categoryId,
       HttpSession session) {
-    return CommonUtils.makeToResponseOkDto(categoryService.deleteCategory(categoryId, session));
+    return ResponseUtils.makeToResponseOkDto(categoryService.deleteCategory(categoryId, session));
   }
 
   /**
@@ -137,7 +131,7 @@ public class BoardController {
   @UserLoginCheck
   @PostMapping("/bbs")
   public ResponseDto insertBbs(@Valid @RequestBody BbsInsertDto bbsInsertDto, HttpSession session) {
-    return CommonUtils.makeToResponseOkDto(categoryService.insertBbs(bbsInsertDto, session));
+    return ResponseUtils.makeToResponseOkDto(categoryService.insertBbs(bbsInsertDto, session));
   }
 
   /**
@@ -150,7 +144,7 @@ public class BoardController {
   @UserLoginCheck
   @PutMapping("/bbs")
   public ResponseDto updateBbs(@Valid @RequestBody BbsUpdateDto bbsUpdateDto, HttpSession session) {
-    return CommonUtils.makeToResponseOkDto(categoryService.updateBbs(bbsUpdateDto, session));
+    return ResponseUtils.makeToResponseOkDto(categoryService.updateBbs(bbsUpdateDto, session));
   }
 
   /**
@@ -166,6 +160,6 @@ public class BoardController {
       @PathVariable(required = false) @NotNull(message = ArticleMessage.BBS_ID_NULL) Integer bbsId,
       HttpSession session
   ) {
-    return CommonUtils.makeToResponseOkDto(categoryService.deleteBbs(bbsId, session));
+    return ResponseUtils.makeToResponseOkDto(categoryService.deleteBbs(bbsId, session));
   }
 }

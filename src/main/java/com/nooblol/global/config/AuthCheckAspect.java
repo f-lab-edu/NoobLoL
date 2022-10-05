@@ -1,7 +1,9 @@
 package com.nooblol.global.config;
 
+import com.nooblol.user.utils.UserRoleStatus;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionUtils;
+import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -29,8 +31,30 @@ public class AuthCheckAspect {
     HttpSession session = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest()
         .getSession();
 
-    String userId = SessionUtils.getSessionUserId(session);
-    if (StringUtils.isBlank(userId)) {
+    if (Optional.ofNullable(SessionUtils.getSessionUserId(session)).isEmpty()) {
+      throw new IllegalArgumentException(ExceptionMessage.UNAUTHORIZED);
+    }
+  }
+
+
+  /**
+   * 사용자 로그인여부, 사용자 관리자인지 동시에 확인한다.
+   *
+   * @param jp
+   */
+  @Before("@annotation(com.nooblol.global.annotation.UserRoleIsAdminCehck)")
+  public void memberLoginAndRoleAdminCheck(JoinPoint jp) throws Throwable {
+    log.debug("AOP - memberLoginAdminCheck");
+
+    HttpSession session = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest()
+        .getSession();
+
+    //사용자 정보가 존재하지 않는 경우 GUEST로 설정
+    Integer userRole = Optional
+        .ofNullable(SessionUtils.getSessionUserRole(session))
+        .orElse(UserRoleStatus.GUEST.getRoleValue());
+
+    if (UserRoleStatus.isUserRoleAdmin(userRole)) {
       throw new IllegalArgumentException(ExceptionMessage.UNAUTHORIZED);
     }
   }

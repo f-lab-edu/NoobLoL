@@ -1,5 +1,6 @@
 package com.nooblol.board.dto;
 
+import com.nooblol.board.utils.ReplyStatusEnum;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,13 +15,13 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ReplyDto {
 
-  private int replyId;
+  private Integer replyId;
 
   private int articleId;
 
   private String replyContent;
 
-  private int status;
+  private ReplyStatusEnum status;
 
   private int sortNo;
 

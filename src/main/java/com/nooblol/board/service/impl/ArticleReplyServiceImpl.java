@@ -1,14 +1,15 @@
 package com.nooblol.board.service.impl;
 
 import com.nooblol.board.dto.ReplyDto;
-import com.nooblol.board.dto.ReplyRequestDto.ReplyInsertDto;
-import com.nooblol.board.dto.ReplyRequestDto.ReplyUpdateDto;
+import com.nooblol.board.dto.ReplyInsertDto;
+import com.nooblol.board.dto.ReplyUpdateDto;
 import com.nooblol.board.mapper.ArticleReplyMapper;
 import com.nooblol.board.service.ArticleReplyService;
 import com.nooblol.board.service.ArticleService;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionUtils;
-import com.nooblol.global.utils.UserUtils;
+import com.nooblol.user.utils.UserRoleStatus;
+import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
 
   @Override
   public boolean insertReply(ReplyInsertDto insertDto, HttpSession session) {
-    validHaveArticleInDb(insertDto.getArticleId());
+    articleService.checkNotExistsArticleByArticleId(insertDto.getArticleId());
 
     Optional<String> userId = Optional.of(SessionUtils.getSessionUserId(session));
 
@@ -35,12 +36,10 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
 
   @Override
   public boolean updateReply(ReplyUpdateDto updateDto, HttpSession session) {
-    validHaveArticleInDb(updateDto.getArticleId());
+    articleService.checkNotExistsArticleByArticleId(updateDto.getArticleId());
 
-    boolean isNotCreatedUser = isNotReplyCreatedUser(updateDto.getReplyId(), session);
-    boolean isNotUserAdmin = isNotSessionUserAdmin(session);
-
-    if (isNotCreatedUser && isNotUserAdmin) {
+    if (isNotReplyCreatedUser(updateDto.getReplyId(), session) &&
+        UserRoleStatus.isNotUserAdmin(SessionUtils.getSessionUserRole(session))) {
       throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
     }
 
@@ -54,43 +53,37 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
 
   @Override
   public boolean deleteReplyByReplyId(int replyId, HttpSession session) {
-    boolean isNotCreatedUser = isNotReplyCreatedUser(replyId, session);
-    boolean isNotUserAdmin = isNotSessionUserAdmin(session);
-
-    if (isNotCreatedUser && isNotUserAdmin) {
+    if (isNotReplyCreatedUser(replyId, session) &&
+        UserRoleStatus.isNotUserAdmin(SessionUtils.getSessionUserRole(session))) {
       throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
     }
 
     return articleReplyMapper.deleteReplyByReplyId(replyId) > 0;
   }
 
+  @Override
+  public ReplyDto selectReplyByReplyId(int replyId) {
+    return articleReplyMapper.selectReplyByReplyId(replyId);
+  }
 
-  private void validHaveArticleInDb(int articleId) {
-    if (articleService.isNotArticleInDb(articleId)) {
-      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
-    }
+  @Override
+  public List<ReplyDto> selectReplyListByArticleId(int articleId) {
+    articleService.checkNotExistsArticleByArticleId(articleId);
+
+    return articleReplyMapper.selectReplyListByArticleId(articleId);
   }
 
   private boolean isNotReplyCreatedUser(int replyId, HttpSession session) {
-    return UserUtils.isNotCreatedUser(
-        Optional.of(articleReplyMapper.selectCreatedUserIdByReplyId(replyId)).get(),
-        Optional.of(SessionUtils.getSessionUserId(session)).get()
-    );
-  }
-
-  private boolean isNotSessionUserAdmin(HttpSession session) {
-    return UserUtils.isNotUserAdmin(
-        Optional.of(SessionUtils.getSessionUserRole(session)).get()
-    );
+    Optional<String> createdUserIdOptional =
+        Optional.of(articleReplyMapper.selectCreatedUserIdByReplyId(replyId));
+    return !createdUserIdOptional.get().equals(SessionUtils.getSessionUserId(session));
   }
 
   private ReplyDto makeInsertReplyDto(ReplyInsertDto insertDto, String userId) {
     return new ReplyDto().builder()
-        .replyId(articleReplyMapper.selectMaxReplyId())
         .articleId(insertDto.getArticleId())
         .replyContent(insertDto.getReplyContent())
         .status(insertDto.getStatus())
-        .sortNo(articleReplyMapper.selectMaxSortNoByArticleId(insertDto.getArticleId()))
         .createdUserId(userId)
         .createdAt(insertDto.getCreatedAt())
         .build();

@@ -2,18 +2,12 @@ package com.nooblol.global.utils;
 
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.exception.ExceptionMessage;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
 
-public class CommonUtils {
-
-  public static String summonerNameWhiteSpaceReplace(String name) {
-    if (name == null) {
-      return null;
-    }
-    return name.replaceAll(" ", "");
-  }
+public class ResponseUtils {
 
   /**
    * List를 받아 공백여부를 확인한 이후 Return할 객체를 가공한다.
@@ -23,7 +17,7 @@ public class CommonUtils {
    * @return
    */
   public static <T> ResponseDto makeListToResponseDto(List<T> list) {
-    if (list == null || list.size() == 0) {
+    if (list.isEmpty()) {
       return ResponseEnum.NOT_FOUND.getResponse();
     }
     return new ResponseDto(HttpStatus.OK.value(), list);
@@ -44,4 +38,17 @@ public class CommonUtils {
     result.setResult(obj);
     return result;
   }
+
+  /**
+   * Null이어도 Return이 되도 상관이 없는 경우 사용한다.
+   *
+   * @param obj
+   * @return
+   */
+  public static ResponseDto makeResponseOkDtoOfNullable(Object obj) {
+    ResponseDto result = ResponseEnum.OK.getResponse();
+    result.setResult(obj);
+    return result;
+  }
 }
+

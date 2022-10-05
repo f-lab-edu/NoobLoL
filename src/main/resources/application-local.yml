@@ -30,3 +30,6 @@ logging:
     path: log/local
   level:
     root: debug
+    org:
+      springframework:
+        cache: TRACE

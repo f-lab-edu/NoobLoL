@@ -1,5 +1,7 @@
 package com.nooblol.board.dto;
 
+import com.nooblol.board.utils.ArticleLikeStatusEnum;
+import com.nooblol.board.utils.ArticleStatusEnum;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,13 +20,7 @@ public class ArticleStatusDto {
 
   private String userId;
 
-  //True : 추천 , False : 비추천
-  private boolean type;
+  private ArticleLikeStatusEnum likeType;
 
-  private LocalDateTime createdAt;
-
-
-  public void setCreatedAtNow() {
-    setCreatedAt(LocalDateTime.now());
-  }
+  private LocalDateTime createdAt = LocalDateTime.now();
 }

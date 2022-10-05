@@ -40,16 +40,10 @@ public interface ArticleService {
    */
   boolean upsertArticle(ArticleDto articleDto, HttpSession session, boolean isInsert);
 
-  /**
-   * 현재 DB에서 사용주인 ArticleId의 최대값에 + 1을 하여 return한다. 만약 ArticleId가 없는 경우에는 1을 반환한다.
-   *
-   * @return
-   */
-  int getNewArticleId();
 
   /**
-   * 게시물 삭제, 요청자가 관리자인 경우 또는 글 작성자인 경우에만 삭제를 진행한다.
-   * Delete를 진행하는 경우 관련 테이블에 대해서도 삭제가 이뤄지다 보니, Transaction으로 묶어 처리를 진행한다
+   * 게시물 삭제, 요청자가 관리자인 경우 또는 글 작성자인 경우에만 삭제를 진행한다. Delete를 진행하는 경우 관련 테이블에 대해서도 삭제가 이뤄지다 보니,
+   * Transaction으로 묶어 처리를 진행한다
    *
    * @param articleId
    * @param session
@@ -58,36 +52,10 @@ public interface ArticleService {
   boolean deleteArticle(int articleId, HttpSession session);
 
   /**
-   * 게시물 추천
-   *
-   * @param articleId
-   * @param session   한개의 Article에 한번만 추천또는 비추천이 가능하며, 재요청이 들어온 경우 Delete처리를 하기위함.
-   * @return
-   */
-  boolean likeArticle(int articleId, HttpSession session);
-
-  /**
-   * 게시물 비추천
-   *
-   * @param articleId
-   * @param session   한개의 Article에 한번만 추천또는 비추천이 가능하며, 재요청이 들어온 경우 Delete처리를 하기위함.
-   * @return
-   */
-  boolean notLikeArticle(int articleId, HttpSession session);
-
-  /**
-   * 해당 ArticleId의 좋아요 갯수와 싫어요 갯수를 Return한다.
+   * DB에 실제 해당 게시물이 존재하는지 여부 확인
    *
    * @param articleId
    * @return
    */
-  LikeAndNotLikeResponseDto likeAndNotListStatus(int articleId);
-
-  /**
-   * 게시물의 존재 여부 확인
-   *
-   * @param articleId
-   * @return
-   */
-  boolean isNotArticleInDb(int articleId);
+  void checkNotExistsArticleByArticleId(int articleId);
 }

@@ -46,6 +46,8 @@ mybatis:
     multiple-result-sets-enabled: false
   type-aliases-package: com.nooblol.*.*
   mapper-locations: classpath:mybatis/mapper/*/*.xml
+  type-handlers-package: com.nooblol.global.utils.typehandler
+
 
 #log
 logging:
