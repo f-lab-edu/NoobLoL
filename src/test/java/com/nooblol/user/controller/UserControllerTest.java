@@ -275,7 +275,7 @@ class UserControllerTest {
   @DisplayName("사용자 인증메일의 재발송 요청시, 실제 인증이 필요한 사용자인 경우, 메일을 발송한 이후 Ok상태값과 결과값으로 True를 획득한다")
   void resendAuthMail_WhenIsSuccess_ThenReturnTrueAndStatusOk() throws Exception {
     //given
-    String requestEmail = UserFixtureUtils.fixtureAuthUserName;
+    String requestEmail = UserFixtureUtils.fixtureAuthUserEmail;
 
     //mock
     when(userSignUpService.reSendSignUpUserMail(requestEmail.trim())).thenReturn(
