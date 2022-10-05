@@ -54,7 +54,7 @@ public class AuthCheckAspect {
         .ofNullable(SessionUtils.getSessionUserRole(session))
         .orElse(UserRoleStatus.GUEST.getRoleValue());
 
-    if (UserRoleStatus.isUserRoleAdmin(userRole)) {
+    if (UserRoleStatus.isNotUserAdmin(userRole)) {
       throw new IllegalArgumentException(ExceptionMessage.UNAUTHORIZED);
     }
   }
