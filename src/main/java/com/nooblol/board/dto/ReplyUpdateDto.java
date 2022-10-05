@@ -1,6 +1,7 @@
 package com.nooblol.board.dto;
 
 import com.nooblol.board.utils.ArticleMessage;
+import com.nooblol.board.utils.ReplyStatusEnum;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +26,7 @@ public class ReplyUpdateDto extends ReplyRequestDto {
   public ReplyUpdateDto(
       @NotNull(message = ArticleMessage.ARTICLE_ID_NULL) Integer articleId,
       @NotNull(message = ArticleMessage.REPLY_CONTENT_NULL) String replyContent,
-      @NotNull(message = ArticleMessage.REPLY_STATUS_NULL) Integer status, Integer sortNo,
+      @NotNull(message = ArticleMessage.REPLY_STATUS_NULL) ReplyStatusEnum status, Integer sortNo,
       Integer replyId
   ) {
     super(articleId, replyContent, status, sortNo);

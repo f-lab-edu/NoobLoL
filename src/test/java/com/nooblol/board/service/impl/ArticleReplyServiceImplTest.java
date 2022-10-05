@@ -8,7 +8,7 @@ import com.nooblol.board.dto.ReplyInsertDto;
 import com.nooblol.board.dto.ReplyUpdateDto;
 import com.nooblol.board.mapper.ArticleReplyMapper;
 import com.nooblol.board.service.ArticleService;
-import com.nooblol.board.utils.BoardStatusEnum;
+import com.nooblol.board.utils.ReplyStatusEnum;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionEnum;
 import com.nooblol.global.utils.SessionUtils;
@@ -106,7 +106,7 @@ class ArticleReplyServiceImplTest {
 
     ReplyInsertDto replyInsertDto = new ReplyInsertDto().builder()
         .articleId(testArticleId)
-        .status(1)
+        .status(ReplyStatusEnum.ACTIVE)
         .build();
 
     //mock
@@ -177,7 +177,7 @@ class ArticleReplyServiceImplTest {
     ReplyUpdateDto replyUpdateDto = new ReplyUpdateDto().builder()
         .articleId(testArticleId)
         .replyId(testReplyId)
-        .status(1)
+        .status(ReplyStatusEnum.ACTIVE)
         .build();
 
     //mock
@@ -201,7 +201,7 @@ class ArticleReplyServiceImplTest {
     ReplyUpdateDto replyUpdateDto = new ReplyUpdateDto().builder()
         .articleId(testArticleId)
         .replyId(testReplyId)
-        .status(1)
+        .status(ReplyStatusEnum.ACTIVE)
         .build();
 
     //mock
@@ -225,7 +225,7 @@ class ArticleReplyServiceImplTest {
     ReplyUpdateDto replyUpdateDto = new ReplyUpdateDto().builder()
         .articleId(testArticleId)
         .replyId(testReplyId)
-        .status(1)
+        .status(ReplyStatusEnum.ACTIVE)
         .build();
 
     //mock
@@ -250,7 +250,7 @@ class ArticleReplyServiceImplTest {
     ReplyUpdateDto replyUpdateDto = new ReplyUpdateDto().builder()
         .articleId(testArticleId)
         .replyId(testReplyId)
-        .status(1)
+        .status(ReplyStatusEnum.ACTIVE)
         .build();
 
     //mock
@@ -391,7 +391,7 @@ class ArticleReplyServiceImplTest {
             .replyId(replyId)
             .articleId(1)
             .replyContent("SampleContent")
-            .status(BoardStatusEnum.ACTIVE.getStatus())
+            .status(ReplyStatusEnum.ACTIVE)
             .createdUserId("test")
             .createdAt(LocalDateTime.now())
             .build();
