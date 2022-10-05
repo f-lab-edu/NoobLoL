@@ -4,13 +4,13 @@ import com.nooblol.board.dto.BbsDto;
 import com.nooblol.board.dto.BbsInsertDto;
 import com.nooblol.board.dto.BbsUpdateDto;
 import com.nooblol.board.dto.CategoryDto;
-import com.nooblol.board.dto.CategoryRequestDto.CategoryDeleteDto;
-import com.nooblol.board.dto.CategoryRequestDto.CategoryInsertDto;
-import com.nooblol.board.dto.CategoryRequestDto.CategoryUpdateDto;
+import com.nooblol.board.dto.CategoryInsertDto;
+import com.nooblol.board.dto.CategoryUpdateDto;
 import com.nooblol.board.dto.SearchBbsListDto;
 import com.nooblol.board.mapper.CategoryMapper;
 import com.nooblol.board.service.CategoryService;
 import com.nooblol.board.utils.BoardStatusEnum;
+import com.nooblol.board.utils.CategoryStatusEnum;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionUtils;
 import java.time.LocalDateTime;
@@ -36,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
   @Transactional(readOnly = true)
   @Cacheable(cacheNames = "category", key = "#status")
   public List<CategoryDto> getCategoryList(int status) {
-    if (BoardStatusEnum.isExistStatus(status)) {
+    if (CategoryStatusEnum.isExistStatus(status)) {
       return categoryMapper.selectCategory(status);
     }
     throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
@@ -123,13 +123,17 @@ public class CategoryServiceImpl implements CategoryService {
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
-    if (dbCategoryData.getStatus() == BoardStatusEnum.DELETE.getStatus()) {
+    if (dbCategoryData.getStatus() == CategoryStatusEnum.DELETE) {
       return true;
     }
 
     return categoryMapper.deleteCategory(
-        makeCategoryDeleteDto(categoryId, session)
-    ) > 0;
+        new CategoryDto().builder()
+            .categoryId(categoryId)
+            .status(CategoryStatusEnum.DELETE)
+            .updatedUserId(SessionUtils.getSessionUserId(session))
+            .updatedAt(LocalDateTime.now())
+            .build()) > 0;
   }
 
   @Override
@@ -169,8 +173,6 @@ public class CategoryServiceImpl implements CategoryService {
     return categoryMapper.deleteBbs(deleteDto) > 0;
   }
 
-  // DTO에 놓는게 맞을지, 여기두는게 맞을지
-
   /**
    * BBS의 Update할 정보 기본값 세팅
    *
@@ -190,22 +192,12 @@ public class CategoryServiceImpl implements CategoryService {
       bbsUpdateDto.setStatus(dbBbsDto.getStatus());
     }
 
-    //수정할 데이터와 DB의 데이터가 동일한경우
     if (bbsUpdateDto.getCategoryId().equals(dbBbsDto.getCategoryId()) &&
         bbsUpdateDto.getBbsName().equals(dbBbsDto.getBbsName()) &&
         bbsUpdateDto.getStatus().equals(dbBbsDto.getStatus())) {
       throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
 
-  }
-
-  private CategoryDeleteDto makeCategoryDeleteDto(int categoryId, HttpSession session) {
-    return new CategoryDeleteDto().builder()
-        .categoryId(categoryId)
-        .status(BoardStatusEnum.DELETE.getStatus())
-        .updatedUserId(SessionUtils.getSessionUserId(session))
-        .updatedAt(LocalDateTime.now())
-        .build();
   }
 
   private BbsDto getBbsDataByBbsId(int bbsId) {

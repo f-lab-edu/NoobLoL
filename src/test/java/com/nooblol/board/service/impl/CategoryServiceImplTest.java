@@ -7,10 +7,11 @@ import com.nooblol.board.dto.BbsDto;
 import com.nooblol.board.dto.BbsInsertDto;
 import com.nooblol.board.dto.BbsUpdateDto;
 import com.nooblol.board.dto.CategoryDto;
-import com.nooblol.board.dto.CategoryRequestDto.CategoryInsertDto;
-import com.nooblol.board.dto.CategoryRequestDto.CategoryUpdateDto;
+import com.nooblol.board.dto.CategoryInsertDto;
+import com.nooblol.board.dto.CategoryUpdateDto;
 import com.nooblol.board.mapper.CategoryMapper;
 import com.nooblol.board.utils.BoardStatusEnum;
+import com.nooblol.board.utils.CategoryStatusEnum;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionSampleObject;
 import java.time.LocalDateTime;
@@ -75,26 +76,28 @@ class CategoryServiceImplTest {
         int haveStatus = BoardStatusEnum.ACTIVE.getStatus();
         List<CategoryDto> mockCategoryList = new ArrayList<>();
 
-        CategoryDto mockCategoryDto1 = new CategoryDto();
-        mockCategoryDto1.setCategoryId(1);
-        mockCategoryDto1.setCategoryName("샘플1");
-        mockCategoryDto1.setStatus(BoardStatusEnum.ACTIVE.getStatus());
-        mockCategoryDto1.setCreatedUserId("a");
-        mockCategoryDto1.setUpdatedUserId("a");
-        mockCategoryDto1.setCreatedAt(LocalDateTime.now());
-        mockCategoryDto1.setUpdatedAt(LocalDateTime.now());
-
-        CategoryDto mockCategoryDto2 = new CategoryDto();
-        mockCategoryDto2.setCategoryId(2);
-        mockCategoryDto2.setCategoryName("샘플2");
-        mockCategoryDto2.setStatus(BoardStatusEnum.ACTIVE.getStatus());
-        mockCategoryDto2.setCreatedUserId("a");
-        mockCategoryDto2.setUpdatedUserId("a");
-        mockCategoryDto2.setCreatedAt(LocalDateTime.now());
-        mockCategoryDto2.setUpdatedAt(LocalDateTime.now());
-
-        mockCategoryList.add(mockCategoryDto1);
-        mockCategoryList.add(mockCategoryDto2);
+        mockCategoryList.add(
+            new CategoryDto().builder()
+                .categoryId(1)
+                .categoryName("샘플1")
+                .status(CategoryStatusEnum.ACTIVE)
+                .createdUserId("a")
+                .updatedUserId("a")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build()
+        );
+        mockCategoryList.add(
+            new CategoryDto().builder()
+                .categoryId(2)
+                .categoryName("샘플2")
+                .status(CategoryStatusEnum.ACTIVE)
+                .createdUserId("a")
+                .updatedUserId("a")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build()
+        );
 
         //mock
         when(categoryMapper.selectCategory(haveStatus)).thenReturn(mockCategoryList);
@@ -160,19 +163,19 @@ class CategoryServiceImplTest {
         //given
         int categoryId = 1;
         String sameTitle = "title";
-        int sameStatus = BoardStatusEnum.ACTIVE.getStatus();
 
         CategoryUpdateDto updateDto = new CategoryUpdateDto().builder()
             .categoryId(categoryId)
             .newCategoryName(sameTitle)
-            .status(sameStatus)
+            .status(CategoryStatusEnum.ACTIVE)
             .build();
 
         CategoryDto mockCategoryDto = new CategoryDto().builder()
             .categoryId(categoryId)
             .categoryName(sameTitle)
-            .status(sameStatus)
+            .status(CategoryStatusEnum.ACTIVE)
             .build();
+
         //mock
         when(categoryMapper.selectCategoryByCategoryId(categoryId)).thenReturn(mockCategoryDto);
 
@@ -200,7 +203,7 @@ class CategoryServiceImplTest {
         CategoryDto mockCategoryDto = new CategoryDto().builder()
             .categoryId(categoryId)
             .categoryName("dbTitle")
-            .status(BoardStatusEnum.ACTIVE.getStatus())
+            .status(CategoryStatusEnum.ACTIVE)
             .build();
         //mock
         when(categoryMapper.selectCategoryByCategoryId(categoryId)).thenReturn(mockCategoryDto);
@@ -245,7 +248,7 @@ class CategoryServiceImplTest {
 
         CategoryDto mockCategoryDto = new CategoryDto().builder()
             .categoryId(categoryId)
-            .status(BoardStatusEnum.DELETE.getStatus())
+            .status(CategoryStatusEnum.DELETE)
             .build();
 
         //mock
@@ -266,7 +269,7 @@ class CategoryServiceImplTest {
 
         CategoryDto mockCategoryDto = new CategoryDto().builder()
             .categoryId(categoryId)
-            .status(BoardStatusEnum.ACTIVE.getStatus())
+            .status(CategoryStatusEnum.ACTIVE)
             .build();
 
         //mock

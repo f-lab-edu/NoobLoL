@@ -4,8 +4,8 @@ import com.nooblol.board.dto.BbsDto;
 import com.nooblol.board.dto.BbsInsertDto;
 import com.nooblol.board.dto.BbsUpdateDto;
 import com.nooblol.board.dto.CategoryDto;
-import com.nooblol.board.dto.CategoryRequestDto.CategoryInsertDto;
-import com.nooblol.board.dto.CategoryRequestDto.CategoryUpdateDto;
+import com.nooblol.board.dto.CategoryInsertDto;
+import com.nooblol.board.dto.CategoryUpdateDto;
 import java.util.List;
 import javax.servlet.http.HttpSession;
 

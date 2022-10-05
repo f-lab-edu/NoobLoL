@@ -54,7 +54,7 @@
   </select>
 
   <insert id="insertCategory"
-    parameterType="com.nooblol.board.dto.CategoryRequestDto$CategoryInsertDto">
+    parameterType="CategoryInsertDto">
     INSERT INTO bbs_category (category_name, status, created_user_id, created_at, updated_user_id,
                               updated_at)
     VALUES (#{categoryName}, #{status}, #{createdUserId}, #{createdAt}, #{updatedUserId},
@@ -62,7 +62,7 @@
   </insert>
 
   <update id="updateCategory"
-    parameterType="com.nooblol.board.dto.CategoryRequestDto$CategoryUpdateDto">
+    parameterType="CategoryUpdateDto">
     UPDATE bbs_category
     SET category_name   = #{newCategoryName},
         status          = #{status},
@@ -71,8 +71,7 @@
     WHERE category_id = #{categoryId}
   </update>
 
-  <update id="deleteCategory"
-    parameterType="com.nooblol.board.dto.CategoryRequestDto$CategoryDeleteDto">
+  <update id="deleteCategory" parameterType="CategoryDto">
     UPDATE bbs_category
     SET status          = #{status},
         updated_user_id = #{updatedUserId},

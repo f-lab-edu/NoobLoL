@@ -2,7 +2,8 @@ package com.nooblol.board.controller;
 
 import com.nooblol.board.dto.BbsInsertDto;
 import com.nooblol.board.dto.BbsUpdateDto;
-import com.nooblol.board.dto.CategoryRequestDto;
+import com.nooblol.board.dto.CategoryInsertDto;
+import com.nooblol.board.dto.CategoryUpdateDto;
 import com.nooblol.board.utils.ArticleMessage;
 import com.nooblol.global.annotation.UserRoleIsAdminCehck;
 import com.nooblol.global.dto.ResponseDto;
@@ -81,7 +82,7 @@ public class BoardController {
   @UserRoleIsAdminCehck
   @PostMapping("/category")
   public ResponseDto insertCategory(
-      @Valid @RequestBody CategoryRequestDto.CategoryInsertDto categoryInsertDto,
+      @Valid @RequestBody CategoryInsertDto categoryInsertDto,
       HttpSession session
   ) {
     return ResponseUtils.makeToResponseOkDto(
@@ -97,8 +98,7 @@ public class BoardController {
   @UserRoleIsAdminCehck
   @PutMapping("/category")
   public ResponseDto updateCategory(
-      @Valid @RequestBody CategoryRequestDto.CategoryUpdateDto categoryUpdateDto,
-      HttpSession session
+      @Valid @RequestBody CategoryUpdateDto categoryUpdateDto, HttpSession session
   ) {
     return ResponseUtils.makeToResponseOkDto(
         categoryService.updateCategory(categoryUpdateDto, session)
