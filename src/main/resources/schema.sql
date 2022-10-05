@@ -169,7 +169,7 @@ CREATE TABLE `bbs_articles_status`
  */
 CREATE TABLE `bbs_articles_reply`
 (
-    `reply_id`        int PRIMARY KEY,
+    `reply_id`        int PRIMARY KEY AUTO_INCREMENT,
     `article_id`      int,
     `reply_content`   text,
     `status`          int,

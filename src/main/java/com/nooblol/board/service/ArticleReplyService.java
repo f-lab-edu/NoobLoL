@@ -27,14 +27,6 @@ public interface ArticleReplyService {
   boolean updateReply(ReplyUpdateDto updateDto, HttpSession session);
 
   /**
-   * 댓글의 Insert, Update를 진행한다
-   *
-   * @param replyDto
-   * @return
-   */
-  int upsertReply(ReplyDto replyDto);
-
-  /**
    * 댓글의 삭제, 요청자가 작성자인 경우이거나 또는 관리자인 경우에 해당 기능이 실행된다.
    *
    * @param replyId

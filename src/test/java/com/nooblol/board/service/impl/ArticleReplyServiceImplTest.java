@@ -89,7 +89,7 @@ class ArticleReplyServiceImplTest {
         .build();
 
     //mock
-    when(articleReplyMapper.upsertReply(any())).thenReturn(1);
+    when(articleReplyMapper.insertReply(any())).thenReturn(1);
 
     //when
     boolean result = articleReplyService.insertReply(replyInsertDto, authUserSession);
@@ -161,7 +161,7 @@ class ArticleReplyServiceImplTest {
 
     //mock
     when(articleReplyMapper.selectCreatedUserIdByReplyId(testReplyId)).thenReturn("NoUserId");
-    when(articleReplyMapper.upsertReply(any())).thenReturn(1);
+    when(articleReplyMapper.updateReply(any())).thenReturn(1);
 
     //when
     boolean result = articleReplyService.updateReply(replyUpdateDto, adminSession);
@@ -185,7 +185,7 @@ class ArticleReplyServiceImplTest {
 
     //mock
     when(articleReplyMapper.selectCreatedUserIdByReplyId(testReplyId)).thenReturn("NoUserId");
-    when(articleReplyMapper.upsertReply(any())).thenReturn(0);
+    when(articleReplyMapper.updateReply(any())).thenReturn(0);
 
     //when
     boolean result = articleReplyService.updateReply(replyUpdateDto, adminSession);
@@ -210,7 +210,7 @@ class ArticleReplyServiceImplTest {
     //mock
     when(articleReplyMapper.selectCreatedUserIdByReplyId(testReplyId)).thenReturn(
         SessionUtils.getSessionUserId(authUserSession));
-    when(articleReplyMapper.upsertReply(any())).thenReturn(1);
+    when(articleReplyMapper.updateReply(any())).thenReturn(1);
 
     //when
     boolean result = articleReplyService.updateReply(replyUpdateDto, authUserSession);
@@ -235,7 +235,7 @@ class ArticleReplyServiceImplTest {
     //mock
     when(articleReplyMapper.selectCreatedUserIdByReplyId(testReplyId)).thenReturn(
         SessionUtils.getSessionUserId(authUserSession));
-    when(articleReplyMapper.upsertReply(any())).thenReturn(0);
+    when(articleReplyMapper.updateReply(any())).thenReturn(0);
 
     //when
     boolean result = articleReplyService.updateReply(replyUpdateDto, authUserSession);
