@@ -37,7 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
   @Cacheable(cacheNames = "category", key = "#status")
   public List<CategoryDto> getCategoryList(int status) {
     if (CategoryStatusEnum.isExistStatus(status)) {
-      return categoryMapper.selectCategory(status);
+      return categoryMapper.selectCategoryList(status);
     }
     throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
   }

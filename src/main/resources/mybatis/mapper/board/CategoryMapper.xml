@@ -53,16 +53,14 @@
     FROM bbs
   </select>
 
-  <insert id="insertCategory"
-    parameterType="CategoryInsertDto">
+  <insert id="insertCategory" parameterType="CategoryInsertDto">
     INSERT INTO bbs_category (category_name, status, created_user_id, created_at, updated_user_id,
                               updated_at)
     VALUES (#{categoryName}, #{status}, #{createdUserId}, #{createdAt}, #{updatedUserId},
             #{updatedAt})
   </insert>
 
-  <update id="updateCategory"
-    parameterType="CategoryUpdateDto">
+  <update id="updateCategory" parameterType="CategoryUpdateDto">
     UPDATE bbs_category
     SET category_name   = #{newCategoryName},
         status          = #{status},

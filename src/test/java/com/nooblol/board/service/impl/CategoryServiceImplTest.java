@@ -100,7 +100,7 @@ class CategoryServiceImplTest {
         );
 
         //mock
-        when(categoryMapper.selectCategory(haveStatus)).thenReturn(mockCategoryList);
+        when(categoryMapper.selectCategoryList(haveStatus)).thenReturn(mockCategoryList);
 
         //when
         List<CategoryDto> result = categoryService.getCategoryList(haveStatus);

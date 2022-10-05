@@ -15,7 +15,7 @@ import org.springframework.cache.annotation.CacheEvict;
 public interface CategoryMapper {
 
   @CacheEvict(value = "category", allEntries = true, key = "#status")
-  List<CategoryDto> selectCategory(int status);
+  List<CategoryDto> selectCategoryList(int status);
 
   CategoryDto selectCategoryByCategoryId(int categoryId);
 
