@@ -5,6 +5,7 @@ import com.nooblol.board.dto.ArticleStatusDto;
 import com.nooblol.board.dto.LikeAndNotLikeResponseDto;
 import com.nooblol.board.mapper.ArticleMapper;
 import com.nooblol.board.mapper.ArticleStatusMapper;
+import com.nooblol.board.service.ArticleService;
 import com.nooblol.board.service.ArticleStatusService;
 import com.nooblol.board.utils.ArticleLikeStatusEnum;
 import com.nooblol.global.exception.ExceptionMessage;
@@ -20,13 +21,13 @@ import org.springframework.util.ObjectUtils;
 @RequiredArgsConstructor
 public class ArticleStatusServiceImpl implements ArticleStatusService {
 
-  private final ArticleMapper articleMapper;
-
   private final ArticleStatusMapper articleStatusMapper;
+
+  private final ArticleService articleService;
 
   @Override
   public boolean likeArticle(int articleId, HttpSession session) {
-    validatedNotHaveArticle(articleId);
+    articleService.checkNotExistsArticleByArticleId(articleId);
 
     ArticleStatusDto requestArticleStatusDto =
         createArticleStatusDto(
@@ -38,7 +39,7 @@ public class ArticleStatusServiceImpl implements ArticleStatusService {
 
   @Override
   public boolean notLikeArticle(int articleId, HttpSession session) {
-    validatedNotHaveArticle(articleId);
+    articleService.checkNotExistsArticleByArticleId(articleId);
 
     ArticleStatusDto requestArticleStatusDto =
         createArticleStatusDto(
@@ -51,16 +52,6 @@ public class ArticleStatusServiceImpl implements ArticleStatusService {
   @Override
   public LikeAndNotLikeResponseDto likeAndNotListStatus(int articleId) {
     return articleStatusMapper.selectArticleAllStatusByArticleId(articleId);
-  }
-
-  private boolean isNotArticleInDb(int articleId) {
-    return ObjectUtils.isEmpty(articleMapper.selectArticleByArticleId(articleId));
-  }
-
-  private void validatedNotHaveArticle(int articleId) {
-    if (isNotArticleInDb(articleId)) {
-      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
-    }
   }
 
   private ArticleStatusDto createArticleStatusDto(int articleId, String userId, boolean type) {
@@ -81,14 +72,14 @@ public class ArticleStatusServiceImpl implements ArticleStatusService {
    * @return
    */
   private boolean statusProcess(ArticleStatusDto requestArticleStatusDto) {
-    ArticleStatusDto IsHaveStatusData = articleStatusMapper.selectArticleStatusByArticleIdAndUserId(
+    ArticleStatusDto isHaveStatusData = articleStatusMapper.selectArticleStatusByArticleIdAndUserId(
         requestArticleStatusDto);
 
-    if (ObjectUtils.isEmpty(IsHaveStatusData)) {
+    if (ObjectUtils.isEmpty(isHaveStatusData)) {
       return articleStatusMapper.insertArticleStatus(requestArticleStatusDto) > 0;
     }
 
-    if (IsHaveStatusData.getLikeType().isLikeStatus() !=
+    if (isHaveStatusData.getLikeType().isLikeStatus() !=
         requestArticleStatusDto.getLikeType().isLikeStatus()) {
       throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }

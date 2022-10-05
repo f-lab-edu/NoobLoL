@@ -162,11 +162,15 @@ CREATE TABLE `bbs_articles_status`
     `created_at` datetime DEFAULT (now())
 );
 
-CREATE TABLE `bbs_article_reply`
+/*
+  22. 09. 09 BBSID컬럼 삭제 : articleId로 추적이 가능하기 떄문에 해당 테이블에서는 꼭 필요하지 않다 판단.
+  22. 09. 09 ReplyId Auto-Increment제거 : Upsert시 자동증가인 경우 Update도 값을 증기사키는 문제로 인한 수정
+  22. 09. 09 테이블명 수정 : bbs_article_reply → bbs_articles_reply
+ */
+CREATE TABLE `bbs_articles_reply`
 (
-    `reply_id`        int PRIMARY KEY AUTO_INCREMENT,
+    `reply_id`        int PRIMARY KEY,
     `article_id`      int,
-    `bbs_id`          int,
     `reply_content`   text,
     `status`          int,
     `sort_no`         int,

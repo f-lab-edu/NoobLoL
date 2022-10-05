@@ -139,7 +139,7 @@ public class UserSignUpServiceImpl implements UserSignUpService {
   }
 
   private void isNotUnAuthUser(UserSignUpRequestDto user) {
-    if (user.getUserRole() != UserRoleStatus.UNAUTH_USER.getRoleValue()) {
+    if (!UserRoleStatus.isUserUnAuthUser(user.getUserRole())) {
       throw new IllegalArgumentException(
           user.getUserName() + "님의 계정은 활성화가 필요한 상태가 아닙니다."
       );

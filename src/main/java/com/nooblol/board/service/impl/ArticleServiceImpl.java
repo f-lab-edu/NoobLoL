@@ -71,12 +71,9 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     //일반 사용자이면서, 게시물의 원작자 여부 확인
-    boolean isNotCreatedUser = isNotArticleCreatedUser(
+    if (isNotArticleCreatedUser(
         articleMapper.selectCreatedUserId(articleDto.getArticleId()),
-        SessionUtils.getSessionUserId(session)
-    );
-
-    if (isNotCreatedUser) {
+        SessionUtils.getSessionUserId(session))) {
       throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
     }
 
@@ -92,20 +89,24 @@ public class ArticleServiceImpl implements ArticleService {
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
-    boolean isUserAdmin = UserRoleStatus.isUserRoleAdmin(SessionUtils.getSessionUserRole(session));
-    if (isUserAdmin) {
+    if (UserRoleStatus.isUserRoleAdmin(SessionUtils.getSessionUserRole(session))) {
       return isArticleDeleteSuccess(articleId);
     }
 
-    boolean isNotCreatedUser = isNotArticleCreatedUser(
+    if (isNotArticleCreatedUser(
         haveArticleData.getCreatedUserId(), SessionUtils.getSessionUserId(session)
-    );
-
-    if (isNotCreatedUser) {
+    )) {
       throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
     }
 
     return isArticleDeleteSuccess(articleId);
+  }
+
+  @Override
+  public void checkNotExistsArticleByArticleId(int articleId) {
+    if (ObjectUtils.isEmpty(articleMapper.selectArticleByArticleId(articleId))) {
+      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
+    }
   }
 
   /**

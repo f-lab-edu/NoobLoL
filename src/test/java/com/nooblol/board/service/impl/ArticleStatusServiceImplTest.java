@@ -2,6 +2,7 @@ package com.nooblol.board.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import com.nooblol.board.dto.ArticleDto;
@@ -26,10 +27,10 @@ import org.springframework.mock.web.MockHttpSession;
 class ArticleStatusServiceImplTest {
 
   @Mock
-  private ArticleMapper articleMapper;
+  private ArticleStatusMapper articleStatusMapper;
 
   @Mock
-  private ArticleStatusMapper articleStatusMapper;
+  private ArticleServiceImpl articleService;
 
   @InjectMocks
   private ArticleStatusServiceImpl articleStatusService;
@@ -42,7 +43,8 @@ class ArticleStatusServiceImplTest {
     int testArticleId = 3;
 
     //mock
-    when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(null);
+    doThrow(new IllegalArgumentException(ExceptionMessage.BAD_REQUEST))
+        .when(articleService).checkNotExistsArticleByArticleId(testArticleId);
 
     //when
     Exception e = assertThrows(IllegalArgumentException.class, () -> {
@@ -72,7 +74,6 @@ class ArticleStatusServiceImplTest {
     session.setAttribute(SessionEnum.USER_LOGIN.getValue(), mockUserDto);
 
     //mock
-    when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(new ArticleDto());
     when(articleStatusMapper.selectArticleStatusByArticleIdAndUserId(any())).thenReturn(null);
     when(articleStatusMapper.insertArticleStatus(any())).thenReturn(1);
 
@@ -107,7 +108,6 @@ class ArticleStatusServiceImplTest {
         .build();
 
     //mock
-    when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(new ArticleDto());
     when(articleStatusMapper.selectArticleStatusByArticleIdAndUserId(any())).thenReturn(
         mockArticleStatusDto);
 
@@ -145,7 +145,6 @@ class ArticleStatusServiceImplTest {
         .build();
 
     //mock
-    when(articleMapper.selectArticleByArticleId(testArticleId)).thenReturn(new ArticleDto());
     when(articleStatusMapper.selectArticleStatusByArticleIdAndUserId(any())).thenReturn(
         mockArticleStatusDto);
     when(articleStatusMapper.deleteArticleStatus(any())).thenReturn(1);

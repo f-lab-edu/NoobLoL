@@ -6,7 +6,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Optional;
-import org.apache.commons.lang3.StringUtils;
 
 public class EncryptUtils {
 
