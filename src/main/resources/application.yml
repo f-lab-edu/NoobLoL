@@ -44,9 +44,10 @@ mybatis:
     jdbc-type-for-null: null
     call-setters-on-nulls: true
     multiple-result-sets-enabled: false
-    default-enum-type-handler: com.nooblol.board.utils.ArticleLikeStatusEnumTypeHandler
   type-aliases-package: com.nooblol.*.*
   mapper-locations: classpath:mybatis/mapper/*/*.xml
+  type-handlers-package: com.nooblol.global.utils.typehandler
+
 
 #log
 logging:

@@ -27,9 +27,7 @@
 
   <insert id="insertArticleStatus" parameterType="ArticleStatusDto">
     INSERT INTO bbs_articles_status(article_id, user_id, type, created_at)
-    VALUES (#{articleId}, #{userId},
-            #{likeType, typeHandler=com.nooblol.board.utils.ArticleLikeStatusEnumTypeHandler},
-            #{createdAt})
+    VALUES (#{articleId}, #{userId}, #{likeType},#{createdAt})
   </insert>
 
 
