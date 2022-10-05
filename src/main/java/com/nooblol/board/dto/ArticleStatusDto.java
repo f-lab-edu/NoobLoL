@@ -1,7 +1,6 @@
 package com.nooblol.board.dto;
 
 import com.nooblol.board.utils.ArticleLikeStatusEnum;
-import com.nooblol.board.utils.ArticleStatusEnum;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -59,7 +59,7 @@ public class ArticleController {
   public ResponseDto insertArticle(
       @Valid @RequestBody ArticleInsertRequestDto articleDto, HttpSession session
   ) {
-    ArticleDto upsertArticle = new ArticleDto().builder()
+    ArticleDto insertArticle = new ArticleDto().builder()
         .bbsId(articleDto.getBbsId())
         .articleTitle(articleDto.getArticleTitle())
         .articleContent(articleDto.getArticleContent())
@@ -70,9 +70,7 @@ public class ArticleController {
         .updatedAt(articleDto.getUpdatedAt())
         .build();
 
-    boolean upsertResult = articleService.upsertArticle(upsertArticle, session, true);
-
-    return ResponseUtils.makeToResponseOkDto(upsertResult);
+    return ResponseUtils.makeToResponseOkDto(articleService.insertArticle(insertArticle));
   }
 
   /**
@@ -92,11 +90,10 @@ public class ArticleController {
         .articleTitle(articleDto.getArticleTitle())
         .articleContent(articleDto.getArticleContent())
         .status(articleDto.getStatus())
+        .updatedAt(articleDto.getUpdatedAt())
         .build();
 
-    boolean upsertResult = articleService.upsertArticle(upsertArticle, session, false);
-
-    return ResponseUtils.makeToResponseOkDto(upsertResult);
+    return ResponseUtils.makeToResponseOkDto(articleService.updateArticle(upsertArticle, session));
   }
 
   /**

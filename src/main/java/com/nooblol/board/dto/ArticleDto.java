@@ -1,6 +1,6 @@
 package com.nooblol.board.dto;
 
-import java.sql.Timestamp;
+import com.nooblol.board.utils.ArticleStatusEnum;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +24,7 @@ public class ArticleDto {
   private String articleTitle;
   private int articleReadCount;
   private String articleContent;
-  private Integer status;
+  private ArticleStatusEnum status;
   private String createdUserId;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;

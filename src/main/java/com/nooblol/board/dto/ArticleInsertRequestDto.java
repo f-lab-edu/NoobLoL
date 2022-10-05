@@ -17,7 +17,7 @@ public class ArticleInsertRequestDto extends ArticleRequestBaseDto {
 
   private String createdUserId;
   private int articleReadCount;
-  private LocalDateTime createdAt = LocalDateTime.now();
-  private LocalDateTime updatedAt = LocalDateTime.now();
+  private final LocalDateTime createdAt = LocalDateTime.now();
+  private final LocalDateTime updatedAt = LocalDateTime.now();
 }
 
