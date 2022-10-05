@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import com.nooblol.board.dto.BbsDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsInsertDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsUpdateDto;
+import com.nooblol.board.dto.BbsInsertDto;
+import com.nooblol.board.dto.BbsUpdateDto;
 import com.nooblol.board.dto.CategoryDto;
 import com.nooblol.board.dto.CategoryRequestDto.CategoryInsertDto;
 import com.nooblol.board.dto.CategoryRequestDto.CategoryUpdateDto;
@@ -13,14 +13,12 @@ import com.nooblol.board.mapper.CategoryMapper;
 import com.nooblol.board.utils.BoardStatusEnum;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionSampleObject;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpSession;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -157,8 +155,8 @@ class CategoryServiceImplTest {
       }
 
       @Test
-      @DisplayName("카테고리의 수정시, 변경되는 데이터가 없는 경우 BadRequest Exception이 발생한다")
-      void updateCategory_WhenNoDataToChangeThenBadRequestException() {
+      @DisplayName("카테고리의 수정시, 변경되는 데이터가 없는 경우 BadRequestException이 발생한다")
+      void updateCategory_WhenNoDataToChange_ThenBadRequestException() {
         //given
         int categoryId = 1;
         String sameTitle = "title";
@@ -325,21 +323,21 @@ class CategoryServiceImplTest {
         BbsDto mockBbsDto1 = new BbsDto().builder()
             .bbsId(1)
             .bbsName("샘플1")
-            .status(BoardStatusEnum.ACTIVE.getStatus())
+            .status(BoardStatusEnum.ACTIVE)
             .categoryId(haveCategoryId)
             .createdUserId("test1").updatedUserId("test1")
-            .createdAt(new Timestamp(System.currentTimeMillis()))
-            .updatedAt(new Timestamp(System.currentTimeMillis()))
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
             .build();
 
         BbsDto mockBbsDto2 = new BbsDto().builder()
             .bbsId(1)
             .bbsName("샘플2")
-            .status(BoardStatusEnum.ACTIVE.getStatus())
+            .status(BoardStatusEnum.ACTIVE)
             .categoryId(haveCategoryId)
             .createdUserId("test1").updatedUserId("test1")
-            .createdAt(new Timestamp(System.currentTimeMillis()))
-            .updatedAt(new Timestamp(System.currentTimeMillis()))
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
             .build();
 
         mockBbsList.add(mockBbsDto1);
@@ -407,14 +405,14 @@ class CategoryServiceImplTest {
               .bbsId(bbsId)
               .categoryId(1)
               .bbsName("test")
-              .status(BoardStatusEnum.ACTIVE.getStatus())
+              .status(BoardStatusEnum.ACTIVE)
               .build();
 
           BbsDto mockBbsDto = new BbsDto().builder()
               .bbsId(bbsId)
               .categoryId(1)
               .bbsName("test")
-              .status(BoardStatusEnum.ACTIVE.getStatus())
+              .status(BoardStatusEnum.ACTIVE)
               .build();
 
           //mock
@@ -438,14 +436,14 @@ class CategoryServiceImplTest {
               .bbsId(bbsId)
               .categoryId(1)
               .bbsName("test")
-              .status(BoardStatusEnum.ACTIVE.getStatus())
+              .status(BoardStatusEnum.ACTIVE)
               .build();
 
           BbsDto mockBbsDto = new BbsDto().builder()
               .bbsId(bbsId)
               .categoryId(5)
               .bbsName("sample")
-              .status(BoardStatusEnum.ACTIVE.getStatus())
+              .status(BoardStatusEnum.ACTIVE)
               .build();
 
           //mock

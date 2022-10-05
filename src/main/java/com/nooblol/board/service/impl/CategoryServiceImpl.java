@@ -1,9 +1,8 @@
 package com.nooblol.board.service.impl;
 
 import com.nooblol.board.dto.BbsDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsDeleteDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsInsertDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsUpdateDto;
+import com.nooblol.board.dto.BbsInsertDto;
+import com.nooblol.board.dto.BbsUpdateDto;
 import com.nooblol.board.dto.CategoryDto;
 import com.nooblol.board.dto.CategoryRequestDto.CategoryDeleteDto;
 import com.nooblol.board.dto.CategoryRequestDto.CategoryInsertDto;
@@ -14,7 +13,6 @@ import com.nooblol.board.service.CategoryService;
 import com.nooblol.board.utils.BoardStatusEnum;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionUtils;
-import com.nooblol.user.utils.UserRoleStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -96,7 +94,6 @@ public class CategoryServiceImpl implements CategoryService {
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
-    // TODO : IFNULL을 쿼리에서 사용할지, 파라미터에 그냥 넣어서 보낼지를 고민함.
     if (ObjectUtils.isEmpty(categoryUpdateDto.getNewCategoryName())) {
       categoryUpdateDto.setNewCategoryName(dbCategoryData.getCategoryName());
     }
@@ -139,7 +136,6 @@ public class CategoryServiceImpl implements CategoryService {
   public boolean insertBbs(BbsInsertDto bbsInsertDto, HttpSession session) {
     String createdUserId = SessionUtils.getSessionUserId(session);
 
-    //TODO [22. 09. 12]: 다른 DTO도 공통적으로 사용되는 경우가 많은데 공통적인 처리방법이 필요할 것같음..
     bbsInsertDto.setCreatedUserId(createdUserId);
     bbsInsertDto.setUpdatedUserId(createdUserId);
     bbsInsertDto.setCreatedAt(LocalDateTime.now());
@@ -153,7 +149,8 @@ public class CategoryServiceImpl implements CategoryService {
     BbsDto dbBbsData = Optional.of(getBbsDataByBbsId(bbsUpdateDto.getBbsId())).get();
 
     isChangeBbsData(bbsUpdateDto, dbBbsData);
-
+    bbsUpdateDto.setUpdatedUserId(SessionUtils.getSessionUserId(session));
+    bbsUpdateDto.setUpdatedAt(LocalDateTime.now());
     return categoryMapper.updateBbs(bbsUpdateDto) > 0;
   }
 
@@ -163,7 +160,12 @@ public class CategoryServiceImpl implements CategoryService {
       log.warn("[deleteBbsData " + ExceptionMessage.NOT_FOUND + "]", bbsId);
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
-    BbsDeleteDto deleteDto = new BbsDeleteDto(bbsId, SessionUtils.getSessionUserId(session));
+    BbsDto deleteDto = new BbsDto().builder()
+        .bbsId(bbsId)
+        .status(BoardStatusEnum.DELETE)
+        .updatedUserId(SessionUtils.getSessionUserId(session))
+        .updatedAt(LocalDateTime.now())
+        .build();
     return categoryMapper.deleteBbs(deleteDto) > 0;
   }
 
@@ -176,7 +178,6 @@ public class CategoryServiceImpl implements CategoryService {
    * @param dbBbsDto
    */
   private void isChangeBbsData(BbsUpdateDto bbsUpdateDto, BbsDto dbBbsDto) {
-    // TODO : IFNULL을 쿼리에서 사용할지, 파라미터에 그냥 넣어서 보낼지를 고민함.
     if (ObjectUtils.isEmpty(bbsUpdateDto.getCategoryId())) {
       bbsUpdateDto.setCategoryId(dbBbsDto.getCategoryId());
     }

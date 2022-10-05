@@ -1,8 +1,8 @@
 package com.nooblol.board.service;
 
 import com.nooblol.board.dto.BbsDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsInsertDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsUpdateDto;
+import com.nooblol.board.dto.BbsInsertDto;
+import com.nooblol.board.dto.BbsUpdateDto;
 import com.nooblol.board.dto.CategoryDto;
 import com.nooblol.board.dto.CategoryRequestDto.CategoryInsertDto;
 import com.nooblol.board.dto.CategoryRequestDto.CategoryUpdateDto;
@@ -78,6 +78,7 @@ public interface CategoryService {
 
   /**
    * 게시판 항목을 추가한다.
+   *
    * @param bbsInsertDto
    * @param session
    * @return
@@ -86,6 +87,7 @@ public interface CategoryService {
 
   /**
    * 게시판의 정보를 수정한다.
+   *
    * @param bbsUpdateDto
    * @param session
    * @return
@@ -94,6 +96,7 @@ public interface CategoryService {
 
   /**
    * 게시판의 Status를 삭제값으로 변경한다.
+   *
    * @param bbsId
    * @param session
    * @return

@@ -1,9 +1,8 @@
 package com.nooblol.board.mapper;
 
 import com.nooblol.board.dto.BbsDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsDeleteDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsInsertDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsUpdateDto;
+import com.nooblol.board.dto.BbsInsertDto;
+import com.nooblol.board.dto.BbsUpdateDto;
 import com.nooblol.board.dto.CategoryDto;
 import com.nooblol.board.dto.CategoryRequestDto.CategoryDeleteDto;
 import com.nooblol.board.dto.CategoryRequestDto.CategoryInsertDto;
@@ -39,5 +38,5 @@ public interface CategoryMapper {
 
   int updateBbs(BbsUpdateDto bbsUpdateDto);
 
-  int deleteBbs(BbsDeleteDto bbsDeleteDto);
+  int deleteBbs(BbsDto bbsDeleteDto);
 }
