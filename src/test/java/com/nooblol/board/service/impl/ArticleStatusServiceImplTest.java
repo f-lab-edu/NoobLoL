@@ -44,7 +44,7 @@ class ArticleStatusServiceImplTest {
 
     //mock
     doThrow(new IllegalArgumentException(ExceptionMessage.BAD_REQUEST))
-        .when(articleService).isNotExistsArticleByArticleId(testArticleId);
+        .when(articleService).checkNotExistsArticleByArticleId(testArticleId);
 
     //when
     Exception e = assertThrows(IllegalArgumentException.class, () -> {

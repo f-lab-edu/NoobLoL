@@ -27,7 +27,7 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
 
   @Override
   public boolean insertReply(ReplyInsertDto insertDto, HttpSession session) {
-    articleService.isNotExistsArticleByArticleId(insertDto.getArticleId());
+    articleService.checkNotExistsArticleByArticleId(insertDto.getArticleId());
 
     Optional<String> userId = Optional.of(SessionUtils.getSessionUserId(session));
 
@@ -36,7 +36,7 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
 
   @Override
   public boolean updateReply(ReplyUpdateDto updateDto, HttpSession session) {
-    articleService.isNotExistsArticleByArticleId(updateDto.getArticleId());
+    articleService.checkNotExistsArticleByArticleId(updateDto.getArticleId());
 
     boolean isNotCreatedUser = isNotReplyCreatedUser(updateDto.getReplyId(), session);
     boolean isNotUserAdmin = UserRoleStatus.isNotUserAdmin(
@@ -76,7 +76,7 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
 
   @Override
   public List<ReplyDto> selectReplyListByArticleId(int articleId) {
-    articleService.isNotExistsArticleByArticleId(articleId);
+    articleService.checkNotExistsArticleByArticleId(articleId);
 
     return articleReplyMapper.selectReplyListByArticleId(articleId);
   }

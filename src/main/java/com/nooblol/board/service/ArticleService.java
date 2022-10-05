@@ -57,5 +57,5 @@ public interface ArticleService {
    * @param articleId
    * @return
    */
-  void isNotExistsArticleByArticleId(int articleId);
+  void checkNotExistsArticleByArticleId(int articleId);
 }

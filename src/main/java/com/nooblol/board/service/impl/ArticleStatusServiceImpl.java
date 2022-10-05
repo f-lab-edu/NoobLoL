@@ -27,7 +27,7 @@ public class ArticleStatusServiceImpl implements ArticleStatusService {
 
   @Override
   public boolean likeArticle(int articleId, HttpSession session) {
-    articleService.isNotExistsArticleByArticleId(articleId);
+    articleService.checkNotExistsArticleByArticleId(articleId);
 
     ArticleStatusDto requestArticleStatusDto =
         createArticleStatusDto(
@@ -39,7 +39,7 @@ public class ArticleStatusServiceImpl implements ArticleStatusService {
 
   @Override
   public boolean notLikeArticle(int articleId, HttpSession session) {
-    articleService.isNotExistsArticleByArticleId(articleId);
+    articleService.checkNotExistsArticleByArticleId(articleId);
 
     ArticleStatusDto requestArticleStatusDto =
         createArticleStatusDto(

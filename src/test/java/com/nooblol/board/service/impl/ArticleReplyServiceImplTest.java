@@ -87,7 +87,7 @@ class ArticleReplyServiceImplTest {
         .build();
     //mock
     doThrow(new IllegalArgumentException(ExceptionMessage.BAD_REQUEST))
-        .when(articleService).isNotExistsArticleByArticleId(testArticleId);
+        .when(articleService).checkNotExistsArticleByArticleId(testArticleId);
 
     //when
     Exception e = assertThrows(IllegalArgumentException.class, () -> {
@@ -132,7 +132,7 @@ class ArticleReplyServiceImplTest {
         .build();
     //mock
     doThrow(new IllegalArgumentException(ExceptionMessage.BAD_REQUEST))
-        .when(articleService).isNotExistsArticleByArticleId(testArticleId);
+        .when(articleService).checkNotExistsArticleByArticleId(testArticleId);
 
     //when
     Exception e = assertThrows(IllegalArgumentException.class, () -> {
@@ -420,7 +420,7 @@ class ArticleReplyServiceImplTest {
 
         //mock
         doThrow(new IllegalArgumentException(ExceptionMessage.BAD_REQUEST))
-            .when(articleService).isNotExistsArticleByArticleId(nullArticleId);
+            .when(articleService).checkNotExistsArticleByArticleId(nullArticleId);
         //when
         Exception e = assertThrows(IllegalArgumentException.class,
             () -> articleReplyService.selectReplyListByArticleId(nullArticleId));

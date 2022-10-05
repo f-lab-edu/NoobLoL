@@ -109,7 +109,7 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
-  public void isNotExistsArticleByArticleId(int articleId) {
+  public void checkNotExistsArticleByArticleId(int articleId) {
     if (ObjectUtils.isEmpty(articleMapper.selectArticleByArticleId(articleId))) {
       throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
