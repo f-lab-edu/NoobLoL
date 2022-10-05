@@ -2,6 +2,7 @@ package com.nooblol.global.utils;
 
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.global.exception.ExceptionMessage;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
@@ -16,7 +17,7 @@ public class ResponseUtils {
    * @return
    */
   public static <T> ResponseDto makeListToResponseDto(List<T> list) {
-    if (list == null || list.size() == 0) {
+    if (list.isEmpty()) {
       return ResponseEnum.NOT_FOUND.getResponse();
     }
     return new ResponseDto(HttpStatus.OK.value(), list);

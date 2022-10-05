@@ -42,8 +42,8 @@ public class UserInfoUpdateDto {
 
   @AssertTrue(message = UserConstants.USER_ROLE_INFO_UPDATE_CANT_ACCOUNT)
   public boolean isReqUserInfoUpdateRoleValidation() {
-    if (getUserRole() == UserRoleStatus.AUTH_USER.getRoleValue() ||
-        getUserRole() == UserRoleStatus.ADMIN.getRoleValue()) {
+    if (UserRoleStatus.isUserRoleAuth(getUserRole()) ||
+        UserRoleStatus.isUserRoleAdmin(getUserRole())) {
       return true;
     }
     return false;

@@ -38,12 +38,8 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
   public boolean updateReply(ReplyUpdateDto updateDto, HttpSession session) {
     articleService.checkNotExistsArticleByArticleId(updateDto.getArticleId());
 
-    boolean isNotCreatedUser = isNotReplyCreatedUser(updateDto.getReplyId(), session);
-    boolean isNotUserAdmin = UserRoleStatus.isNotUserAdmin(
-        SessionUtils.getSessionUserRole(session)
-    );
-
-    if (isNotCreatedUser && isNotUserAdmin) {
+    if (isNotReplyCreatedUser(updateDto.getReplyId(), session) &&
+        UserRoleStatus.isNotUserAdmin(SessionUtils.getSessionUserRole(session))) {
       throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
     }
 
@@ -57,12 +53,8 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
 
   @Override
   public boolean deleteReplyByReplyId(int replyId, HttpSession session) {
-    boolean isNotCreatedUser = isNotReplyCreatedUser(replyId, session);
-    boolean isNotUserAdmin = UserRoleStatus.isNotUserAdmin(
-        SessionUtils.getSessionUserRole(session)
-    );
-
-    if (isNotCreatedUser && isNotUserAdmin) {
+    if (isNotReplyCreatedUser(replyId, session) &&
+        UserRoleStatus.isNotUserAdmin(SessionUtils.getSessionUserRole(session))) {
       throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
     }
 

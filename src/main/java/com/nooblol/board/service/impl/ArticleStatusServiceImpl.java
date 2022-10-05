@@ -72,14 +72,14 @@ public class ArticleStatusServiceImpl implements ArticleStatusService {
    * @return
    */
   private boolean statusProcess(ArticleStatusDto requestArticleStatusDto) {
-    ArticleStatusDto IsHaveStatusData = articleStatusMapper.selectArticleStatusByArticleIdAndUserId(
+    ArticleStatusDto isHaveStatusData = articleStatusMapper.selectArticleStatusByArticleIdAndUserId(
         requestArticleStatusDto);
 
-    if (ObjectUtils.isEmpty(IsHaveStatusData)) {
+    if (ObjectUtils.isEmpty(isHaveStatusData)) {
       return articleStatusMapper.insertArticleStatus(requestArticleStatusDto) > 0;
     }
 
-    if (IsHaveStatusData.getLikeType().isLikeStatus() !=
+    if (isHaveStatusData.getLikeType().isLikeStatus() !=
         requestArticleStatusDto.getLikeType().isLikeStatus()) {
       throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
