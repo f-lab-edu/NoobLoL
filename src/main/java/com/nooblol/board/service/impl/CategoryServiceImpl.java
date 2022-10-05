@@ -68,8 +68,6 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public boolean insertCategory(CategoryInsertDto categoryInsertDto, HttpSession session) {
-    isSessionUserIsAdmin(session);
-
     String reqUserId = Optional.of(SessionUtils.getSessionUserId(session)).get();
     categoryInsertDto.setCreatedUserId(reqUserId);
     categoryInsertDto.setUpdatedUserId(reqUserId);
@@ -79,8 +77,6 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public boolean updateCategory(CategoryUpdateDto categoryUpdateDto, HttpSession session) {
-    isSessionUserIsAdmin(session);
-
     CategoryDto dbCategoryData = selectCategory(categoryUpdateDto.getCategoryId());
 
     isChangeCategoryData(categoryUpdateDto, dbCategoryData);
@@ -123,8 +119,6 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public boolean deleteCategory(int categoryId, HttpSession session) {
-    isSessionUserIsAdmin(session);
-
     CategoryDto dbCategoryData = selectCategory(categoryId);
 
     if (ObjectUtils.isEmpty(dbCategoryData)) {
@@ -143,8 +137,6 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public boolean insertBbs(BbsInsertDto bbsInsertDto, HttpSession session) {
-    isSessionUserIsAdmin(session);
-
     String createdUserId = SessionUtils.getSessionUserId(session);
 
     //TODO [22. 09. 12]: 다른 DTO도 공통적으로 사용되는 경우가 많은데 공통적인 처리방법이 필요할 것같음..
@@ -158,8 +150,6 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public boolean updateBbs(BbsUpdateDto bbsUpdateDto, HttpSession session) {
-    isSessionUserIsAdmin(session);
-
     BbsDto dbBbsData = Optional.of(getBbsDataByBbsId(bbsUpdateDto.getBbsId())).get();
 
     isChangeBbsData(bbsUpdateDto, dbBbsData);
@@ -169,8 +159,6 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public boolean deleteBbs(int bbsId, HttpSession session) {
-    isSessionUserIsAdmin(session);
-
     if (ObjectUtils.isEmpty(getBbsDataByBbsId(bbsId))) {
       log.warn("[deleteBbsData " + ExceptionMessage.NOT_FOUND + "]", bbsId);
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
@@ -223,11 +211,4 @@ public class CategoryServiceImpl implements CategoryService {
     return categoryMapper.selectBbsByBbsId(bbsId);
   }
 
-  private void isSessionUserIsAdmin(HttpSession session) {
-    Integer sessionUserRole = Optional.of(SessionUtils.getSessionUserRole(session)).get();
-
-    if (sessionUserRole != UserRoleStatus.ADMIN.getRoleValue()) {
-      throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
-    }
-  }
 }

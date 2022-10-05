@@ -1,11 +1,10 @@
 package com.nooblol.board.controller;
 
-import com.nooblol.board.dto.BbsRequestDto.BbsInsertDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsUpdateDto;
+import com.nooblol.board.dto.BbsInsertDto;
+import com.nooblol.board.dto.BbsUpdateDto;
 import com.nooblol.board.dto.CategoryRequestDto;
 import com.nooblol.board.utils.ArticleMessage;
-import com.nooblol.board.utils.BoardStatusEnum;
-import com.nooblol.global.annotation.UserLoginCheck;
+import com.nooblol.global.annotation.UserRoleIsAdminCehck;
 import com.nooblol.global.dto.ResponseDto;
 import com.nooblol.board.service.CategoryService;
 import com.nooblol.global.utils.ResponseUtils;
@@ -79,7 +78,7 @@ public class BoardController {
    * @param session           현재 로그인중인 사용자 확인
    * @return
    */
-  @UserLoginCheck
+  @UserRoleIsAdminCehck
   @PostMapping("/category")
   public ResponseDto insertCategory(
       @Valid @RequestBody CategoryRequestDto.CategoryInsertDto categoryInsertDto,
@@ -95,7 +94,7 @@ public class BoardController {
    *
    * @return
    */
-  @UserLoginCheck
+  @UserRoleIsAdminCehck
   @PutMapping("/category")
   public ResponseDto updateCategory(
       @Valid @RequestBody CategoryRequestDto.CategoryUpdateDto categoryUpdateDto,
@@ -113,7 +112,7 @@ public class BoardController {
    * @param session
    * @return
    */
-  @UserLoginCheck
+  @UserRoleIsAdminCehck
   @DeleteMapping("/category/{categoryId}")
   public ResponseDto deleteCategory(
       @PathVariable @NotNull(message = ArticleMessage.CATEGORY_ID_NULL) Integer categoryId,
@@ -128,7 +127,7 @@ public class BoardController {
    * @param session
    * @return
    */
-  @UserLoginCheck
+  @UserRoleIsAdminCehck
   @PostMapping("/bbs")
   public ResponseDto insertBbs(@Valid @RequestBody BbsInsertDto bbsInsertDto, HttpSession session) {
     return ResponseUtils.makeToResponseOkDto(categoryService.insertBbs(bbsInsertDto, session));
@@ -141,7 +140,7 @@ public class BoardController {
    * @param session
    * @return
    */
-  @UserLoginCheck
+  @UserRoleIsAdminCehck
   @PutMapping("/bbs")
   public ResponseDto updateBbs(@Valid @RequestBody BbsUpdateDto bbsUpdateDto, HttpSession session) {
     return ResponseUtils.makeToResponseOkDto(categoryService.updateBbs(bbsUpdateDto, session));
@@ -154,7 +153,7 @@ public class BoardController {
    * @param session
    * @return
    */
-  @UserLoginCheck
+  @UserRoleIsAdminCehck
   @DeleteMapping("/bbs/{bbsId}")
   public ResponseDto deleteBbs(
       @PathVariable(required = false) @NotNull(message = ArticleMessage.BBS_ID_NULL) Integer bbsId,
