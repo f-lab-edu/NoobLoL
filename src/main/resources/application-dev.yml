@@ -8,10 +8,6 @@ spring:
     tomcat:
       validation-query: SELECT 1 FROM DUAL
 
-  #redis
-  redis:
-    host: 127.0.0.1
-    port: 6379
 
 server:
   port: 8081

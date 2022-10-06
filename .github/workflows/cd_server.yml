@@ -28,6 +28,16 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
+      ##mail값 주입
+      - name: E-Mail DI
+        run: |
+          cd ./src/main/resources
+          chmod 755 application.yml
+          sed -i 's/mail-id/${{ secrets.EMAIL }}/g' application.yml
+          sed -i 's/mail-pw/${{ secrets.EMAIL_PW }}/g' application.yml
+          cat application.yml
+        shell: bash
+
       ## Riot Api Key 수정
       - name: Constants.yml Change Riot Api Key
         run: |
