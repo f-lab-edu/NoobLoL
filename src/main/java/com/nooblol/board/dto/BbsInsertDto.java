@@ -1,7 +1,7 @@
 package com.nooblol.board.dto;
 
 import com.nooblol.board.utils.ArticleMessage;
-import com.nooblol.board.utils.BoardStatusEnum;
+import com.nooblol.board.utils.BoardStatus;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -24,11 +24,11 @@ public class BbsInsertDto extends BbsRequestDto {
   private String bbsName;
 
   @NotNull(message = ArticleMessage.BBS_STATUS_NULL)
-  private BoardStatusEnum status;
+  private BoardStatus status;
 
   @Builder
   public BbsInsertDto(String createdUserId, LocalDateTime createdAt, String updatedUserId,
-      LocalDateTime updatedAt, Integer categoryId, String bbsName, BoardStatusEnum status) {
+      LocalDateTime updatedAt, Integer categoryId, String bbsName, BoardStatus status) {
     super(createdUserId, createdAt, updatedUserId, updatedAt);
     this.categoryId = categoryId;
     this.bbsName = bbsName;

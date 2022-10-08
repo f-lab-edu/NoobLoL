@@ -7,7 +7,7 @@ import com.nooblol.board.dto.ArticleDto;
 import com.nooblol.board.mapper.ArticleMapper;
 import com.nooblol.board.mapper.ArticleStatusMapper;
 import com.nooblol.board.utils.ArticleAuthMessage;
-import com.nooblol.board.utils.ArticleStatusEnum;
+import com.nooblol.board.utils.ArticleStatus;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionEnum;
 import com.nooblol.user.dto.UserDto;
@@ -105,7 +105,7 @@ class ArticleServiceImplTest {
         .articleId(articleId)
         .bbsId(1)
         .articleTitle("Test Title")
-        .status(ArticleStatusEnum.ACTIVE)
+        .status(ArticleStatus.ACTIVE)
         .build();
 
     //mock

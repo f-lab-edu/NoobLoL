@@ -10,8 +10,8 @@ import com.nooblol.board.dto.CategoryDto;
 import com.nooblol.board.dto.CategoryInsertDto;
 import com.nooblol.board.dto.CategoryUpdateDto;
 import com.nooblol.board.mapper.CategoryMapper;
-import com.nooblol.board.utils.BoardStatusEnum;
-import com.nooblol.board.utils.CategoryStatusEnum;
+import com.nooblol.board.utils.BoardStatus;
+import com.nooblol.board.utils.CategoryStatus;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionSampleObject;
 import java.time.LocalDateTime;
@@ -73,14 +73,14 @@ class CategoryServiceImplTest {
       @DisplayName("카테고리를 조회시 상태값이 Enum에 존재하는 값인 경우에는 해당 Status와 일치하는 카테고리 리스트를 획득한다")
       void getCategoryList_WhenNoHaveEnumThenReturnListCategory() {
         //given
-        int haveStatus = BoardStatusEnum.ACTIVE.getStatus();
+        int haveStatus = BoardStatus.ACTIVE.getStatus();
         List<CategoryDto> mockCategoryList = new ArrayList<>();
 
         mockCategoryList.add(
             new CategoryDto().builder()
                 .categoryId(1)
                 .categoryName("샘플1")
-                .status(CategoryStatusEnum.ACTIVE)
+                .status(CategoryStatus.ACTIVE)
                 .createdUserId("a")
                 .updatedUserId("a")
                 .createdAt(LocalDateTime.now())
@@ -91,7 +91,7 @@ class CategoryServiceImplTest {
             new CategoryDto().builder()
                 .categoryId(2)
                 .categoryName("샘플2")
-                .status(CategoryStatusEnum.ACTIVE)
+                .status(CategoryStatus.ACTIVE)
                 .createdUserId("a")
                 .updatedUserId("a")
                 .createdAt(LocalDateTime.now())
@@ -167,13 +167,13 @@ class CategoryServiceImplTest {
         CategoryUpdateDto updateDto = new CategoryUpdateDto().builder()
             .categoryId(categoryId)
             .newCategoryName(sameTitle)
-            .status(CategoryStatusEnum.ACTIVE)
+            .status(CategoryStatus.ACTIVE)
             .build();
 
         CategoryDto mockCategoryDto = new CategoryDto().builder()
             .categoryId(categoryId)
             .categoryName(sameTitle)
-            .status(CategoryStatusEnum.ACTIVE)
+            .status(CategoryStatus.ACTIVE)
             .build();
 
         //mock
@@ -203,7 +203,7 @@ class CategoryServiceImplTest {
         CategoryDto mockCategoryDto = new CategoryDto().builder()
             .categoryId(categoryId)
             .categoryName("dbTitle")
-            .status(CategoryStatusEnum.ACTIVE)
+            .status(CategoryStatus.ACTIVE)
             .build();
         //mock
         when(categoryMapper.selectCategoryByCategoryId(categoryId)).thenReturn(mockCategoryDto);
@@ -248,7 +248,7 @@ class CategoryServiceImplTest {
 
         CategoryDto mockCategoryDto = new CategoryDto().builder()
             .categoryId(categoryId)
-            .status(CategoryStatusEnum.DELETE)
+            .status(CategoryStatus.DELETE)
             .build();
 
         //mock
@@ -269,7 +269,7 @@ class CategoryServiceImplTest {
 
         CategoryDto mockCategoryDto = new CategoryDto().builder()
             .categoryId(categoryId)
-            .status(CategoryStatusEnum.ACTIVE)
+            .status(CategoryStatus.ACTIVE)
             .build();
 
         //mock
@@ -318,7 +318,7 @@ class CategoryServiceImplTest {
       @DisplayName("게시판리스트 조회시 조회하고자 하는 Status가 Enum에 존재하고, 카테고리Id도 존재하는 경우, 해당 항목과 일치하는 값을 가진 게시판 리스트를 획득한다.")
       void getBbsList_WhenNoHaveEnum_ThenReturnListCategory() {
         //given
-        int haveStatus = BoardStatusEnum.ACTIVE.getStatus();
+        int haveStatus = BoardStatus.ACTIVE.getStatus();
         int haveCategoryId = 1;
 
         List<BbsDto> mockBbsList = new ArrayList<>();
@@ -326,7 +326,7 @@ class CategoryServiceImplTest {
         BbsDto mockBbsDto1 = new BbsDto().builder()
             .bbsId(1)
             .bbsName("샘플1")
-            .status(BoardStatusEnum.ACTIVE)
+            .status(BoardStatus.ACTIVE)
             .categoryId(haveCategoryId)
             .createdUserId("test1").updatedUserId("test1")
             .createdAt(LocalDateTime.now())
@@ -336,7 +336,7 @@ class CategoryServiceImplTest {
         BbsDto mockBbsDto2 = new BbsDto().builder()
             .bbsId(1)
             .bbsName("샘플2")
-            .status(BoardStatusEnum.ACTIVE)
+            .status(BoardStatus.ACTIVE)
             .categoryId(haveCategoryId)
             .createdUserId("test1").updatedUserId("test1")
             .createdAt(LocalDateTime.now())
@@ -408,14 +408,14 @@ class CategoryServiceImplTest {
               .bbsId(bbsId)
               .categoryId(1)
               .bbsName("test")
-              .status(BoardStatusEnum.ACTIVE)
+              .status(BoardStatus.ACTIVE)
               .build();
 
           BbsDto mockBbsDto = new BbsDto().builder()
               .bbsId(bbsId)
               .categoryId(1)
               .bbsName("test")
-              .status(BoardStatusEnum.ACTIVE)
+              .status(BoardStatus.ACTIVE)
               .build();
 
           //mock
@@ -439,14 +439,14 @@ class CategoryServiceImplTest {
               .bbsId(bbsId)
               .categoryId(1)
               .bbsName("test")
-              .status(BoardStatusEnum.ACTIVE)
+              .status(BoardStatus.ACTIVE)
               .build();
 
           BbsDto mockBbsDto = new BbsDto().builder()
               .bbsId(bbsId)
               .categoryId(5)
               .bbsName("sample")
-              .status(BoardStatusEnum.ACTIVE)
+              .status(BoardStatus.ACTIVE)
               .build();
 
           //mock

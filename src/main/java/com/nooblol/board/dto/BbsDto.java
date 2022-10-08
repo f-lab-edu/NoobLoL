@@ -1,6 +1,6 @@
 package com.nooblol.board.dto;
 
-import com.nooblol.board.utils.BoardStatusEnum;
+import com.nooblol.board.utils.BoardStatus;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +18,7 @@ public class BbsDto {
   private int bbsId;
   private int categoryId;
   private String bbsName;
-  private BoardStatusEnum status;
+  private BoardStatus status;
   private String createdUserId;
   private LocalDateTime createdAt;
   private String updatedUserId;

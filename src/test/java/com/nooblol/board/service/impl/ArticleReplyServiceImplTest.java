@@ -8,12 +8,10 @@ import com.nooblol.board.dto.ReplyInsertDto;
 import com.nooblol.board.dto.ReplyUpdateDto;
 import com.nooblol.board.mapper.ArticleReplyMapper;
 import com.nooblol.board.service.ArticleService;
-import com.nooblol.board.utils.ReplyStatusEnum;
+import com.nooblol.board.utils.ReplyStatus;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionSampleObject;
 import com.nooblol.global.utils.SessionUtils;
-import com.nooblol.user.dto.UserDto;
-import com.nooblol.user.utils.UserRoleStatus;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +25,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.util.ObjectUtils;
 
 
@@ -85,7 +82,7 @@ class ArticleReplyServiceImplTest {
 
     ReplyInsertDto replyInsertDto = new ReplyInsertDto().builder()
         .articleId(testArticleId)
-        .status(ReplyStatusEnum.ACTIVE)
+        .status(ReplyStatus.ACTIVE)
         .build();
 
     //mock
@@ -156,7 +153,7 @@ class ArticleReplyServiceImplTest {
     ReplyUpdateDto replyUpdateDto = new ReplyUpdateDto().builder()
         .articleId(testArticleId)
         .replyId(testReplyId)
-        .status(ReplyStatusEnum.ACTIVE)
+        .status(ReplyStatus.ACTIVE)
         .build();
 
     //mock
@@ -180,7 +177,7 @@ class ArticleReplyServiceImplTest {
     ReplyUpdateDto replyUpdateDto = new ReplyUpdateDto().builder()
         .articleId(testArticleId)
         .replyId(testReplyId)
-        .status(ReplyStatusEnum.ACTIVE)
+        .status(ReplyStatus.ACTIVE)
         .build();
 
     //mock
@@ -204,7 +201,7 @@ class ArticleReplyServiceImplTest {
     ReplyUpdateDto replyUpdateDto = new ReplyUpdateDto().builder()
         .articleId(testArticleId)
         .replyId(testReplyId)
-        .status(ReplyStatusEnum.ACTIVE)
+        .status(ReplyStatus.ACTIVE)
         .build();
 
     //mock
@@ -229,7 +226,7 @@ class ArticleReplyServiceImplTest {
     ReplyUpdateDto replyUpdateDto = new ReplyUpdateDto().builder()
         .articleId(testArticleId)
         .replyId(testReplyId)
-        .status(ReplyStatusEnum.ACTIVE)
+        .status(ReplyStatus.ACTIVE)
         .build();
 
     //mock
@@ -370,7 +367,7 @@ class ArticleReplyServiceImplTest {
             .replyId(replyId)
             .articleId(1)
             .replyContent("SampleContent")
-            .status(ReplyStatusEnum.ACTIVE)
+            .status(ReplyStatus.ACTIVE)
             .createdUserId("test")
             .createdAt(LocalDateTime.now())
             .build();

@@ -6,34 +6,34 @@ import java.util.Arrays;
 import lombok.Getter;
 
 @Getter
-public enum ArticleStatusEnum {
-  ACTIVE(1), SECRET(2);
+public enum CategoryStatus {
+  ACTIVE(1), DEACTIVE(2), DELETE(9);
 
 
-  ArticleStatusEnum(int status) {
+  CategoryStatus(int status) {
     this.status = status;
   }
 
   int status;
 
   public static boolean isExistStatus(int statusType) {
-    return Arrays.stream(ArticleStatusEnum.values())
+    return Arrays.stream(CategoryStatus.values())
         .anyMatch(status -> status.getStatus() == statusType);
   }
 
-  public static ArticleStatusEnum findStatusEnumByString(String statusType) {
-    return ArticleStatusEnum.valueOf(statusType.toUpperCase());
+  public static CategoryStatus findStatusEnumByString(String statusType) {
+    return CategoryStatus.valueOf(statusType.toUpperCase());
   }
 
 
-  public static ArticleStatusEnum findStatusEnumByIntValue(int statusValue) {
-    return Arrays.stream(ArticleStatusEnum.values())
-        .filter(articleStatusEnum -> articleStatusEnum.getStatus() == statusValue)
+  public static CategoryStatus findStatusEnumByIntValue(int statusValue) {
+    return Arrays.stream(CategoryStatus.values())
+        .filter(categoryStatusEnum -> categoryStatusEnum.getStatus() == statusValue)
         .findFirst().get();
   }
 
   @JsonCreator
-  public static ArticleStatusEnum findByEnum(Object statusValue) {
+  public static CategoryStatus findByEnum(Object statusValue) {
     if (statusValue instanceof String) {
       return findStatusEnumByString(((String) statusValue).toUpperCase());
     }

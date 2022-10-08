@@ -9,8 +9,8 @@ import com.nooblol.board.dto.CategoryUpdateDto;
 import com.nooblol.board.dto.SearchBbsListDto;
 import com.nooblol.board.mapper.CategoryMapper;
 import com.nooblol.board.service.CategoryService;
-import com.nooblol.board.utils.BoardStatusEnum;
-import com.nooblol.board.utils.CategoryStatusEnum;
+import com.nooblol.board.utils.BoardStatus;
+import com.nooblol.board.utils.CategoryStatus;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionUtils;
 import java.time.LocalDateTime;
@@ -36,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
   @Transactional(readOnly = true)
   @Cacheable(cacheNames = "category", key = "#status")
   public List<CategoryDto> getCategoryList(int status) {
-    if (CategoryStatusEnum.isExistStatus(status)) {
+    if (CategoryStatus.isExistStatus(status)) {
       return categoryMapper.selectCategoryList(status);
     }
     throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
@@ -46,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
   @Transactional(readOnly = true)
   @Cacheable(cacheNames = "bbs", key = "#categoryId")
   public List<BbsDto> getBbsList(int categoryId, int status) {
-    if (BoardStatusEnum.isExistStatus(status)) {
+    if (BoardStatus.isExistStatus(status)) {
       return categoryMapper.selectBbsList(
           new SearchBbsListDto().builder()
               .categoryId(categoryId)
@@ -122,14 +122,14 @@ public class CategoryServiceImpl implements CategoryService {
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
-    if (dbCategoryData.getStatus() == CategoryStatusEnum.DELETE) {
+    if (dbCategoryData.getStatus() == CategoryStatus.DELETE) {
       throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
 
     return categoryMapper.deleteCategory(
         new CategoryDto().builder()
             .categoryId(categoryId)
-            .status(CategoryStatusEnum.DELETE)
+            .status(CategoryStatus.DELETE)
             .updatedUserId(SessionUtils.getSessionUserId(session))
             .updatedAt(LocalDateTime.now())
             .build()) > 0;
@@ -165,7 +165,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
     BbsDto deleteDto = new BbsDto().builder()
         .bbsId(bbsId)
-        .status(BoardStatusEnum.DELETE)
+        .status(BoardStatus.DELETE)
         .updatedUserId(SessionUtils.getSessionUserId(session))
         .updatedAt(LocalDateTime.now())
         .build();

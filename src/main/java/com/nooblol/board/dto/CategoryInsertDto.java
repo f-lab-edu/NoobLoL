@@ -1,7 +1,7 @@
 package com.nooblol.board.dto;
 
 import com.nooblol.board.utils.ArticleMessage;
-import com.nooblol.board.utils.CategoryStatusEnum;
+import com.nooblol.board.utils.CategoryStatus;
 import java.time.LocalDateTime;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
@@ -22,7 +22,7 @@ public class CategoryInsertDto extends CategoryRequestDto {
   private String categoryName;
 
   @NotNull(message = ArticleMessage.CATEGORY_STATUS_NULL)
-  private CategoryStatusEnum status;
+  private CategoryStatus status;
 
   @AssertTrue(message = "CreatedAt, UpdateAt 초기화")
   public boolean isInitDateTime() {
@@ -33,7 +33,7 @@ public class CategoryInsertDto extends CategoryRequestDto {
 
   @Builder
   public CategoryInsertDto(LocalDateTime createdAt, LocalDateTime updatedAt,
-      String createdUserId, String updatedUserId, String categoryName, CategoryStatusEnum status) {
+      String createdUserId, String updatedUserId, String categoryName, CategoryStatus status) {
     super(createdAt, updatedAt, createdUserId, updatedUserId);
     this.categoryName = categoryName;
     this.status = status;

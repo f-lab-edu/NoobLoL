@@ -3,11 +3,10 @@ package com.nooblol.board.service.impl;
 
 import com.nooblol.board.dto.ArticleStatusDto;
 import com.nooblol.board.dto.LikeAndNotLikeResponseDto;
-import com.nooblol.board.mapper.ArticleMapper;
 import com.nooblol.board.mapper.ArticleStatusMapper;
 import com.nooblol.board.service.ArticleService;
 import com.nooblol.board.service.ArticleStatusService;
-import com.nooblol.board.utils.ArticleLikeStatusEnum;
+import com.nooblol.board.utils.ArticleLikeStatus;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionUtils;
 import javax.servlet.http.HttpSession;
@@ -58,7 +57,7 @@ public class ArticleStatusServiceImpl implements ArticleStatusService {
     ArticleStatusDto articleStatusDto = new ArticleStatusDto().builder()
         .articleId(articleId)
         .userId(userId)
-        .likeType(ArticleLikeStatusEnum.findLikeStatusType(type))
+        .likeType(ArticleLikeStatus.findLikeStatusType(type))
         .build();
 
     return articleStatusDto;

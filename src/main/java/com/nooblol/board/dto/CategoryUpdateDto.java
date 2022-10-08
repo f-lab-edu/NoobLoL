@@ -1,7 +1,7 @@
 package com.nooblol.board.dto;
 
 import com.nooblol.board.utils.ArticleMessage;
-import com.nooblol.board.utils.CategoryStatusEnum;
+import com.nooblol.board.utils.CategoryStatus;
 import java.time.LocalDateTime;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
@@ -25,7 +25,7 @@ public class CategoryUpdateDto extends CategoryRequestDto {
   private Integer categoryId;
 
   private String newCategoryName;
-  private CategoryStatusEnum status;
+  private CategoryStatus status;
 
   @AssertTrue(message = ArticleMessage.CATEGORY_UPDATE_VALIDATION)
   public boolean isNewCategoryInfoValid() {
@@ -37,7 +37,7 @@ public class CategoryUpdateDto extends CategoryRequestDto {
 
   @Builder
   public CategoryUpdateDto(LocalDateTime createdAt, LocalDateTime updatedAt, String createdUserId,
-      String updatedUserId, Integer categoryId, String newCategoryName, CategoryStatusEnum status) {
+      String updatedUserId, Integer categoryId, String newCategoryName, CategoryStatus status) {
     super(createdAt, updatedAt, createdUserId, updatedUserId);
     this.categoryId = categoryId;
     this.newCategoryName = newCategoryName;

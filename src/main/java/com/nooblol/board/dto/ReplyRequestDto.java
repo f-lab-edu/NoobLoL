@@ -1,7 +1,7 @@
 package com.nooblol.board.dto;
 
 import com.nooblol.board.utils.ArticleMessage;
-import com.nooblol.board.utils.ReplyStatusEnum;
+import com.nooblol.board.utils.ReplyStatus;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class ReplyRequestDto {
   private String replyContent;
 
   @NotNull(message = ArticleMessage.REPLY_STATUS_NULL)
-  private ReplyStatusEnum status;
+  private ReplyStatus status;
 
   private Integer sortNo;
 

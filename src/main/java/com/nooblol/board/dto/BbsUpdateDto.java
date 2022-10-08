@@ -2,7 +2,7 @@ package com.nooblol.board.dto;
 
 
 import com.nooblol.board.utils.ArticleMessage;
-import com.nooblol.board.utils.BoardStatusEnum;
+import com.nooblol.board.utils.BoardStatus;
 import java.time.LocalDateTime;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
@@ -27,7 +27,7 @@ public class BbsUpdateDto extends BbsRequestDto {
 
   private String bbsName;
 
-  private BoardStatusEnum status;
+  private BoardStatus status;
 
   @AssertTrue(message = ArticleMessage.BBS_UPDATE_VALIDATION)
   public boolean isValidUpdateData() {
@@ -44,7 +44,7 @@ public class BbsUpdateDto extends BbsRequestDto {
   @Builder
   public BbsUpdateDto(String createdUserId, LocalDateTime createdAt, String updatedUserId,
       LocalDateTime updatedAt, Integer bbsId, Integer categoryId, String bbsName,
-      BoardStatusEnum status) {
+      BoardStatus status) {
     super(createdUserId, createdAt, updatedUserId, updatedAt);
     this.bbsId = bbsId;
     this.categoryId = categoryId;

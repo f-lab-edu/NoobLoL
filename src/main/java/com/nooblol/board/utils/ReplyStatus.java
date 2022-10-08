@@ -6,32 +6,32 @@ import java.util.Arrays;
 import lombok.Getter;
 
 @Getter
-public enum ReplyStatusEnum {
+public enum ReplyStatus {
 
   ACTIVE(1), DEACTIVE(2);
 
 
-  ReplyStatusEnum(int status) {
+  ReplyStatus(int status) {
     this.status = status;
   }
 
   int status;
 
   public static boolean isExistStatus(int statusType) {
-    return Arrays.stream(ReplyStatusEnum.values())
+    return Arrays.stream(ReplyStatus.values())
         .anyMatch(status -> status.getStatus() == statusType);
   }
 
-  public static ReplyStatusEnum findStatusEnumByStatusValue(int statusValue) {
-    return Arrays.stream(ReplyStatusEnum.values())
+  public static ReplyStatus findStatusEnumByStatusValue(int statusValue) {
+    return Arrays.stream(ReplyStatus.values())
         .filter(replyStatusEnum -> replyStatusEnum.getStatus() == statusValue)
         .findFirst().get();
   }
 
   @JsonCreator
-  public static ReplyStatusEnum findByEnum(Object statusValue) {
+  public static ReplyStatus findByEnum(Object statusValue) {
     if (statusValue instanceof String) {
-      return ReplyStatusEnum.valueOf(((String) statusValue).toUpperCase());
+      return ReplyStatus.valueOf(((String) statusValue).toUpperCase());
     }
     if (statusValue instanceof Integer) {
       return findStatusEnumByStatusValue((Integer) statusValue);
