@@ -24,13 +24,6 @@ public class CategoryInsertDto extends CategoryRequestDto {
   @NotNull(message = ArticleMessage.CATEGORY_STATUS_NULL)
   private CategoryStatus status;
 
-  @AssertTrue(message = "CreatedAt, UpdateAt 초기화")
-  public boolean isInitDateTime() {
-    setUpdatedAt(LocalDateTime.now());
-    setCreatedAt(LocalDateTime.now());
-    return true;
-  }
-
   @Builder
   public CategoryInsertDto(LocalDateTime createdAt, LocalDateTime updatedAt,
       String createdUserId, String updatedUserId, String categoryName, CategoryStatus status) {

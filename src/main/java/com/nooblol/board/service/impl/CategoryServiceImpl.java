@@ -79,7 +79,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     isChangeCategoryData(categoryUpdateDto, dbCategoryData);
     categoryUpdateDto.setUpdatedUserId(SessionUtils.getSessionUserId(session));
-    categoryUpdateDto.setUpdatedAt(LocalDateTime.now());
     return categoryMapper.updateCategory(categoryUpdateDto) > 0;
 
   }
@@ -141,8 +140,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     bbsInsertDto.setCreatedUserId(createdUserId);
     bbsInsertDto.setUpdatedUserId(createdUserId);
-    bbsInsertDto.setCreatedAt(LocalDateTime.now());
-    bbsInsertDto.setUpdatedAt(LocalDateTime.now());
 
     return categoryMapper.insertBbs(bbsInsertDto) > 0;
   }
@@ -153,7 +150,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     isChangeBbsData(bbsUpdateDto, dbBbsData);
     bbsUpdateDto.setUpdatedUserId(SessionUtils.getSessionUserId(session));
-    bbsUpdateDto.setUpdatedAt(LocalDateTime.now());
     return categoryMapper.updateBbs(bbsUpdateDto) > 0;
   }
 

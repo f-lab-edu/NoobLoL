@@ -14,9 +14,9 @@ public class BbsRequestDto {
 
   private String createdUserId;
 
-  private LocalDateTime createdAt;
+  private LocalDateTime createdAt = LocalDateTime.now();
 
   private String updatedUserId;
 
-  private LocalDateTime updatedAt;
+  private LocalDateTime updatedAt = LocalDateTime.now();
 }

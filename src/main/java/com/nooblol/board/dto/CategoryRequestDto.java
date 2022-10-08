@@ -22,8 +22,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CategoryRequestDto {
 
-  private LocalDateTime createdAt;
-  private LocalDateTime updatedAt;
+  private LocalDateTime createdAt = LocalDateTime.now();
+  private LocalDateTime updatedAt = LocalDateTime.now();
   private String createdUserId;
   private String updatedUserId;
 
