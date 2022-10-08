@@ -26,7 +26,7 @@ public class ArticleDto {
   private String articleContent;
   private ArticleStatus status;
   private String createdUserId;
-  private LocalDateTime createdAt;
-  private LocalDateTime updatedAt;
+  private LocalDateTime createdAt = LocalDateTime.now();
+  private LocalDateTime updatedAt = LocalDateTime.now();
   private String authMessage;
 }
