@@ -27,25 +27,4 @@ public class CategoryRequestDto {
   private String createdUserId;
   private String updatedUserId;
 
-
-
-  @Getter
-  @Setter
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class CategoryDeleteDto extends CategoryRequestDto {
-
-    private Integer categoryId;
-    private Integer status;
-
-
-    @Builder
-    public CategoryDeleteDto(LocalDateTime createdAt, LocalDateTime updatedAt, String createdUserId,
-        String updatedUserId, Integer categoryId, Integer status) {
-      super(createdAt, updatedAt, createdUserId, updatedUserId);
-      this.categoryId = categoryId;
-      this.status = status;
-    }
-
-  }
 }
