@@ -88,8 +88,7 @@ public class CategoryServiceImpl implements CategoryService {
       CategoryDto dbCategoryData) {
     if (dbCategoryData == null) {
       log.warn(
-          ExceptionMessage.NOT_FOUND,
-          categoryUpdateDto.getCategoryId()
+          ExceptionMessage.NOT_FOUND, categoryUpdateDto.toString()
       );
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
@@ -124,7 +123,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     if (dbCategoryData.getStatus() == CategoryStatusEnum.DELETE) {
-      return true;
+      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
 
     return categoryMapper.deleteCategory(
