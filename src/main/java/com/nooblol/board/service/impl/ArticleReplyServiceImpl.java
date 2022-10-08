@@ -78,9 +78,12 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
 
   private boolean isReplyCreatedUserOrAdminUser(int replyId, HttpSession session) {
     Optional<String> createdUserIdOptional =
-        Optional.of(articleReplyMapper.selectCreatedUserIdByReplyId(replyId));
+        Optional.ofNullable(articleReplyMapper.selectCreatedUserIdByReplyId(replyId));
+
     return UserRoleStatus.isUserRoleAdmin(SessionUtils.getSessionUserRole(session)) ||
-        createdUserIdOptional.get().equals(SessionUtils.getSessionUserId(session));
+        createdUserIdOptional
+            .filter(createdUserId -> createdUserId.equals(SessionUtils.getSessionUserId(session)))
+            .isPresent();
   }
 
 }
