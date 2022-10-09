@@ -119,7 +119,7 @@ public class LetterController {
       @PathVariable @NotNull(message = LetterConstants.LETTER_ID_NULL) int letterId,
       HttpSession session
   ) {
-    LetterDto letterDto = new LetterDto().builder()
+    LetterDto letterDto = LetterDto.builder()
         .letterId(letterId)
         .type(type)
         .build();
@@ -141,7 +141,7 @@ public class LetterController {
   private LetterSearchDto makeLetterListSearchDto(
       String userId, int pageNum, int limitNum, String type
   ) {
-    return new LetterSearchDto().builder()
+    return LetterSearchDto.builder()
         .userId(userId)
         .statusArr(LetterConstants.LETTER_LIST_SEARCH_STATUS_ARR)
         .pageNum(pageNum * limitNum)

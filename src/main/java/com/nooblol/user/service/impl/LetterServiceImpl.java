@@ -87,11 +87,14 @@ public class LetterServiceImpl implements LetterService {
       throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
 
-    if (isNotExistsUserId(requestDto.getToUserId())) {
+    //실제 수신자가 존재하지 않는지 여부 확인
+    if (Optional
+        .ofNullable(userInfoService.selectUserInfoByUserId(requestDto.getToUserId()))
+        .isEmpty()) {
       throw new IllegalArgumentException(ExceptionMessage.NOT_FOUND);
     }
 
-    LetterDto insertLetter = new LetterDto().builder()
+    LetterDto insertLetter = LetterDto.builder()
         .letterTitle(requestDto.getLetterTitle())
         .letterContent(requestDto.getLetterContent())
         .toUserId(requestDto.getToUserId())
@@ -126,16 +129,11 @@ public class LetterServiceImpl implements LetterService {
   private boolean updateLetterStatus(
       int letterId, int status, String letterType, HttpSession session
   ) {
-    if (!statusValid(status)) {
-      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
-    }
-
-    //혹시라도 String으로 작성하는경우를 대비해 toUpperCase를 진행해준다.
     letterType = letterType.toUpperCase();
 
     if (LetterConstants.LETTER_TYPE_TO.equals(letterType)) {
       return letterMapper.updateLetterToStatusByLetterIdAndToUserId(
-          new LetterDto().builder()
+          LetterDto.builder()
               .letterId(letterId)
               .toStatus(status)
               .toUserId(SessionUtils.getSessionUserId(session))
@@ -145,7 +143,7 @@ public class LetterServiceImpl implements LetterService {
 
     if (LetterConstants.LETTER_TYPE_FROM.equals(letterType)) {
       return letterMapper.updateLetterFromStatusByLetterIdAndFromUserId(
-          new LetterDto().builder()
+          LetterDto.builder()
               .letterId(letterId)
               .fromStatus(status)
               .fromUserId(SessionUtils.getSessionUserId(session))
@@ -153,27 +151,7 @@ public class LetterServiceImpl implements LetterService {
       ) > 0;
     }
 
+    //LetterConstants에 없는 Type(수신 또는 발신이 아닌경우) Exception
     throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
-  }
-
-  /**
-   * Status의 값이 실제 Constants에 존재하는지 여부 확인
-   *
-   * @param status
-   * @return
-   */
-  private boolean statusValid(int status) {
-    return Arrays.stream(LetterConstants.LETTER_LIST_STATUS_ALL_ARR)
-        .anyMatch(arrStatusVal -> arrStatusVal == status);
-  }
-
-  /**
-   * 수신자가 실제 Users테이블에 존재하는지 여부 확인
-   *
-   * @param userId
-   * @return
-   */
-  private boolean isNotExistsUserId(String userId) {
-    return Optional.ofNullable(userInfoService.selectUserInfoByUserId(userId)).isEmpty();
   }
 }
