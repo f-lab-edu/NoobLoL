@@ -25,4 +25,5 @@ public class SessionUtils {
     }
     return userAttribute.getUserRole();
   }
+
 }

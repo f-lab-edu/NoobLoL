@@ -53,16 +53,14 @@
     FROM bbs
   </select>
 
-  <insert id="insertCategory"
-    parameterType="com.nooblol.board.dto.CategoryRequestDto$CategoryInsertDto">
+  <insert id="insertCategory" parameterType="CategoryInsertDto">
     INSERT INTO bbs_category (category_name, status, created_user_id, created_at, updated_user_id,
                               updated_at)
     VALUES (#{categoryName}, #{status}, #{createdUserId}, #{createdAt}, #{updatedUserId},
             #{updatedAt})
   </insert>
 
-  <update id="updateCategory"
-    parameterType="com.nooblol.board.dto.CategoryRequestDto$CategoryUpdateDto">
+  <update id="updateCategory" parameterType="CategoryUpdateDto">
     UPDATE bbs_category
     SET category_name   = #{newCategoryName},
         status          = #{status},
@@ -71,8 +69,7 @@
     WHERE category_id = #{categoryId}
   </update>
 
-  <update id="deleteCategory"
-    parameterType="com.nooblol.board.dto.CategoryRequestDto$CategoryDeleteDto">
+  <update id="deleteCategory" parameterType="CategoryDto">
     UPDATE bbs_category
     SET status          = #{status},
         updated_user_id = #{updatedUserId},
@@ -93,24 +90,24 @@
     WHERE bbs_id = #{bbsId}
   </select>
 
-  <insert id="insertBbs" parameterType="com.nooblol.board.dto.BbsRequestDto$BbsInsertDto">
+  <insert id="insertBbs" parameterType="BbsInsertDto">
     INSERT INTO BBS(category_id, bbs_name, status, created_user_id, created_at, updated_user_id,
                     updated_at)
-    VALUES (#{categoryId}, #{bbsName}, #{status}, #{createdUserId}, #{cratedAt}, #{updatedUserId},
+    VALUES (#{categoryId}, #{bbsName}, #{status}, #{createdUserId}, #{createdAt}, #{updatedUserId},
             #{updatedAt})
   </insert>
 
-  <update id="updateBbs" parameterType="com.nooblol.board.dto.BbsRequestDto$BbsUpdateDto">
+  <update id="updateBbs" parameterType="BbsUpdateDto">
     UPDATE bbs
     SET category_id     = #{categoryId},
         bbs_name        = #{bbsName},
         status          = #{status},
         updated_user_id = #{updatedUserId},
         updated_at      = #{updatedAt}
-    WHERE bbsId = #{bbsId}
+    WHERE bbs_id = #{bbsId}
   </update>
 
-  <update id="deleteBbs" parameterType="com.nooblol.board.dto.BbsRequestDto$BbsDeleteDto">
+  <update id="deleteBbs" parameterType="BbsDto">
     UPDATE bbs
     SET status          = #{status},
         updated_user_id = #{updatedUserId},

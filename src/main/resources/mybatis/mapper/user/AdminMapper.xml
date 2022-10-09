@@ -16,7 +16,7 @@
       AND user_password_hash = #{adminUserPassword}
   </select>
 
-  <select id="getAllUserList">
+  <select id="getAllUserList" parameterType="int">
     SELECt user_id,
            user_email,
            user_name,
@@ -26,6 +26,8 @@
            created_at,
            updated_at
     FROM users
+    ORDER BY created_at DESC
+      LIMIT #{pageNum}, #{limitNum}
   </select>
 
 

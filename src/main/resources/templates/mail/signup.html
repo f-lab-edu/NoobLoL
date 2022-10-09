@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:title="${title}">NoobLoL 회원가입 인증</title>
+</head>
+<body>
+<div>
+  <p>안녕하세요 <span th:text="${name}"></span>님 NoobLoL인증 안내 메일입니다.<br>
+    <a th:href="${content}">인증 링크입니다</a>
+  </p>
+</div>
+</body>
+</html>

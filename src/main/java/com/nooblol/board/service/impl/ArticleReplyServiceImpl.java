@@ -1,14 +1,15 @@
 package com.nooblol.board.service.impl;
 
 import com.nooblol.board.dto.ReplyDto;
-import com.nooblol.board.dto.ReplyRequestDto.ReplyInsertDto;
-import com.nooblol.board.dto.ReplyRequestDto.ReplyUpdateDto;
+import com.nooblol.board.dto.ReplyInsertDto;
+import com.nooblol.board.dto.ReplyUpdateDto;
 import com.nooblol.board.mapper.ArticleReplyMapper;
 import com.nooblol.board.service.ArticleReplyService;
 import com.nooblol.board.service.ArticleService;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionUtils;
-import com.nooblol.global.utils.UserUtils;
+import com.nooblol.user.utils.UserRoleStatus;
+import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -26,81 +27,63 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
 
   @Override
   public boolean insertReply(ReplyInsertDto insertDto, HttpSession session) {
-    validHaveArticleInDb(insertDto.getArticleId());
+    articleService.checkNotExistsArticleByArticleId(insertDto.getArticleId());
 
-    Optional<String> userId = Optional.of(SessionUtils.getSessionUserId(session));
-
-    return upsertReply(makeInsertReplyDto(insertDto, userId.get())) > 0;
+    return articleReplyMapper.insertReply(
+        new ReplyDto().builder()
+            .articleId(insertDto.getArticleId())
+            .replyContent(insertDto.getReplyContent())
+            .status(insertDto.getStatus())
+            .createdUserId(Optional.of(SessionUtils.getSessionUserId(session)).get())
+            .createdAt(insertDto.getCreatedAt())
+            .build()) > 0;
   }
 
   @Override
   public boolean updateReply(ReplyUpdateDto updateDto, HttpSession session) {
-    validHaveArticleInDb(updateDto.getArticleId());
+    articleService.checkNotExistsArticleByArticleId(updateDto.getArticleId());
 
-    boolean isNotCreatedUser = isNotReplyCreatedUser(updateDto.getReplyId(), session);
-    boolean isNotUserAdmin = isNotSessionUserAdmin(session);
-
-    if (isNotCreatedUser && isNotUserAdmin) {
-      throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
+    if (isReplyCreatedUserOrAdminUser(updateDto.getReplyId(), session)) {
+      return articleReplyMapper.updateReply(
+          new ReplyDto().builder()
+              .replyId(updateDto.getReplyId())
+              .replyContent(updateDto.getReplyContent())
+              .status(updateDto.getStatus())
+              .build()
+      ) > 0;
     }
-
-    return upsertReply(makeUpdateReplyDto(updateDto)) > 0;
-  }
-
-  @Override
-  public int upsertReply(ReplyDto replyDto) {
-    return articleReplyMapper.upsertReply(replyDto);
+    throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
   }
 
   @Override
   public boolean deleteReplyByReplyId(int replyId, HttpSession session) {
-    boolean isNotCreatedUser = isNotReplyCreatedUser(replyId, session);
-    boolean isNotUserAdmin = isNotSessionUserAdmin(session);
-
-    if (isNotCreatedUser && isNotUserAdmin) {
-      throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
+    if (isReplyCreatedUserOrAdminUser(replyId, session)) {
+      return articleReplyMapper.deleteReplyByReplyId(replyId) > 0;
     }
 
-    return articleReplyMapper.deleteReplyByReplyId(replyId) > 0;
+    throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
   }
 
-
-  private void validHaveArticleInDb(int articleId) {
-    if (articleService.isNotArticleInDb(articleId)) {
-      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
-    }
+  @Override
+  public ReplyDto selectReplyByReplyId(int replyId) {
+    return articleReplyMapper.selectReplyByReplyId(replyId);
   }
 
-  private boolean isNotReplyCreatedUser(int replyId, HttpSession session) {
-    return UserUtils.isNotCreatedUser(
-        Optional.of(articleReplyMapper.selectCreatedUserIdByReplyId(replyId)).get(),
-        Optional.of(SessionUtils.getSessionUserId(session)).get()
-    );
+  @Override
+  public List<ReplyDto> selectReplyListByArticleId(int articleId) {
+    articleService.checkNotExistsArticleByArticleId(articleId);
+
+    return articleReplyMapper.selectReplyListByArticleId(articleId);
   }
 
-  private boolean isNotSessionUserAdmin(HttpSession session) {
-    return UserUtils.isNotUserAdmin(
-        Optional.of(SessionUtils.getSessionUserRole(session)).get()
-    );
+  private boolean isReplyCreatedUserOrAdminUser(int replyId, HttpSession session) {
+    Optional<String> createdUserIdOptional =
+        Optional.ofNullable(articleReplyMapper.selectCreatedUserIdByReplyId(replyId));
+
+    return UserRoleStatus.isUserRoleAdmin(SessionUtils.getSessionUserRole(session)) ||
+        createdUserIdOptional
+            .filter(createdUserId -> createdUserId.equals(SessionUtils.getSessionUserId(session)))
+            .isPresent();
   }
 
-  private ReplyDto makeInsertReplyDto(ReplyInsertDto insertDto, String userId) {
-    return new ReplyDto().builder()
-        .replyId(articleReplyMapper.selectMaxReplyId())
-        .articleId(insertDto.getArticleId())
-        .replyContent(insertDto.getReplyContent())
-        .status(insertDto.getStatus())
-        .sortNo(articleReplyMapper.selectMaxSortNoByArticleId(insertDto.getArticleId()))
-        .createdUserId(userId)
-        .createdAt(insertDto.getCreatedAt())
-        .build();
-  }
-
-  private ReplyDto makeUpdateReplyDto(ReplyUpdateDto updateDto) {
-    return new ReplyDto().builder()
-        .replyId(updateDto.getReplyId())
-        .replyContent(updateDto.getReplyContent())
-        .status(updateDto.getStatus())
-        .build();
-  }
 }

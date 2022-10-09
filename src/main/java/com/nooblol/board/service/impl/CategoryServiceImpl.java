@@ -1,26 +1,25 @@
 package com.nooblol.board.service.impl;
 
 import com.nooblol.board.dto.BbsDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsDeleteDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsInsertDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsUpdateDto;
+import com.nooblol.board.dto.BbsInsertDto;
+import com.nooblol.board.dto.BbsUpdateDto;
 import com.nooblol.board.dto.CategoryDto;
-import com.nooblol.board.dto.CategoryRequestDto.CategoryDeleteDto;
-import com.nooblol.board.dto.CategoryRequestDto.CategoryInsertDto;
-import com.nooblol.board.dto.CategoryRequestDto.CategoryUpdateDto;
+import com.nooblol.board.dto.CategoryInsertDto;
+import com.nooblol.board.dto.CategoryUpdateDto;
 import com.nooblol.board.dto.SearchBbsListDto;
 import com.nooblol.board.mapper.CategoryMapper;
 import com.nooblol.board.service.CategoryService;
-import com.nooblol.board.utils.BoardStatusEnum;
+import com.nooblol.board.utils.BoardStatus;
+import com.nooblol.board.utils.CategoryStatus;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionUtils;
-import com.nooblol.user.utils.UserRoleStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,41 +34,38 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   @Transactional(readOnly = true)
+  @Cacheable(cacheNames = "category", key = "#status")
   public List<CategoryDto> getCategoryList(int status) {
-    for (BoardStatusEnum enumObj : BoardStatusEnum.values()) {
-      if (enumObj.getStatus() == status) {
-        return categoryMapper.selectCategoryList(enumObj.getStatus());
-      }
+    if (CategoryStatus.isExistStatus(status)) {
+      return categoryMapper.selectCategoryList(status);
     }
-    return null;
+    throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
   }
 
   @Override
   @Transactional(readOnly = true)
+  @Cacheable(cacheNames = "bbs", key = "#categoryId")
   public List<BbsDto> getBbsList(int categoryId, int status) {
-    for (BoardStatusEnum enumObj : BoardStatusEnum.values()) {
-      if (enumObj.getStatus() == status) {
-        SearchBbsListDto searchParamDto =
-            new SearchBbsListDto().builder()
-                .categoryId(categoryId)
-                .status(status)
-                .build();
-        return categoryMapper.selectBbsList(searchParamDto);
-      }
+    if (BoardStatus.isExistStatus(status)) {
+      return categoryMapper.selectBbsList(
+          new SearchBbsListDto().builder()
+              .categoryId(categoryId)
+              .status(status)
+              .build()
+      );
     }
-
-    return null;
+    throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
   }
 
   @Override
+  @Transactional(readOnly = true)
+  @Cacheable(cacheNames = "allBbs")
   public List<BbsDto> getAllBbsList() {
     return categoryMapper.selectAllBbsList();
   }
 
   @Override
   public boolean insertCategory(CategoryInsertDto categoryInsertDto, HttpSession session) {
-    isSessionUserIsAdmin(session);
-
     String reqUserId = Optional.of(SessionUtils.getSessionUserId(session)).get();
     categoryInsertDto.setCreatedUserId(reqUserId);
     categoryInsertDto.setUpdatedUserId(reqUserId);
@@ -79,13 +75,10 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public boolean updateCategory(CategoryUpdateDto categoryUpdateDto, HttpSession session) {
-    isSessionUserIsAdmin(session);
-
     CategoryDto dbCategoryData = selectCategory(categoryUpdateDto.getCategoryId());
 
     isChangeCategoryData(categoryUpdateDto, dbCategoryData);
     categoryUpdateDto.setUpdatedUserId(SessionUtils.getSessionUserId(session));
-    categoryUpdateDto.setUpdatedAt(LocalDateTime.now());
     return categoryMapper.updateCategory(categoryUpdateDto) > 0;
 
   }
@@ -94,13 +87,11 @@ public class CategoryServiceImpl implements CategoryService {
       CategoryDto dbCategoryData) {
     if (dbCategoryData == null) {
       log.warn(
-          ExceptionMessage.NOT_FOUND,
-          categoryUpdateDto.getCategoryId()
+          ExceptionMessage.NOT_FOUND, categoryUpdateDto.toString()
       );
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
-    // TODO : IFNULL을 쿼리에서 사용할지, 파라미터에 그냥 넣어서 보낼지를 고민함.
     if (ObjectUtils.isEmpty(categoryUpdateDto.getNewCategoryName())) {
       categoryUpdateDto.setNewCategoryName(dbCategoryData.getCategoryName());
     }
@@ -123,8 +114,6 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public boolean deleteCategory(int categoryId, HttpSession session) {
-    isSessionUserIsAdmin(session);
-
     CategoryDto dbCategoryData = selectCategory(categoryId);
 
     if (ObjectUtils.isEmpty(dbCategoryData)) {
@@ -132,54 +121,52 @@ public class CategoryServiceImpl implements CategoryService {
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
-    if (dbCategoryData.getStatus() == BoardStatusEnum.DELETE.getStatus()) {
-      return true;
+    if (dbCategoryData.getStatus() == CategoryStatus.DELETE) {
+      throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
     }
 
     return categoryMapper.deleteCategory(
-        makeCategoryDeleteDto(categoryId, session)
-    ) > 0;
+        new CategoryDto().builder()
+            .categoryId(categoryId)
+            .status(CategoryStatus.DELETE)
+            .updatedUserId(SessionUtils.getSessionUserId(session))
+            .updatedAt(LocalDateTime.now())
+            .build()) > 0;
   }
 
   @Override
   public boolean insertBbs(BbsInsertDto bbsInsertDto, HttpSession session) {
-    isSessionUserIsAdmin(session);
-
     String createdUserId = SessionUtils.getSessionUserId(session);
 
-    //TODO [22. 09. 12]: 다른 DTO도 공통적으로 사용되는 경우가 많은데 공통적인 처리방법이 필요할 것같음..
     bbsInsertDto.setCreatedUserId(createdUserId);
     bbsInsertDto.setUpdatedUserId(createdUserId);
-    bbsInsertDto.setCreatedAt(LocalDateTime.now());
-    bbsInsertDto.setUpdatedAt(LocalDateTime.now());
 
     return categoryMapper.insertBbs(bbsInsertDto) > 0;
   }
 
   @Override
   public boolean updateBbs(BbsUpdateDto bbsUpdateDto, HttpSession session) {
-    isSessionUserIsAdmin(session);
-
     BbsDto dbBbsData = Optional.of(getBbsDataByBbsId(bbsUpdateDto.getBbsId())).get();
 
     isChangeBbsData(bbsUpdateDto, dbBbsData);
-
+    bbsUpdateDto.setUpdatedUserId(SessionUtils.getSessionUserId(session));
     return categoryMapper.updateBbs(bbsUpdateDto) > 0;
   }
 
   @Override
   public boolean deleteBbs(int bbsId, HttpSession session) {
-    isSessionUserIsAdmin(session);
-
     if (ObjectUtils.isEmpty(getBbsDataByBbsId(bbsId))) {
       log.warn("[deleteBbsData " + ExceptionMessage.NOT_FOUND + "]", bbsId);
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
-    BbsDeleteDto deleteDto = new BbsDeleteDto(bbsId, SessionUtils.getSessionUserId(session));
+    BbsDto deleteDto = new BbsDto().builder()
+        .bbsId(bbsId)
+        .status(BoardStatus.DELETE)
+        .updatedUserId(SessionUtils.getSessionUserId(session))
+        .updatedAt(LocalDateTime.now())
+        .build();
     return categoryMapper.deleteBbs(deleteDto) > 0;
   }
-
-  // DTO에 놓는게 맞을지, 여기두는게 맞을지
 
   /**
    * BBS의 Update할 정보 기본값 세팅
@@ -188,7 +175,6 @@ public class CategoryServiceImpl implements CategoryService {
    * @param dbBbsDto
    */
   private void isChangeBbsData(BbsUpdateDto bbsUpdateDto, BbsDto dbBbsDto) {
-    // TODO : IFNULL을 쿼리에서 사용할지, 파라미터에 그냥 넣어서 보낼지를 고민함.
     if (ObjectUtils.isEmpty(bbsUpdateDto.getCategoryId())) {
       bbsUpdateDto.setCategoryId(dbBbsDto.getCategoryId());
     }
@@ -201,7 +187,6 @@ public class CategoryServiceImpl implements CategoryService {
       bbsUpdateDto.setStatus(dbBbsDto.getStatus());
     }
 
-    //수정할 데이터와 DB의 데이터가 동일한경우
     if (bbsUpdateDto.getCategoryId().equals(dbBbsDto.getCategoryId()) &&
         bbsUpdateDto.getBbsName().equals(dbBbsDto.getBbsName()) &&
         bbsUpdateDto.getStatus().equals(dbBbsDto.getStatus())) {
@@ -210,24 +195,8 @@ public class CategoryServiceImpl implements CategoryService {
 
   }
 
-  private CategoryDeleteDto makeCategoryDeleteDto(int categoryId, HttpSession session) {
-    return new CategoryDeleteDto().builder()
-        .categoryId(categoryId)
-        .status(BoardStatusEnum.DELETE.getStatus())
-        .updatedUserId(SessionUtils.getSessionUserId(session))
-        .updatedAt(LocalDateTime.now())
-        .build();
-  }
-
   private BbsDto getBbsDataByBbsId(int bbsId) {
     return categoryMapper.selectBbsByBbsId(bbsId);
   }
 
-  private void isSessionUserIsAdmin(HttpSession session) {
-    Integer sessionUserRole = Optional.of(SessionUtils.getSessionUserRole(session)).get();
-
-    if (sessionUserRole != UserRoleStatus.ADMIN.getRoleValue()) {
-      throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
-    }
-  }
 }

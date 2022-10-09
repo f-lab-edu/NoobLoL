@@ -6,16 +6,17 @@ import com.nooblol.board.dto.ArticleUpdateRequestDto;
 import com.nooblol.board.service.ArticleService;
 import com.nooblol.global.annotation.UserLoginCheck;
 import com.nooblol.global.dto.ResponseDto;
-import com.nooblol.global.utils.CommonUtils;
-import com.nooblol.global.utils.ResponseEnum;
+import com.nooblol.global.utils.ResponseUtils;
 import com.nooblol.global.utils.SessionUtils;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +30,8 @@ public class ArticleController {
   private final ArticleService articleService;
 
   /**
-   * articleId의 게시물 정보와 현재 요청한 사용자의 권한을 같이 Return한다
+   * articleId의 게시물 정보와 현재 요청한 사용자의 권한을 같이 Return한다 Session에 로그인정보가 없는 경우에는 게시물에 대한 정보 수정을 주는 권한을
+   * Guest로 설정한다
    *
    * @param articleId
    * @param session
@@ -43,7 +45,7 @@ public class ArticleController {
         articleId, SessionUtils.getSessionUserId(session)
     );
 
-    return CommonUtils.makeToResponseOkDto(article);
+    return ResponseUtils.makeToResponseOkDto(article);
   }
 
   /**
@@ -53,25 +55,20 @@ public class ArticleController {
    * @return
    */
   @UserLoginCheck
-  @PostMapping("/insert")
+  @PostMapping("/")
   public ResponseDto insertArticle(
       @Valid @RequestBody ArticleInsertRequestDto articleDto, HttpSession session
   ) {
-    ArticleDto upsertArticle = new ArticleDto().builder()
-        .articleId(articleService.getNewArticleId())
+    ArticleDto insertArticle = ArticleDto.builder()
         .bbsId(articleDto.getBbsId())
         .articleTitle(articleDto.getArticleTitle())
         .articleContent(articleDto.getArticleContent())
         .articleReadCount(articleDto.getArticleReadCount())
         .status(articleDto.getStatus())
         .createdUserId(SessionUtils.getSessionUserId(session))
-        .createdAt(articleDto.getCreatedAt())
-        .updatedAt(articleDto.getUpdatedAt())
         .build();
 
-    boolean upsertResult = articleService.upsertArticle(upsertArticle, session, true);
-
-    return CommonUtils.makeToResponseOkDto(upsertResult);
+    return ResponseUtils.makeToResponseOkDto(articleService.insertArticle(insertArticle));
   }
 
   /**
@@ -81,74 +78,31 @@ public class ArticleController {
    * @return
    */
   @UserLoginCheck
-  @PostMapping("/update")
+  @PutMapping("/")
   public ResponseDto updateArticle(
       @Valid @RequestBody ArticleUpdateRequestDto articleDto, HttpSession session
   ) {
-    ArticleDto upsertArticle = new ArticleDto().builder()
+    ArticleDto upsertArticle = ArticleDto.builder()
         .articleId(articleDto.getArticleId())
         .bbsId(articleDto.getBbsId())
         .articleTitle(articleDto.getArticleTitle())
         .articleContent(articleDto.getArticleContent())
         .status(articleDto.getStatus())
-        .updatedAt(articleDto.getUpdatedAt())
         .build();
 
-    boolean upsertResult = articleService.upsertArticle(upsertArticle, session, false);
-
-    return CommonUtils.makeToResponseOkDto(upsertResult);
+    return ResponseUtils.makeToResponseOkDto(articleService.updateArticle(upsertArticle, session));
   }
 
   /**
-   * @param articleId
-   * @param session
-   * @return
-   */
-  @UserLoginCheck
-  @GetMapping("/delete/{articleId}")
-  public ResponseDto deleteArticle(
-      @PathVariable int articleId, HttpSession session
-  ) {
-    boolean deleteResult = articleService.deleteArticle(articleId, session);
-
-    return CommonUtils.makeToResponseOkDto(deleteResult);
-  }
-
-
-  /**
-   * 파라미터로 제공한 게시물의 추천, 비추천 갯수를 Return한다
-   *
-   * @param articleId
-   * @return
-   */
-  @GetMapping("/status/{articleId}")
-  public ResponseDto likeAndNotLikeArticle(@PathVariable int articleId) {
-    return CommonUtils.makeToResponseOkDto(articleService.likeAndNotListStatus(articleId));
-  }
-
-  /**
-   * 게시물 추천
+   * 게시물 삭제
    *
    * @param articleId
    * @param session
    * @return
    */
   @UserLoginCheck
-  @GetMapping("/like/{articleId}")
-  public ResponseDto likeArticle(@PathVariable int articleId, HttpSession session) {
-    return CommonUtils.makeToResponseOkDto(articleService.likeArticle(articleId, session));
-  }
-
-  /**
-   * 게시물 비추천
-   *
-   * @param articleId
-   * @param session
-   * @return
-   */
-  @UserLoginCheck
-  @GetMapping("/notLike/{articleId}")
-  public ResponseDto notLikeArticle(@PathVariable int articleId, HttpSession session) {
-    return CommonUtils.makeToResponseOkDto(articleService.notLikeArticle(articleId, session));
+  @DeleteMapping("/{articleId}")
+  public ResponseDto deleteArticle(@PathVariable int articleId, HttpSession session) {
+    return ResponseUtils.makeToResponseOkDto(articleService.deleteArticle(articleId, session));
   }
 }

@@ -2,26 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nooblol.board.mapper.ArticleReplyMapper">
-  <insert id="upsertReply" parameterType="ReplyDto">
-    INSERT INTO bbs_articles_reply(reply_id, article_id, reply_content, status, sort_no,
-                                   created_user_id, created_at)
-    VALUES (#{replyId}, #{articleId}, #{replyContent}, #{status}, #{sortNo}, #{createdUserId},
-            #{createdAt}) ON DUPLICATE KEY
-    UPDATE
-      reply_content = IFNULL(VALUES (reply_content), reply_content)
-      , status = IFNULL(VALUES (status), status)
+  <insert id="insertReply" parameterType="ReplyDto">
+    INSERT INTO bbs_articles_reply(article_id, reply_content, status, created_user_id,
+                                   created_at, sort_no)
+    VALUES (#{articleId}, #{replyContent}, #{status}, #{createdUserId}, #{createdAt},
+            IFNULL((SELECT sort_no + 1
+                    FROM bbs_articles_reply
+                    WHERE article_id = #{articleId}
+                    ORDER BY sort_no DESC limit 1), 1))
   </insert>
 
-  <select id="selectMaxReplyId" resultType="int">
-    SELECT COALESCE(MAX(reply_id) + 1, 1)
-    FROM bbs_articles_reply
-  </select>
-
-  <select id="selectMaxSortNoByArticleId" parameterType="int" resultType="int">
-    SELECT COALESCE(MAX(sort_no) + 1, 1)
-    FROM bbs_articles_reply
-    WHERE article_id = #{articleId}
-  </select>
+  <update id="updateReply" parameterType="ReplyDto">
+    UPDATE bbs_articles_reply
+    SET reply_content = IFNULL(#{replyContent}, reply_content),
+        status        = IFNULL(#{status}, status)
+    WHERE reply_id = #{replyId}
+  </update>
 
   <select id="selectCreatedUserIdByReplyId" parameterType="int" resultType="String">
     SELECT created_user_id
@@ -40,4 +36,31 @@
     FROM bbs_articles_reply
     WHERE article_id = #{articleId}
   </delete>
+
+  <select id="selectReplyByReplyId" parameterType="int" resultType="ReplyDto">
+    SELECT reply_id,
+           article_id,
+           reply_content,
+           status,
+           sort_no,
+           created_at,
+           created_user_id,
+           created_at
+    FROM bbs_articles_reply
+    WHERE reply_id = #{replyId}
+  </select>
+
+  <select id="selectReplyListByArticleId" parameterType="int" resultType="ReplyDto">
+    SELECT reply_id,
+           article_id,
+           reply_content,
+           status,
+           sort_no,
+           created_at,
+           created_user_id,
+           created_at
+    FROM bbs_articles_reply
+    WHERE article_id = #{articleId}
+    ORDER BY sort_no ASC
+  </select>
 </mapper>

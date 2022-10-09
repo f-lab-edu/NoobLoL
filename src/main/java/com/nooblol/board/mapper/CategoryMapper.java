@@ -1,33 +1,35 @@
 package com.nooblol.board.mapper;
 
 import com.nooblol.board.dto.BbsDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsDeleteDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsInsertDto;
-import com.nooblol.board.dto.BbsRequestDto.BbsUpdateDto;
+import com.nooblol.board.dto.BbsInsertDto;
+import com.nooblol.board.dto.BbsUpdateDto;
 import com.nooblol.board.dto.CategoryDto;
-import com.nooblol.board.dto.CategoryRequestDto.CategoryDeleteDto;
-import com.nooblol.board.dto.CategoryRequestDto.CategoryInsertDto;
-import com.nooblol.board.dto.CategoryRequestDto.CategoryUpdateDto;
+import com.nooblol.board.dto.CategoryInsertDto;
+import com.nooblol.board.dto.CategoryUpdateDto;
 import com.nooblol.board.dto.SearchBbsListDto;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.cache.annotation.CacheEvict;
 
 @Mapper
 public interface CategoryMapper {
 
-  List<CategoryDto> selectCategoryList(int active);
+  @CacheEvict(value = "category", allEntries = true, key = "#status")
+  List<CategoryDto> selectCategoryList(int status);
 
   CategoryDto selectCategoryByCategoryId(int categoryId);
 
+  @CacheEvict(value = "bbs", allEntries = true, key = "#searchBbsListDto.categoryId")
   List<BbsDto> selectBbsList(SearchBbsListDto searchBbsListDto);
 
+  @CacheEvict(value = "allBbs", allEntries = true)
   List<BbsDto> selectAllBbsList();
 
   int insertCategory(CategoryInsertDto categoryInsertDto);
 
   int updateCategory(CategoryUpdateDto categoryUpdateDto);
 
-  int deleteCategory(CategoryDeleteDto makeCategoryDeleteDto);
+  int deleteCategory(CategoryDto CategoryDto);
 
   BbsDto selectBbsByBbsId(int bbsId);
 
@@ -35,5 +37,5 @@ public interface CategoryMapper {
 
   int updateBbs(BbsUpdateDto bbsUpdateDto);
 
-  int deleteBbs(BbsDeleteDto bbsDeleteDto);
+  int deleteBbs(BbsDto bbsDeleteDto);
 }
