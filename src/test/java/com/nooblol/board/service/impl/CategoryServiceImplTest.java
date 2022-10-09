@@ -241,7 +241,7 @@ class CategoryServiceImplTest {
       }
 
       @Test
-      @DisplayName("카테고리를 삭제 할 때, 이미 DB에서 상태값이 삭제가 되어있는 경우 결과값으로 true를 획득한다")
+      @DisplayName("카테고리를 삭제 할 때, 이미 DB에서 상태값이 삭제가 되어있는 경우 BadRequestException이 발생한다")
       void deleteCategory_WhenCategoryAlreadyDeleteThenReturnTrue() {
         //given
         int categoryId = 1;
@@ -255,10 +255,12 @@ class CategoryServiceImplTest {
         when(categoryMapper.selectCategoryByCategoryId(categoryId)).thenReturn(mockCategoryDto);
 
         //when
-        boolean result = categoryService.deleteCategory(categoryId, adminSession);
+        Exception result = assertThrows(IllegalArgumentException.class, () -> {
+          categoryService.deleteCategory(categoryId, adminSession);
+        });
 
         //then
-        assertTrue(result);
+        assertEquals(result.getMessage(), ExceptionMessage.BAD_REQUEST);
       }
 
       @Test
