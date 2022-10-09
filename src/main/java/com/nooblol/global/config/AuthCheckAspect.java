@@ -21,7 +21,6 @@ public class AuthCheckAspect {
 
   /**
    * 사용자로그인이 필요한 기능에서 AOP를 활용하여 사전에 로그인이 안된 사용자를 거름
-   * <p>
    *
    * @param jp
    */
@@ -55,7 +54,7 @@ public class AuthCheckAspect {
         .ofNullable(SessionUtils.getSessionUserRole(session))
         .orElse(UserRoleStatus.GUEST.getRoleValue());
 
-    if (UserRoleStatus.isUserRoleAdmin(userRole)) {
+    if (UserRoleStatus.isNotUserAdmin(userRole)) {
       throw new IllegalArgumentException(ExceptionMessage.UNAUTHORIZED);
     }
   }

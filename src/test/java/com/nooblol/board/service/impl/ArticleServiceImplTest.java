@@ -7,6 +7,7 @@ import com.nooblol.board.dto.ArticleDto;
 import com.nooblol.board.mapper.ArticleMapper;
 import com.nooblol.board.mapper.ArticleStatusMapper;
 import com.nooblol.board.utils.ArticleAuthMessage;
+import com.nooblol.board.utils.ArticleStatus;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionEnum;
 import com.nooblol.user.dto.UserDto;
@@ -104,7 +105,7 @@ class ArticleServiceImplTest {
         .articleId(articleId)
         .bbsId(1)
         .articleTitle("Test Title")
-        .status(1)
+        .status(ArticleStatus.ACTIVE)
         .build();
 
     //mock
@@ -118,28 +119,16 @@ class ArticleServiceImplTest {
   }
 
   @Test
-  @DisplayName("일반 사용자이며 게시물을 등록하는 경우에 DB에 정상적으로 데이터가 삽입되면 결과로 True를 Return받는다")
+  @DisplayName("게시물을 등록 할 때 경우에 DB에 정상적으로 데이터가 삽입되면 결과로 True를 Return받는다")
   void upsertArticle_WhenUserIsAuthUserAndInsertIsSuccessThenReturnTrue() {
     //given
-    UserDto sessionUserData = new UserDto().builder()
-        .userId("test")
-        .userEmail("test@test.com")
-        .userName("test")
-        .userRole(UserRoleStatus.AUTH_USER.getRoleValue())
-        .level(1)
-        .exp(0)
-        .build();
-
-    HttpSession session = new MockHttpSession();
-    session.setAttribute(SessionEnum.USER_LOGIN.getValue(), sessionUserData);
-
     ArticleDto mockArticleDto = new ArticleDto();
 
     //mock
-    when(articleMapper.upsertArticle(mockArticleDto)).thenReturn(1);
+    when(articleMapper.insertArticle(mockArticleDto)).thenReturn(1);
 
     //when
-    boolean result = articleService.upsertArticle(mockArticleDto, session, true);
+    boolean result = articleService.insertArticle(mockArticleDto);
 
     //then
     assertEquals(result, true);
@@ -161,13 +150,13 @@ class ArticleServiceImplTest {
     HttpSession session = new MockHttpSession();
     session.setAttribute(SessionEnum.USER_LOGIN.getValue(), sessionUserData);
 
-    ArticleDto mockArticleDto = new ArticleDto();
+    ArticleDto mockArticleDto = new ArticleDto().builder().articleId(1).build();
 
     //mock
-    when(articleMapper.upsertArticle(mockArticleDto)).thenReturn(1);
+    when(articleMapper.updateArticle(mockArticleDto)).thenReturn(1);
 
     //when
-    boolean result = articleService.upsertArticle(mockArticleDto, session, false);
+    boolean result = articleService.updateArticle(mockArticleDto, session);
 
     //then
     assertEquals(result, true);
@@ -192,12 +181,12 @@ class ArticleServiceImplTest {
     ArticleDto mockArticleDto = new ArticleDto().builder().articleId(1).build();
 
     //mock
-    when(articleMapper.upsertArticle(mockArticleDto)).thenReturn(1);
+    when(articleMapper.updateArticle(mockArticleDto)).thenReturn(1);
     when(articleMapper.selectCreatedUserId(mockArticleDto.getArticleId()))
         .thenReturn(sessionUserData.getUserId());
 
     //when
-    boolean result = articleService.upsertArticle(mockArticleDto, session, false);
+    boolean result = articleService.updateArticle(mockArticleDto, session);
 
     //then
     assertEquals(result, true);
@@ -227,7 +216,7 @@ class ArticleServiceImplTest {
 
     //when
     Exception e = assertThrows(IllegalArgumentException.class, () -> {
-      articleService.upsertArticle(mockArticleDto, session, false);
+      articleService.updateArticle(mockArticleDto, session);
     });
 
     //then

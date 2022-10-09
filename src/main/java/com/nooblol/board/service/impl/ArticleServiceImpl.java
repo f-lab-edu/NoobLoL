@@ -60,24 +60,20 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
-  public boolean upsertArticle(ArticleDto articleDto, HttpSession session, boolean isInsert) {
-    //UserLoginCheck의 Annotation을 통해 무조건 Session로그인이 확인된 상황이기에, Role이 Null이 올 수 없음
+  public boolean insertArticle(ArticleDto articleDto) {
+    return articleMapper.insertArticle(articleDto) > 0;
+  }
 
-    boolean isUserAdminOrInsertArticle =
-        UserRoleStatus.isUserRoleAdmin(SessionUtils.getSessionUserRole(session)) || isInsert;
-
-    if (isUserAdminOrInsertArticle) {
-      return isArticleUpsertSuccess(articleDto);
+  @Override
+  public boolean updateArticle(ArticleDto articleDto, HttpSession session) {
+    //관리자 또는 게시글 작성자
+    if (isArticleCreatedUserOrAdminUser(
+        articleMapper.selectCreatedUserId(articleDto.getArticleId()), session)) {
+      return articleMapper.updateArticle(articleDto) > 0;
     }
 
     //일반 사용자이면서, 게시물의 원작자 여부 확인
-    if (isNotArticleCreatedUser(
-        articleMapper.selectCreatedUserId(articleDto.getArticleId()),
-        SessionUtils.getSessionUserId(session))) {
-      throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
-    }
-
-    return isArticleUpsertSuccess(articleDto);
+    throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
   }
 
   @Override
@@ -89,17 +85,10 @@ public class ArticleServiceImpl implements ArticleService {
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
-    if (UserRoleStatus.isUserRoleAdmin(SessionUtils.getSessionUserRole(session))) {
+    if (isArticleCreatedUserOrAdminUser(haveArticleData.getCreatedUserId(), session)) {
       return isArticleDeleteSuccess(articleId);
     }
-
-    if (isNotArticleCreatedUser(
-        haveArticleData.getCreatedUserId(), SessionUtils.getSessionUserId(session)
-    )) {
-      throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
-    }
-
-    return isArticleDeleteSuccess(articleId);
+    throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
   }
 
   @Override
@@ -110,24 +99,16 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   /**
-   * Upsert가 정상적으로 진행된 경우 True를 Return한다.
+   * 게시물에 대한 작업의 요청자가 관리자나 제작자가 맞는지를 확인한다
    *
-   * @param articleDto
+   * @param createdUserId 게시물에 대한 작성자 UserId
+   * @param session       현재 로그인정보가 들어간 Session
    * @return
    */
-  private boolean isArticleUpsertSuccess(ArticleDto articleDto) {
-    return articleMapper.upsertArticle(articleDto) > 0;
-  }
-
-  /**
-   * 게시글을 작성한 사용자가 Session에 저장된 사용자가 아닌 경우 True를 Return한다.
-   *
-   * @param dbCreatedUserId 데이터가 없는 경우 빈값이 올 수 있기에 무조건 첫번쨰 파라미터는 DB의 CreatedUserId를 넣어야 한다.
-   * @param sessionUserId   Session에 존재하는 로그인된 사용자 Id
-   * @return
-   */
-  private boolean isNotArticleCreatedUser(String dbCreatedUserId, String sessionUserId) {
-    return StringUtils.isBlank(dbCreatedUserId) || !dbCreatedUserId.equals(sessionUserId);
+  private boolean isArticleCreatedUserOrAdminUser(String createdUserId, HttpSession session) {
+    return UserRoleStatus.isUserRoleAdmin(SessionUtils.getSessionUserRole(session)) ||
+        (StringUtils.isNotBlank(createdUserId) &&
+            createdUserId.equals(SessionUtils.getSessionUserId(session)));
   }
 
 

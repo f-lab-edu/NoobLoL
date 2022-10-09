@@ -28,26 +28,23 @@
     WHERE article_id = #{articleId}
   </update>
 
-  <!--
-  Upsert를 통한 DB입력을 진행하려 하였으나, Update를 진행하는 경우에도 auto-increment값이 증가한다는 포스트를 보게되어 자동증가대신 무조건 articleId를 넣어주는 방식으로 제작
-  해당 포스트를 본 Reference : https://stuffdrawers.tistory.com/11
-  -->
-  <insert id="upsertArticle" parameterType="ArticleDto">
-    INSERT INTO bbs_articles(article_id, bbs_id, article_title, article_read_count, article_content,
+  <insert id="insertArticle" parameterType="ArticleDto">
+    INSERT INTO bbs_articles(bbs_id, article_title, article_read_count, article_content,
                              status, created_user_id, created_at, updated_at)
-    VALUES (IFNULL(#{articleId}, IFNULL((SELECT article_id + 1
-                                         FROM bbs_articles
-                                         ORDER BY article_id DESC limit 1), 1)),
-            #{bbsId}, #{articleTitle},
-            #{articleReadCount}, #{articleContent},
-            #{status}, #{createdUserId}, #{createdAt}, #{updatedAt}) ON DUPLICATE KEY
-    UPDATE
-      updated_at = IFNULL(VALUES (updated_at), updated_at)
-      , bbs_id = IFNULL(VALUES (bbs_id), bbs_id)
-      , article_title = IFNULL(VALUES (article_title), article_title)
-      , article_content = IFNULL(VALUES (article_content), article_content)
-      , status = IFNULL(VALUES (status), status)
+    VALUES (#{bbsId}, #{articleTitle}, #{articleReadCount}, #{articleContent}, #{status},
+            #{createdUserId}, #{createdAt}, #{updatedAt})
   </insert>
+
+  <update id="updateArticle" parameterType="ArticleDto">
+    UPDATE bbs_articles
+    SET bbs_id          = IFNULL(#{bbsId}, bbs_id),
+        article_title   = IFNULL(#{articleTitle}, article_title),
+        article_content = IFNULL(#{articleContent}, article_content),
+        status          = IFNULL(#{status}, status),
+        updated_at      = #{updatedAt}
+    WHERE article_id = #{articleId}
+  </update>
+
 
   <select id="selectCreatedUserId" parameterType="int" resultType="String">
     SELECT created_user_id

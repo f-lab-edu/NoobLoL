@@ -1,20 +1,19 @@
 package com.nooblol.board.utils;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-public enum ArticleLikeStatusEnum {
+public enum ArticleLikeStatus {
 
   LIKE(true), NOT_LIKE(false);
 
-  ArticleLikeStatusEnum(boolean likeStatus) {
+  ArticleLikeStatus(boolean likeStatus) {
     this.likeStatus = likeStatus;
   }
 
   boolean likeStatus;
 
-  public static ArticleLikeStatusEnum findLikeStatusType(boolean likeStatus) {
+  public static ArticleLikeStatus findLikeStatusType(boolean likeStatus) {
     if (likeStatus) {
       return LIKE;
     }
@@ -22,7 +21,7 @@ public enum ArticleLikeStatusEnum {
   }
 
 
-  public static ArticleLikeStatusEnum findLikeStatusByInt(int num) {
+  public static ArticleLikeStatus findLikeStatusByInt(int num) {
     if (num == 1) {
       return LIKE;
     }

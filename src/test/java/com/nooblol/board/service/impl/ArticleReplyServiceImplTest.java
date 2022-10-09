@@ -8,12 +8,10 @@ import com.nooblol.board.dto.ReplyInsertDto;
 import com.nooblol.board.dto.ReplyUpdateDto;
 import com.nooblol.board.mapper.ArticleReplyMapper;
 import com.nooblol.board.service.ArticleService;
-import com.nooblol.board.utils.ReplyStatusEnum;
+import com.nooblol.board.utils.ReplyStatus;
 import com.nooblol.global.exception.ExceptionMessage;
-import com.nooblol.global.utils.SessionEnum;
+import com.nooblol.global.utils.SessionSampleObject;
 import com.nooblol.global.utils.SessionUtils;
-import com.nooblol.user.dto.UserDto;
-import com.nooblol.user.utils.UserRoleStatus;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +25,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.util.ObjectUtils;
 
 
@@ -49,30 +46,9 @@ class ArticleReplyServiceImplTest {
 
   @BeforeEach
   void setUp() {
-    authUserSession = new MockHttpSession();
-    authUserSession.setAttribute(
-        SessionEnum.USER_LOGIN.getValue(),
-        new UserDto().builder()
-            .userId("test")
-            .userEmail("test@test.com")
-            .userName("test")
-            .userRole(UserRoleStatus.AUTH_USER.getRoleValue())
-            .level(1)
-            .exp(0)
-            .build())
-    ;
+    authUserSession = SessionSampleObject.authUserLoginSession;
 
-    adminSession = new MockHttpSession();
-    adminSession.setAttribute(
-        SessionEnum.USER_LOGIN.getValue(),
-        new UserDto().builder()
-            .userId("admin")
-            .userEmail("admin@test.com")
-            .userName("admin")
-            .userRole(UserRoleStatus.ADMIN.getRoleValue())
-            .level(1)
-            .exp(0)
-            .build());
+    adminSession = SessionSampleObject.adminUserLoginSession;
   }
 
 
@@ -106,11 +82,11 @@ class ArticleReplyServiceImplTest {
 
     ReplyInsertDto replyInsertDto = new ReplyInsertDto().builder()
         .articleId(testArticleId)
-        .status(ReplyStatusEnum.ACTIVE)
+        .status(ReplyStatus.ACTIVE)
         .build();
 
     //mock
-    when(articleReplyMapper.upsertReply(any())).thenReturn(1);
+    when(articleReplyMapper.insertReply(any())).thenReturn(1);
 
     //when
     boolean result = articleReplyService.insertReply(replyInsertDto, authUserSession);
@@ -177,12 +153,12 @@ class ArticleReplyServiceImplTest {
     ReplyUpdateDto replyUpdateDto = new ReplyUpdateDto().builder()
         .articleId(testArticleId)
         .replyId(testReplyId)
-        .status(ReplyStatusEnum.ACTIVE)
+        .status(ReplyStatus.ACTIVE)
         .build();
 
     //mock
     when(articleReplyMapper.selectCreatedUserIdByReplyId(testReplyId)).thenReturn("NoUserId");
-    when(articleReplyMapper.upsertReply(any())).thenReturn(1);
+    when(articleReplyMapper.updateReply(any())).thenReturn(1);
 
     //when
     boolean result = articleReplyService.updateReply(replyUpdateDto, adminSession);
@@ -201,12 +177,12 @@ class ArticleReplyServiceImplTest {
     ReplyUpdateDto replyUpdateDto = new ReplyUpdateDto().builder()
         .articleId(testArticleId)
         .replyId(testReplyId)
-        .status(ReplyStatusEnum.ACTIVE)
+        .status(ReplyStatus.ACTIVE)
         .build();
 
     //mock
     when(articleReplyMapper.selectCreatedUserIdByReplyId(testReplyId)).thenReturn("NoUserId");
-    when(articleReplyMapper.upsertReply(any())).thenReturn(0);
+    when(articleReplyMapper.updateReply(any())).thenReturn(0);
 
     //when
     boolean result = articleReplyService.updateReply(replyUpdateDto, adminSession);
@@ -225,13 +201,13 @@ class ArticleReplyServiceImplTest {
     ReplyUpdateDto replyUpdateDto = new ReplyUpdateDto().builder()
         .articleId(testArticleId)
         .replyId(testReplyId)
-        .status(ReplyStatusEnum.ACTIVE)
+        .status(ReplyStatus.ACTIVE)
         .build();
 
     //mock
     when(articleReplyMapper.selectCreatedUserIdByReplyId(testReplyId)).thenReturn(
         SessionUtils.getSessionUserId(authUserSession));
-    when(articleReplyMapper.upsertReply(any())).thenReturn(1);
+    when(articleReplyMapper.updateReply(any())).thenReturn(1);
 
     //when
     boolean result = articleReplyService.updateReply(replyUpdateDto, authUserSession);
@@ -250,13 +226,13 @@ class ArticleReplyServiceImplTest {
     ReplyUpdateDto replyUpdateDto = new ReplyUpdateDto().builder()
         .articleId(testArticleId)
         .replyId(testReplyId)
-        .status(ReplyStatusEnum.ACTIVE)
+        .status(ReplyStatus.ACTIVE)
         .build();
 
     //mock
     when(articleReplyMapper.selectCreatedUserIdByReplyId(testReplyId)).thenReturn(
         SessionUtils.getSessionUserId(authUserSession));
-    when(articleReplyMapper.upsertReply(any())).thenReturn(0);
+    when(articleReplyMapper.updateReply(any())).thenReturn(0);
 
     //when
     boolean result = articleReplyService.updateReply(replyUpdateDto, authUserSession);
@@ -391,7 +367,7 @@ class ArticleReplyServiceImplTest {
             .replyId(replyId)
             .articleId(1)
             .replyContent("SampleContent")
-            .status(ReplyStatusEnum.ACTIVE)
+            .status(ReplyStatus.ACTIVE)
             .createdUserId("test")
             .createdAt(LocalDateTime.now())
             .build();

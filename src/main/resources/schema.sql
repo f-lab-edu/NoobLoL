@@ -140,7 +140,7 @@ CREATE TABLE `bbs`
 /* Upsert시 자동증가인 경우 Update도 값을 증기사키는 문제로 인한 수정*/
 CREATE TABLE `bbs_articles`
 (
-    `article_id`         int PRIMARY KEY,
+    `article_id`         int PRIMARY KEY AUTO_INCREMENT,
     `bbs_id`             int,
     `article_title`      varchar(255),
     `article_read_count` int,
@@ -169,7 +169,7 @@ CREATE TABLE `bbs_articles_status`
  */
 CREATE TABLE `bbs_articles_reply`
 (
-    `reply_id`        int PRIMARY KEY,
+    `reply_id`        int PRIMARY KEY AUTO_INCREMENT,
     `article_id`      int,
     `reply_content`   text,
     `status`          int,

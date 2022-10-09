@@ -14,7 +14,9 @@ public interface ArticleMapper {
 
   int selectUserAuth(String userId);
 
-  int upsertArticle(ArticleDto articleDto);
+  int insertArticle(ArticleDto articleDto);
+
+  int updateArticle(ArticleDto articleDto);
 
   String selectCreatedUserId(int articleId);
 

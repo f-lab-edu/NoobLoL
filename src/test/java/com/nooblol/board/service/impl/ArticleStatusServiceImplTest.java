@@ -5,11 +5,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-import com.nooblol.board.dto.ArticleDto;
 import com.nooblol.board.dto.ArticleStatusDto;
-import com.nooblol.board.mapper.ArticleMapper;
 import com.nooblol.board.mapper.ArticleStatusMapper;
-import com.nooblol.board.utils.ArticleLikeStatusEnum;
+import com.nooblol.board.utils.ArticleLikeStatus;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionEnum;
 import com.nooblol.user.dto.UserDto;
@@ -104,7 +102,7 @@ class ArticleStatusServiceImplTest {
     ArticleStatusDto mockArticleStatusDto = new ArticleStatusDto().builder()
         .articleId(testArticleId)
         .userId(mockUserDto.getUserId())
-        .likeType(ArticleLikeStatusEnum.NOT_LIKE)
+        .likeType(ArticleLikeStatus.NOT_LIKE)
         .build();
 
     //mock
@@ -141,7 +139,7 @@ class ArticleStatusServiceImplTest {
     ArticleStatusDto mockArticleStatusDto = new ArticleStatusDto().builder()
         .articleId(testArticleId)
         .userId(mockUserDto.getUserId())
-        .likeType(ArticleLikeStatusEnum.LIKE)
+        .likeType(ArticleLikeStatus.LIKE)
         .build();
 
     //mock

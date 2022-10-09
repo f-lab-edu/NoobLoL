@@ -7,7 +7,9 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ArticleReplyMapper {
 
-  int upsertReply(ReplyDto insertDto);
+  int insertReply(ReplyDto insertDto);
+
+  int updateReply(ReplyDto updateDto);
 
   String selectCreatedUserIdByReplyId(int replyId);
 

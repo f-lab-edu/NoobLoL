@@ -2,6 +2,7 @@ package com.nooblol.board.dto;
 
 
 import com.nooblol.board.utils.ArticleMessage;
+import com.nooblol.board.utils.ArticleStatus;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -25,5 +26,5 @@ public class ArticleRequestBaseDto {
   private String articleContent;
 
   @NotNull(message = ArticleMessage.ARTICLE_STATUS_NULL)
-  private Integer status;
+  private ArticleStatus status;
 }
