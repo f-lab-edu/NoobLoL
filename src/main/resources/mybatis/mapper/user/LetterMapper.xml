@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nooblol.user.mapper.LetterMapper">
+  <insert id="insertLetter" parameterType="LetterDto">
+    INSERT INTO users_letter(letter_title, letter_content, to_user_id, to_status, from_user_id,
+                             from_status, created_at)
+    VALUES (#{letterTitle}, #{letterContent}, #{toUserId}, #{toStatus}, #{fromUserId},
+            #{fromStatus}, #{createdAt})
+  </insert>
+
+  <!--읽은상태와 읽지 않은 상태에 대해서 배열로 전달해야 하기 떄문-->
+  <select id="selectLetterListByUserIdAndTypeTo" parameterType="LetterSearchDto"
+    resultType="LetterDto">
+    SELECT letter_id,
+    letter_title,
+    letter_content,
+    to_user_id,
+    from_user_id,
+    to_status,
+    from_status,
+    created_at
+    FROM users_letter
+    WHERE to_user_id = #{userId}
+    AND to_status IN
+    <foreach item="item" collection="statusArr" open="(" close=")" separator=",">
+      #{item}
+    </foreach>
+    ORDER BY created_at DESC
+    LIMIT #{pageNum}, #{limitNum}
+  </select>
+
+  <select id="selectLetterListByUserIdAndTypeFrom" parameterType="LetterSearchDto"
+    resultType="LetterDto">
+    SELECT letter_id,
+    letter_title,
+    letter_content,
+    to_user_id,
+    from_user_id,
+    to_status,
+    from_status,
+    created_at
+    FROM users_letter
+    WHERE from_user_id = #{userId}
+    AND from_status IN
+    <foreach item="item" collection="statusArr" open="(" close=")" separator=",">
+      #{item}
+    </foreach>
+    ORDER BY created_at DESC
+    LIMIT #{pageNum}, #{limitNum}
+  </select>
+
+  <select id="selectLetterByLetterId" parameterType="int" resultType="LetterDto">
+    SELECT letter_id,
+           letter_title,
+           letter_content,
+           to_user_id,
+           from_user_id,
+           to_status,
+           from_status,
+           created_at
+    FROM users_letter
+    WHERE letter_id = #{letterId}
+  </select>
+
+  <update id="updateLetterToStatusByLetterIdAndToUserId" parameterType="LetterDto">
+    UPDATE users_letter
+    SET to_status = #{toStatus}
+    WHERE letter_id = #{letterId}
+      AND to_user_id = #{toUserId}
+  </update>
+
+  <update id="updateLetterFromStatusByLetterIdAndFromUserId" parameterType="LetterDto">
+    UPDATE users_letter
+    SET from_status = #{fromStatus}
+    WHERE letter_id = #{letterId}
+      AND from_user_id = #{fromUserId}
+  </update>
+</mapper>

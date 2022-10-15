@@ -104,6 +104,13 @@ CREATE TABLE `users`
     `updated_at`         datetime
 );
 
+/*
+ 22. 09. 14 : to_status, from_status, to_read_status의 추가
+    -> 쪽지를 삭제할 시 status값을 한쪽만 사용하게 되면, 둘다 동시에 삭제하게 되는 것이므로 해당 문제를 방지하기 위해 각각 status를 보관한다.
+    -> 수신자의 읽음 처리를 구분하기 위하여 추가하였으며, true는 읽음, false는 읽지않음 이다.
+
+ 22. 09. 14 to, from status에서 이미 읽은 상태 구혀중이기에 to_read_status제거
+ */
 CREATE TABLE `users_letter`
 (
     `letter_id`      int PRIMARY KEY AUTO_INCREMENT,
@@ -111,6 +118,8 @@ CREATE TABLE `users_letter`
     `letter_content` text,
     `to_user_id`     varchar(255) NOT NULL,
     `from_user_id`   varchar(255) NOT NULL,
+    `to_status`      int          NOT NULL,
+    `from_status`    int          NOT NULL,
     `created_at`     datetime DEFAULT (now())
 );
 

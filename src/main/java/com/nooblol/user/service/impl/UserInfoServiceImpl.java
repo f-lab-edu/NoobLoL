@@ -110,5 +110,10 @@ public class UserInfoServiceImpl implements UserInfoService {
     return result;
   }
 
+  @Override
+  public UserDto selectUserInfoByUserId(String userId) {
+    return userInfoMapper.selectUserByUserId(userId);
+  }
+
 }
 
