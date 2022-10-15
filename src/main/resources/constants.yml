@@ -1,6 +1,6 @@
 #Riot API Key
 riot:
-  apiKey: RGAPI-4e9755a0-3165-4696-a14c-bb656e513db3
+  apiKey: riot-api-key
   summoner-domain: https://kr.api.riotgames.com/
   summoner-name-search-by-id-api: lol/summoner/v4/summoners/
   summoner-name-search-by-name-api: lol/summoner/v4/summoners/by-name/
