@@ -211,7 +211,8 @@ class LetterServiceImplTest {
           .build();
 
       //mock
-      when(letterMapper.selectLetterListByUserIdAndTypeTo(requestDto)).thenReturn(null);
+      when(letterMapper.selectLetterListByUserIdAndTypeTo(requestDto))
+          .thenReturn(new ArrayList<LetterDto>());
 
       //when
       List<LetterDto> result = letterService.getLetterListByUserId(requestDto);
@@ -257,7 +258,8 @@ class LetterServiceImplTest {
           .build();
 
       //mock
-      when(letterMapper.selectLetterListByUserIdAndTypeFrom(requestDto)).thenReturn(null);
+      when(letterMapper.selectLetterListByUserIdAndTypeFrom(requestDto))
+          .thenReturn(new ArrayList<LetterDto>());
 
       //when
       List<LetterDto> result = letterService.getLetterListByUserId(requestDto);
