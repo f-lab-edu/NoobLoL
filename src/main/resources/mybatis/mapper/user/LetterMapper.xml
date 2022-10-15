@@ -13,41 +13,35 @@
   <select id="selectLetterListByUserIdAndTypeTo" parameterType="LetterSearchDto"
     resultType="LetterDto">
     SELECT letter_id,
-    letter_title,
-    letter_content,
-    to_user_id,
-    from_user_id,
-    to_status,
-    from_status,
-    created_at
+           letter_title,
+           letter_content,
+           to_user_id,
+           from_user_id,
+           to_status,
+           from_status,
+           created_at
     FROM users_letter
     WHERE to_user_id = #{userId}
-    AND to_status IN
-    <foreach item="item" collection="statusArr" open="(" close=")" separator=",">
-      #{item}
-    </foreach>
+      AND to_status IN (${statusArr})
     ORDER BY created_at DESC
-    LIMIT #{pageNum}, #{limitNum}
+      LIMIT #{pageNum}, #{limitNum}
   </select>
 
   <select id="selectLetterListByUserIdAndTypeFrom" parameterType="LetterSearchDto"
     resultType="LetterDto">
     SELECT letter_id,
-    letter_title,
-    letter_content,
-    to_user_id,
-    from_user_id,
-    to_status,
-    from_status,
-    created_at
+           letter_title,
+           letter_content,
+           to_user_id,
+           from_user_id,
+           to_status,
+           from_status,
+           created_at
     FROM users_letter
     WHERE from_user_id = #{userId}
-    AND from_status IN
-    <foreach item="item" collection="statusArr" open="(" close=")" separator=",">
-      #{item}
-    </foreach>
+      AND from_status IN (${statusArr})
     ORDER BY created_at DESC
-    LIMIT #{pageNum}, #{limitNum}
+      LIMIT #{pageNum}, #{limitNum}
   </select>
 
   <select id="selectLetterByLetterId" parameterType="int" resultType="LetterDto">

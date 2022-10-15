@@ -8,12 +8,10 @@ import com.nooblol.user.dto.LetterSearchDto;
 import com.nooblol.user.mapper.LetterMapper;
 import com.nooblol.user.service.LetterService;
 import com.nooblol.user.service.UserInfoService;
-import com.nooblol.user.utils.LetterConstants;
+import com.nooblol.user.utils.LetterStatus;
+import com.nooblol.user.utils.LetterType;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,26 +36,18 @@ public class LetterServiceImpl implements LetterService {
       throw new IllegalArgumentException(ExceptionMessage.NO_DATA);
     }
 
-    if (!ObjectUtils.isEmpty(letterDto) &&
-        !(letterReqUserId.equals(letterDto.getToUserId()) ||
-            letterReqUserId.equals(letterDto.getFromUserId()))
-    ) {
+    if (!isHaveGetLetterAuth(letterDto, letterReqUserId)) {
       throw new IllegalArgumentException(ExceptionMessage.FORBIDDEN);
     }
 
     //발송자인 경우에는 먼저 return
-    if (letterReqUserId.equals(letterDto.getFromUserId())) {
+    if (isReqUserLetterTypeFrom(letterDto, letterReqUserId)) {
       return letterDto;
     }
     //수신자의 경우 읽지 않았으면 Update
-    if (letterDto.getToStatus() == LetterConstants.LETTER_STATUS_UNREAD) {
-      letterDto.setToStatus(LetterConstants.LETTER_STATUS_READ);
-      updateLetterStatus(
-          letterDto.getLetterId(),
-          LetterConstants.LETTER_STATUS_READ,
-          LetterConstants.LETTER_TYPE_TO,
-          session
-      );
+    if (LetterStatus.UNREAD.equals(letterDto.getToStatus())) {
+      letterDto.setToStatus(LetterStatus.READ);
+      updateLetterStatus(letterDto.getLetterId(), LetterStatus.READ, LetterType.TO, session);
     }
 
     return letterDto;
@@ -65,16 +55,12 @@ public class LetterServiceImpl implements LetterService {
 
   @Override
   public List<LetterDto> getLetterListByUserId(LetterSearchDto letterSearchDto) {
-    if (LetterConstants.LETTER_TYPE_TO.equals(letterSearchDto.getLetterType())) {
-      return Optional.ofNullable(
-          letterMapper.selectLetterListByUserIdAndTypeTo(letterSearchDto)
-      ).orElse(new ArrayList<LetterDto>());
+    if (LetterType.TO.equals(letterSearchDto.getLetterType())) {
+      return letterMapper.selectLetterListByUserIdAndTypeTo(letterSearchDto);
     }
 
-    if (LetterConstants.LETTER_TYPE_FROM.equals(letterSearchDto.getLetterType())) {
-      return Optional.ofNullable(
-          letterMapper.selectLetterListByUserIdAndTypeFrom(letterSearchDto)
-      ).orElse(new ArrayList<LetterDto>());
+    if (LetterType.FROM.equals(letterSearchDto.getLetterType())) {
+      return letterMapper.selectLetterListByUserIdAndTypeFrom(letterSearchDto);
     }
 
     throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
@@ -88,9 +74,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     //실제 수신자가 존재하지 않는지 여부 확인
-    if (Optional
-        .ofNullable(userInfoService.selectUserInfoByUserId(requestDto.getToUserId()))
-        .isEmpty()) {
+    if (ObjectUtils.isEmpty(userInfoService.selectUserInfoByUserId(requestDto.getToUserId()))) {
       throw new IllegalArgumentException(ExceptionMessage.NOT_FOUND);
     }
 
@@ -98,9 +82,9 @@ public class LetterServiceImpl implements LetterService {
         .letterTitle(requestDto.getLetterTitle())
         .letterContent(requestDto.getLetterContent())
         .toUserId(requestDto.getToUserId())
-        .toStatus(LetterConstants.LETTER_STATUS_UNREAD)
+        .toStatus(LetterStatus.UNREAD)
         .fromUserId(fromUserId)
-        .fromStatus(LetterConstants.LETTER_STATUS_READ)
+        .fromStatus(LetterStatus.READ)
         .createdAt(LocalDateTime.now())
         .build();
 
@@ -111,7 +95,7 @@ public class LetterServiceImpl implements LetterService {
   public boolean deleteLetter(LetterDto letterDto, HttpSession session) {
     return updateLetterStatus(
         letterDto.getLetterId(),
-        LetterConstants.LETTER_STATUS_DELETE,
+        LetterStatus.DELETE,
         letterDto.getType(),
         session
     );
@@ -127,11 +111,9 @@ public class LetterServiceImpl implements LetterService {
    * @return
    */
   private boolean updateLetterStatus(
-      int letterId, int status, String letterType, HttpSession session
+      int letterId, LetterStatus status, LetterType letterType, HttpSession session
   ) {
-    letterType = letterType.toUpperCase();
-
-    if (LetterConstants.LETTER_TYPE_TO.equals(letterType)) {
+    if (LetterType.TO.equals(letterType)) {
       return letterMapper.updateLetterToStatusByLetterIdAndToUserId(
           LetterDto.builder()
               .letterId(letterId)
@@ -141,7 +123,7 @@ public class LetterServiceImpl implements LetterService {
       ) > 0;
     }
 
-    if (LetterConstants.LETTER_TYPE_FROM.equals(letterType)) {
+    if (LetterType.FROM.equals(letterType)) {
       return letterMapper.updateLetterFromStatusByLetterIdAndFromUserId(
           LetterDto.builder()
               .letterId(letterId)
@@ -153,5 +135,40 @@ public class LetterServiceImpl implements LetterService {
 
     //LetterConstants에 없는 Type(수신 또는 발신이 아닌경우) Exception
     throw new IllegalArgumentException(ExceptionMessage.BAD_REQUEST);
+  }
+
+
+  /**
+   * 해당 쪽지가 발송자 또는 수신자인지 여부 확인
+   *
+   * @param letterDto
+   * @param reqUserId
+   * @return
+   */
+  private boolean isHaveGetLetterAuth(LetterDto letterDto, String reqUserId) {
+    return isReqUserLetterTypeTo(letterDto, reqUserId) ||
+        isReqUserLetterTypeFrom(letterDto, reqUserId);
+  }
+
+  /**
+   * 요청자가 쪽지의 수신자가 맞는지 확인
+   *
+   * @param letterDto
+   * @param reqUserId
+   * @return
+   */
+  private boolean isReqUserLetterTypeTo(LetterDto letterDto, String reqUserId) {
+    return reqUserId.equals(letterDto.getToUserId());
+  }
+
+  /**
+   * 요청자가 쪽지의 발송자가 맞는지 확인
+   *
+   * @param letterDto
+   * @param reqUserId
+   * @return
+   */
+  private boolean isReqUserLetterTypeFrom(LetterDto letterDto, String reqUserId) {
+    return reqUserId.equals(letterDto.getFromUserId());
   }
 }

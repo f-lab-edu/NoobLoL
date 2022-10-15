@@ -27,4 +27,17 @@
       AND user_password_hash = #{userPassword}
   </select>
 
+
+  <select id="selectUserByUserId" parameterType="String" resultType="UserDto">
+    SELECt user_id,
+           user_email,
+           user_name,
+           user_role,
+           level,
+           exp,
+           created_at,
+           updated_at
+    FROM users
+    WHERE user_id = #{userId}
+  </select>
 </mapper>

@@ -1,6 +1,8 @@
 package com.nooblol.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.nooblol.user.utils.LetterStatus;
+import com.nooblol.user.utils.LetterType;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,13 +26,13 @@ public class LetterDto {
 
   private String toUserId;
 
-  private int toStatus;
+  private LetterStatus toStatus;
 
   private String fromUserId;
 
-  private int fromStatus;
+  private LetterStatus fromStatus;
 
   private LocalDateTime createdAt;
 
-  private String type;
+  private LetterType type;
 }
