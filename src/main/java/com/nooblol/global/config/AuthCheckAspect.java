@@ -6,6 +6,7 @@ import com.nooblol.global.utils.SessionUtils;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -55,7 +56,7 @@ public class AuthCheckAspect {
         .ofNullable(SessionUtils.getSessionUserRole(session))
         .orElse(UserRoleStatus.GUEST.getRoleValue());
 
-    if (userRole.equals(UserRoleStatus.ADMIN.getRoleValue())) {
+    if (UserRoleStatus.isNotUserAdmin(userRole)) {
       throw new IllegalArgumentException(ExceptionMessage.UNAUTHORIZED);
     }
   }

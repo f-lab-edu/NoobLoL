@@ -85,12 +85,12 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     ResponseDto result = ResponseEnum.OK.getResponse();
-    if (loginUser.getUserRole() == UserRoleStatus.SUSPENSION_USER.getRoleValue()) {
+    if (UserRoleStatus.isUserSuspension(loginUser.getUserRole())) {
       result.setResult(UserRoleStatus.SUSPENSION_USER);
       return result;
     }
 
-    if (loginUser.getUserRole() == UserRoleStatus.UNAUTH_USER.getRoleValue()) {
+    if (UserRoleStatus.isUserUnAuthUser(loginUser.getUserRole())) {
       result.setResult(UserRoleStatus.UNAUTH_USER);
       return result;
     }

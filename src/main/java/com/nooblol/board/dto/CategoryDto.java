@@ -1,5 +1,6 @@
 package com.nooblol.board.dto;
 
+import com.nooblol.board.utils.CategoryStatus;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ public class CategoryDto {
 
   private int categoryId;
   private String categoryName;
-  private int status;
+  private CategoryStatus status;
   private String createdUserId;
   private LocalDateTime createdAt;
   private String updatedUserId;

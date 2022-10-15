@@ -14,20 +14,11 @@ public interface ArticleMapper {
 
   int selectUserAuth(String userId);
 
-  int upsertArticle(ArticleDto articleDto);
+  int insertArticle(ArticleDto articleDto);
 
-  int selectMaxArticleId();
+  int updateArticle(ArticleDto articleDto);
 
   String selectCreatedUserId(int articleId);
 
   int deleteArticleByArticleId(int articleId);
-
-  ArticleStatusDto selectArticleStatusByArticleIdAndUserId(ArticleStatusDto articleStatusDto);
-
-  LikeAndNotLikeResponseDto selectArticleAllStatusByArticleId(int articleId);
-
-  int insertArticleStatus(ArticleStatusDto articleStatusDto);
-
-  int deleteArticleStatue(ArticleStatusDto articleStatusDto);
-
 }

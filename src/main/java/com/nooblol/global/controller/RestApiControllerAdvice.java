@@ -122,17 +122,4 @@ public class RestApiControllerAdvice {
     log.warn("[HttpRequestMethodNotSupportedException]", e);
     return ResponseEnum.BAD_REQUEST.getResponse();
   }
-
-
-  /**
-   * Optinal을 사용하게 될 경우 발생하는 NPE에 대하여 Handling하기 위한 추가
-   *
-   * @param e
-   * @return
-   */
-  @ExceptionHandler({NullPointerException.class})
-  public ResponseDto nullPointerExceptionHandling(NullPointerException e) {
-    log.warn("[NullPointerException]", e);
-    return ResponseEnum.BAD_REQUEST.getResponse();
-  }
 }
