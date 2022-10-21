@@ -12,7 +12,8 @@ import com.nooblol.user.dto.LetterSearchDto;
 import com.nooblol.user.dto.UserDto;
 import com.nooblol.user.mapper.LetterMapper;
 import com.nooblol.user.service.UserInfoService;
-import com.nooblol.user.utils.LetterConstants;
+import com.nooblol.user.utils.LetterStatus;
+import com.nooblol.user.utils.LetterType;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpSession;
@@ -189,7 +190,7 @@ class LetterServiceImplTest {
     void getLetterListByUserId_WhenIsNotExistsType_ThenBadRequestExcpeiton() {
       //gvien
       LetterSearchDto requestDto = new LetterSearchDto().builder()
-          .letterType("없는 타입")
+          .letterType(null)
           .build();
 
       //when
@@ -206,11 +207,12 @@ class LetterServiceImplTest {
     void getLetterListByUserId_WhenIsNotExistsLetterByDbTypeTo_ThenReturnEmptyLetterList() {
       //given
       LetterSearchDto requestDto = new LetterSearchDto().builder()
-          .letterType(LetterConstants.LETTER_TYPE_TO)
+          .letterType(LetterType.TO)
           .build();
 
       //mock
-      when(letterMapper.selectLetterListByUserIdAndTypeTo(requestDto)).thenReturn(null);
+      when(letterMapper.selectLetterListByUserIdAndTypeTo(requestDto))
+          .thenReturn(new ArrayList<LetterDto>());
 
       //when
       List<LetterDto> result = letterService.getLetterListByUserId(requestDto);
@@ -225,26 +227,16 @@ class LetterServiceImplTest {
       //given
       LetterSearchDto requestDto = new LetterSearchDto().builder()
           .userId(SessionUtils.getSessionUserId(authUserSession))
-          .letterType(LetterConstants.LETTER_TYPE_TO)
-          .statusArr(LetterConstants.LETTER_LIST_SEARCH_STATUS_ARR)
+          .letterType(LetterType.TO)
+          .statusArr(getLetterSearchTypeStr())
           .limitNum(30)
           .pageNum(0)
           .build();
 
-      LetterDto letterListObj1 = new LetterDto().builder()
-          .letterId(1)
-          .build();
-      LetterDto letterListObj2 = new LetterDto().builder()
-          .letterId(2)
-          .build();
-      LetterDto letterListObj3 = new LetterDto().builder()
-          .letterId(3)
-          .build();
-
       List<LetterDto> mockReturnLetterList = new ArrayList<>();
-      mockReturnLetterList.add(letterListObj1);
-      mockReturnLetterList.add(letterListObj2);
-      mockReturnLetterList.add(letterListObj3);
+      mockReturnLetterList.add(LetterDto.builder().letterId(1).build());
+      mockReturnLetterList.add(LetterDto.builder().letterId(2).build());
+      mockReturnLetterList.add(LetterDto.builder().letterId(3).build());
 
       //mock
       when(letterMapper.selectLetterListByUserIdAndTypeTo(requestDto)).thenReturn(
@@ -262,11 +254,12 @@ class LetterServiceImplTest {
     void getLetterListByUserId_WhenIsNotExistsLetterByDbTypeFrom_ThenReturnEmptyLetterList() {
       //given
       LetterSearchDto requestDto = new LetterSearchDto().builder()
-          .letterType(LetterConstants.LETTER_TYPE_FROM)
+          .letterType(LetterType.FROM)
           .build();
 
       //mock
-      when(letterMapper.selectLetterListByUserIdAndTypeFrom(requestDto)).thenReturn(null);
+      when(letterMapper.selectLetterListByUserIdAndTypeFrom(requestDto))
+          .thenReturn(new ArrayList<LetterDto>());
 
       //when
       List<LetterDto> result = letterService.getLetterListByUserId(requestDto);
@@ -279,28 +272,18 @@ class LetterServiceImplTest {
     @DisplayName("발송 리스트 조회시 데이터가 있는 경우, 발송한 쪽지 리스트를 획득한다.")
     void getLetterListByUserId_WhenIsExistsLetterAndTypeFrom_ThenReturnLetterList() {
       //given
-      LetterSearchDto requestDto = new LetterSearchDto().builder()
+      LetterSearchDto requestDto = LetterSearchDto.builder()
           .userId(SessionUtils.getSessionUserId(authUserSession))
-          .letterType(LetterConstants.LETTER_TYPE_FROM)
-          .statusArr(LetterConstants.LETTER_LIST_SEARCH_STATUS_ARR)
+          .letterType(LetterType.FROM)
+          .statusArr(getLetterSearchTypeStr())
           .limitNum(30)
           .pageNum(0)
           .build();
 
-      LetterDto letterListObj1 = new LetterDto().builder()
-          .letterId(1)
-          .build();
-      LetterDto letterListObj2 = new LetterDto().builder()
-          .letterId(2)
-          .build();
-      LetterDto letterListObj3 = new LetterDto().builder()
-          .letterId(3)
-          .build();
-
       List<LetterDto> mockReturnLetterList = new ArrayList<>();
-      mockReturnLetterList.add(letterListObj1);
-      mockReturnLetterList.add(letterListObj2);
-      mockReturnLetterList.add(letterListObj3);
+      mockReturnLetterList.add(LetterDto.builder().letterId(1).build());
+      mockReturnLetterList.add(LetterDto.builder().letterId(2).build());
+      mockReturnLetterList.add(LetterDto.builder().letterId(3).build());
 
       //mock
       when(letterMapper.selectLetterListByUserIdAndTypeFrom(requestDto)).thenReturn(
@@ -311,6 +294,20 @@ class LetterServiceImplTest {
 
       //then
       assertEquals(result, mockReturnLetterList);
+    }
+
+    String getLetterSearchTypeStr() {
+
+      String searchListStr = "(";
+
+      for (int i = 0; i < LetterStatus.SEARCH_STATUS_ARR.length; i++) {
+        searchListStr += "\'" + LetterStatus.SEARCH_STATUS_ARR[i] + "\',";
+        if (i != LetterStatus.SEARCH_STATUS_ARR.length - 1) {
+          searchListStr += ",";
+        }
+      }
+      searchListStr += ")";
+      return searchListStr;
     }
   }
 
@@ -325,7 +322,7 @@ class LetterServiceImplTest {
     void deleteLetter_WhenLetterTypeNotExistsConstants_ThenBadRequestException() {
       //given
       LetterDto requestDto = new LetterDto();
-      requestDto.setType("Not Exists Constants Type");
+      requestDto.setType(null);
 
       //when
       Exception e = assertThrows(IllegalArgumentException.class, () -> {
@@ -343,7 +340,7 @@ class LetterServiceImplTest {
       int nullLetterId = 99999;
       LetterDto requestDto = new LetterDto();
       requestDto.setLetterId(nullLetterId);
-      requestDto.setType(LetterConstants.LETTER_TYPE_TO);
+      requestDto.setType(LetterType.TO);
 
       //mock
       when(letterMapper.updateLetterToStatusByLetterIdAndToUserId(any())).thenReturn(0);
@@ -362,7 +359,7 @@ class LetterServiceImplTest {
       int nullLetterId = 99999;
       LetterDto requestDto = new LetterDto();
       requestDto.setLetterId(nullLetterId);
-      requestDto.setType(LetterConstants.LETTER_TYPE_TO);
+      requestDto.setType(LetterType.TO);
 
       //mock
       when(letterMapper.updateLetterToStatusByLetterIdAndToUserId(any())).thenReturn(1);
@@ -373,6 +370,6 @@ class LetterServiceImplTest {
       //then
       assertTrue(result);
     }
-
   }
+
 }

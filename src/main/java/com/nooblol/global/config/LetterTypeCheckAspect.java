@@ -2,8 +2,7 @@ package com.nooblol.global.config;
 
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionUtils;
-import com.nooblol.user.utils.LetterConstants;
-import java.util.Arrays;
+import com.nooblol.user.utils.LetterType;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -36,8 +35,7 @@ public class LetterTypeCheckAspect {
   }
 
   private boolean typeValid(String type) {
-    return Arrays.stream(LetterConstants.LETTER_DELETE_TYPE_ARR)
-        .anyMatch(constantType -> constantType.equals(type));
+    return LetterType.isExistsType(type);
   }
 
   private String getSessionInUserId(JoinPoint jp) {

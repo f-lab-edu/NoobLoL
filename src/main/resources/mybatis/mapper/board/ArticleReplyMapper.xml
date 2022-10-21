@@ -5,11 +5,7 @@
   <insert id="insertReply" parameterType="ReplyDto">
     INSERT INTO bbs_articles_reply(article_id, reply_content, status, created_user_id,
                                    created_at, sort_no)
-    VALUES (#{articleId}, #{replyContent}, #{status}, #{createdUserId}, #{createdAt},
-            IFNULL((SELECT sort_no + 1
-                    FROM bbs_articles_reply
-                    WHERE article_id = #{articleId}
-                    ORDER BY sort_no DESC limit 1), 1))
+    VALUES (#{articleId}, #{replyContent}, #{status}, #{createdUserId}, #{createdAt}, 1)
   </insert>
 
   <update id="updateReply" parameterType="ReplyDto">
@@ -55,12 +51,11 @@
            article_id,
            reply_content,
            status,
-           sort_no,
            created_at,
            created_user_id,
            created_at
     FROM bbs_articles_reply
     WHERE article_id = #{articleId}
-    ORDER BY sort_no ASC
+    ORDER BY created_at ASC
   </select>
 </mapper>

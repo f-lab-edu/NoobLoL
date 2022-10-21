@@ -11,6 +11,8 @@ import com.nooblol.user.dto.LetterInsertRequestDto;
 import com.nooblol.user.dto.LetterSearchDto;
 import com.nooblol.user.service.LetterService;
 import com.nooblol.user.utils.LetterConstants;
+import com.nooblol.user.utils.LetterStatus;
+import com.nooblol.user.utils.LetterType;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -73,13 +75,13 @@ public class LetterController {
   @LetterTypeValidation
   @GetMapping("/list/{type}")
   public ResponseDto getLetterToList(
-      @PathVariable String type,
+      @PathVariable LetterType type,
       @RequestParam(value = "page", required = false, defaultValue = "0") int pageNum,
       @RequestParam(value = "limit", required = false, defaultValue = "30") int limitNum,
       HttpSession session
   ) {
     LetterSearchDto searchParameterDto = makeLetterListSearchDto(
-        SessionUtils.getSessionUserId(session), pageNum, limitNum, type.toUpperCase()
+        SessionUtils.getSessionUserId(session), pageNum, limitNum, type
     );
 
     //Data 가 Null인경우 CommonUtils에선 NotFound로 보내버려서 직접 설정함.
@@ -115,7 +117,7 @@ public class LetterController {
   @LetterTypeValidation
   @DeleteMapping("/{type}/{letterId}")
   public ResponseDto deleteLetter(
-      @PathVariable @NotBlank(message = LetterConstants.LETTER_TYPE_NULL) String type,
+      @PathVariable @NotBlank(message = LetterConstants.LETTER_TYPE_NULL) LetterType type,
       @PathVariable @NotNull(message = LetterConstants.LETTER_ID_NULL) int letterId,
       HttpSession session
   ) {
@@ -139,11 +141,19 @@ public class LetterController {
    * @return
    */
   private LetterSearchDto makeLetterListSearchDto(
-      String userId, int pageNum, int limitNum, String type
+      String userId, int pageNum, int limitNum, LetterType type
   ) {
+    String searchListStr = "";
+    for (int i = 0; i < LetterStatus.SEARCH_STATUS_ARR.length; i++) {
+      searchListStr += "\'" + LetterStatus.SEARCH_STATUS_ARR[i] + "\'";
+      if (i != LetterStatus.SEARCH_STATUS_ARR.length - 1) {
+        searchListStr += ",";
+      }
+    }
+
     return LetterSearchDto.builder()
         .userId(userId)
-        .statusArr(LetterConstants.LETTER_LIST_SEARCH_STATUS_ARR)
+        .statusArr(searchListStr)
         .pageNum(pageNum * limitNum)
         .limitNum(limitNum)
         .letterType(type)

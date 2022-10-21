@@ -1,5 +1,6 @@
 package com.nooblol.user.dto;
 
+import com.nooblol.user.utils.LetterType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,11 +16,11 @@ public class LetterSearchDto {
 
   private String userId;
 
-  private int[] statusArr;
+  private String statusArr;
 
   private int pageNum;
 
   private int limitNum;
 
-  private String letterType;
+  private LetterType letterType;
 }
