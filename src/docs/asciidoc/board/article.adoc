@@ -1,0 +1,102 @@
+= Article API Docs
+Creator : https://devjong12.tistory.com , Jong1
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ../../../../build/generated-snippets
+endif::[]
+
+
+[[introduction]]
+== introduction
+
+해당 API는 게시물(Article)의 등록, 수정, 삭제와 관련된 API문서 입니다.
+
+[[Article_API]]
+== Article API
+
+[[Article_등록]]
+=== Article 등록
+
+[[Request]]
+==== Request
+
+include::{snippets}/article/addArticle/request-headers.adoc[]
+include::{snippets}/article/addArticle/request-fields.adoc[]
+
+[[Response]]
+==== Response
+
+include::{snippets}/article/addArticle/response-headers.adoc[]
+include::{snippets}/article/addArticle/response-fields.adoc[]
+
+[[example]]
+==== example
+
+include::{snippets}/article/addArticle/curl-request.adoc[]
+include::{snippets}/article/addArticle/http-request.adoc[]
+include::{snippets}/article/addArticle/http-response.adoc[]
+
+[[Article_조회]]
+=== Article 조회
+
+[[Field]]
+==== Field
+
+include::{snippets}/article/getArticle/guest/path-parameters.adoc[]
+
+[[Reuqest]]
+==== Request
+
+include::{snippets}/article/getArticle/guest/curl-request.adoc[]
+include::{snippets}/article/getArticle/guest/httpie-request.adoc[]
+
+[[Response]]
+==== Response
+
+include::{snippets}/article/getArticle/guest/response-headers.adoc[]
+include::{snippets}/article/getArticle/guest/response-fields.adoc[]
+
+[[Guest_조회]]
+==== Guest 조회
+
+include::{snippets}/article/getArticle/guest/http-request.adoc[]
+include::{snippets}/article/getArticle/guest/http-response.adoc[]
+
+[[User_조회]]
+==== User 조회
+
+include::{snippets}/article/getArticle/user/http-request.adoc[]
+include::{snippets}/article/getArticle/user/http-response.adoc[]
+
+[[Admin_조회]]
+==== Admin 조회
+
+include::{snippets}/article/getArticle/admin/http-request.adoc[]
+include::{snippets}/article/getArticle/admin/http-response.adoc[]
+
+[[Article_삭제]]
+=== Article 삭제
+
+[[Request]]
+==== Request
+
+include::{snippets}/article/deleteArticle/path-parameters.adoc[]
+
+[[Response]]
+==== Response
+
+include::{snippets}/article/deleteArticle/response-headers.adoc[]
+include::{snippets}/article/deleteArticle/response-fields.adoc[]
+
+[[example]]
+==== example
+
+include::{snippets}/article/deleteArticle/curl-request.adoc[]
+include::{snippets}/article/deleteArticle/http-request.adoc[]
+include::{snippets}/article/deleteArticle/http-response.adoc[]

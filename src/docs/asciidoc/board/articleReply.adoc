@@ -1,0 +1,81 @@
+= Article Reply API Docs
+Creator : https://devjong12.tistory.com , Jong1
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ../../../../build/generated-snippets
+endif::[]
+
+[[introduction]]
+== introduction
+
+해당 API는 게시물(Article)의 댓글에 대한 추가, 수정, 삭제 조회에 대한 API문서 입니다.
+
+[[Reply_API]]
+== Reply API
+
+=== 추가
+
+==== Request
+
+include::{snippets}/article/reply/add/request-headers.adoc[]
+include::{snippets}/article/reply/add/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/article/reply/add/response-headers.adoc[]
+include::{snippets}/article/reply/add/response-fields.adoc[]
+
+==== Example
+
+include::{snippets}/article/reply/add/curl-request.adoc[]
+include::{snippets}/article/reply/add/http-request.adoc[]
+include::{snippets}/article/reply/add/http-response.adoc[]
+
+=== 수정
+
+==== Request
+
+include::{snippets}/article/reply/update/request-headers.adoc[]
+include::{snippets}/article/reply/update/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/article/reply/update/response-headers.adoc[]
+include::{snippets}/article/reply/update/response-fields.adoc[]
+
+==== Example
+
+include::{snippets}/article/reply/update/curl-request.adoc[]
+include::{snippets}/article/reply/update/http-request.adoc[]
+include::{snippets}/article/reply/update/http-response.adoc[]
+
+=== 삭제
+
+==== Request
+
+include::{snippets}/article/reply/delete/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/article/reply/delete/response-headers.adoc[]
+include::{snippets}/article/reply/delete/response-fields.adoc[]
+
+==== Example
+
+include::{snippets}/article/reply/delete/curl-request.adoc[]
+include::{snippets}/article/reply/delete/http-request.adoc[]
+include::{snippets}/article/reply/delete/http-response.adoc[]
+
+=== 조회
+//TODO : 추가예정
+==== Request
+
+==== Response
+
+==== Example

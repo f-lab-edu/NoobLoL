@@ -1,7 +1,6 @@
 package com.nooblol.user.controller;
 
 import com.nooblol.global.annotation.UserRoleIsAdminCehck;
-import com.nooblol.user.dto.AdminUserDto;
 import com.nooblol.user.dto.UserSignOutDto;
 import com.nooblol.user.dto.UserSignUpRequestDto;
 import com.nooblol.user.service.AdminService;

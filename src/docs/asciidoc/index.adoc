@@ -1,0 +1,45 @@
+= Rest API Index Docs
+Creator : https://devjong12.tistory.com , Jong1
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+
+[[공통_Response_Body]]
+= 공통 Response Body
+
+|===
+| field | value | description
+.6+| `resultCode`
+| 200 | OK
+| 400 | Bad Request 잘못된 요청
+| 401 | 사용자 권한 부족
+| 404 | Not Found, 실제로 존재하지가 않음
+| 409 | 데이터가 이미 존재하는 경우
+| 500 | Server Error
+|===
+
+== 구현 기능 링크
+
+=== 게임 정보
+
+- link:./game/game.html[게임 정보 조회]
+
+=== 사용자 정보
+
+- link:./user/user.html[사용자]
+- link:./user/admin.html[관리자]
+- link:./user/letter.html[쪽지]
+
+=== 커뮤니티
+
+- link:./board/category.html[카테고리]
+- link:./board/bbs.html[게시판]
+- link:./board/article.html[게시물]
+- link:./board/articleStatus.html[게시물의 추천,비추천]

@@ -1,0 +1,123 @@
+= Category API Docs
+Creator : https://devjong12.tistory.com , Jong1
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ../../../../build/generated-snippets
+endif::[]
+
+
+== introduction
+
+해당 API는 계정 정보 조회에 대한 기능에 대해서 문서화 하였습니다.
+
+== Summoner API
+
+=== 소환사명을 통한 계정 정보 조회
+
+==== Request
+
+include::{snippets}/summoner/search/name/request-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/summoner/search/name/response-headers.adoc[]
+include::{snippets}/summoner/search/name/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/summoner/search/name/curl-request.adoc[]
+include::{snippets}/summoner/search/name/http-request.adoc[]
+include::{snippets}/summoner/search/name/http-response.adoc[]
+
+=== 소환사의 랭크 정보 조회
+
+==== Request
+
+include::{snippets}/summoner/search/history/request-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/summoner/search/history/response-headers.adoc[]
+include::{snippets}/summoner/search/history/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/summoner/search/history/curl-request.adoc[]
+include::{snippets}/summoner/search/history/http-request.adoc[]
+include::{snippets}/summoner/search/history/http-response.adoc[]
+
+== Game Match API
+
+=== 게임 전적 리스트 조회
+
+==== Request
+
+include::{snippets}/match/list/request-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/match/list/response-headers.adoc[]
+include::{snippets}/match/list/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/match/list/curl-request.adoc[]
+include::{snippets}/match/list/http-request.adoc[]
+include::{snippets}/match/list/http-response.adoc[]
+
+=== 게임 참가자 상세 조회
+
+==== Request
+
+include::{snippets}/match/participants/request-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/match/participants/response-headers.adoc[]
+include::{snippets}/match/participants/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/match/participants/curl-request.adoc[]
+include::{snippets}/match/participants/http-request.adoc[]
+include::{snippets}/match/participants/http-response.adoc[]
+
+=== 게임 사용 룬 조회
+
+==== Request
+
+include::{snippets}/match/rune/request-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/match/rune/response-headers.adoc[]
+include::{snippets}/match/rune/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/match/rune/curl-request.adoc[]
+include::{snippets}/match/rune/http-request.adoc[]
+include::{snippets}/match/rune/http-response.adoc[]
+
+=== 게임 밴 리스트 조회
+
+==== Request
+
+include::{snippets}/match/ban/request-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/match/ban/response-headers.adoc[]
+include::{snippets}/match/ban/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/match/ban/curl-request.adoc[]
+include::{snippets}/match/ban/http-request.adoc[]
+include::{snippets}/match/ban/http-response.adoc[]

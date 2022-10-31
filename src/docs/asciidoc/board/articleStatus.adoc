@@ -1,0 +1,75 @@
+= Article Status API Docs
+Creator : https://devjong12.tistory.com , Jong1
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ../../../../build/generated-snippets
+endif::[]
+
+
+[[introduction]]
+== introduction
+
+해당 API는 게시물(Article)의 추천과 비추천에 대하여 관련된 API문서 입니다.
+
+[[Stauts_API]]
+== Status API
+
+[[추천,비추천_조회]]
+=== 추천, 비추천 조회
+
+==== Request
+
+include::{snippets}/article/status/getLikeAndNotLike/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/article/status/getLikeAndNotLike/response-headers.adoc[]
+include::{snippets}/article/status/getLikeAndNotLike/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/article/status/getLikeAndNotLike/curl-request.adoc[]
+include::{snippets}/article/status/getLikeAndNotLike/http-request.adoc[]
+include::{snippets}/article/status/getLikeAndNotLike/http-response.adoc[]
+
+[[게시글_추천]]
+=== 게시글 추천
+
+==== Request
+
+include::{snippets}/article/status/like/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/article/status/like/response-headers.adoc[]
+include::{snippets}/article/status/like/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/article/status/like/curl-request.adoc[]
+include::{snippets}/article/status/like/http-request.adoc[]
+include::{snippets}/article/status/like/http-response.adoc[]
+
+[[게시글_비추천]]
+=== 게시글 비추천
+
+==== Request
+
+include::{snippets}/article/status/notLike/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/article/status/notLike/response-headers.adoc[]
+include::{snippets}/article/status/notLike/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/article/status/notLike/curl-request.adoc[]
+include::{snippets}/article/status/notLike/http-request.adoc[]
+include::{snippets}/article/status/notLike/http-response.adoc[]

@@ -1,6 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '2.7.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
     id 'java'
 //    id 'war'
 }
@@ -11,6 +12,11 @@ sourceCompatibility = '11'
 
 repositories {
     mavenCentral()
+}
+
+
+ext {
+    snippetsDir = file('build/generated-snippets') //문서의 저장 위치
 }
 
 dependencies {
@@ -27,26 +33,52 @@ dependencies {
     implementation group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4.1', version: '1.16'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+
     runtimeOnly 'com.h2database:h2'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
-//    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation group: 'org.springframework.restdocs', name: 'spring-restdocs-mockmvc', version: '2.0.6.RELEASE'
+
+}
+
+tasks.named('test') {
+    outputs.dir snippetsDir //선언한 디렉토리에 문서의 생성
+    useJUnitPlatform()
+}
+
+asciidoctor { //asciidoctor작업 설정
+    attributes 'snippets': snippetsDir //adoc파일 생성시 올바르게 include하기 위함
+    inputs.dir snippetsDir //snippets 디렉토리를 입력 설정함
+    dependsOn test //문서가 작성되기 전에 테스트가 실행되도록 작업 의존 추가
+}
+
+task copyDocument(type: Copy) { // 생성된 docs 파일을 build시 static 아래에 docs로 복사!
+    dependsOn bootJar
+
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static/docs")
 }
 
 
 //Build FileName Change app.jar
 bootJar {
+    dependsOn asciidoctor
+    from("${asciidoctor.outputDir}") {
+        into 'static/docs'
+    }
     archiveFileName = 'app.jar'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
+
+build {
+    dependsOn copyDocument // build시 copy 실행
 }
 
 //No-Create plain.jar
 jar {
     enabled(false)
 }
+

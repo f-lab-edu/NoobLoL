@@ -42,6 +42,7 @@ class CategoryServiceImplTest {
   CategoryMapper categoryMapper;
 
   HttpSession authUserSession = SessionSampleObject.authUserLoginSession;
+
   HttpSession adminSession = SessionSampleObject.adminUserLoginSession;
 
   @Order(1)
@@ -108,6 +109,7 @@ class CategoryServiceImplTest {
         //then
         assertEquals(result, mockCategoryList);
       }
+
 
     }
 
@@ -505,3 +507,4 @@ class CategoryServiceImplTest {
     }
   }
 }
+

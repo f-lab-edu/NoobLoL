@@ -2,6 +2,7 @@ package com.nooblol.global.utils;
 
 import com.nooblol.user.dto.UserDto;
 import com.nooblol.user.utils.UserRoleStatus;
+import java.time.LocalDateTime;
 
 public class UserSampleObject {
 
@@ -21,6 +22,8 @@ public class UserSampleObject {
         .userRole(UserRoleStatus.AUTH_USER.getRoleValue())
         .level(1)
         .exp(0)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
         .build();
   }
 
@@ -37,6 +40,8 @@ public class UserSampleObject {
         .userRole(UserRoleStatus.ADMIN.getRoleValue())
         .level(1)
         .exp(0)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
         .build();
   }
 

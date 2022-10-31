@@ -10,6 +10,8 @@ import com.nooblol.board.utils.ArticleAuthMessage;
 import com.nooblol.board.utils.ArticleStatus;
 import com.nooblol.global.exception.ExceptionMessage;
 import com.nooblol.global.utils.SessionEnum;
+import com.nooblol.global.utils.SessionSampleObject;
+import com.nooblol.global.utils.SessionUtils;
 import com.nooblol.user.dto.UserDto;
 import com.nooblol.user.utils.UserRoleStatus;
 import javax.servlet.http.HttpSession;
@@ -247,19 +249,10 @@ class ArticleServiceImplTest {
     //given
     int testArticleId = 1;
 
-    UserDto sessionUserData = new UserDto().builder()
-        .userId("test")
-        .userEmail("test@test.com")
-        .userName("test")
-        .userRole(UserRoleStatus.ADMIN.getRoleValue())
-        .level(1)
-        .exp(0)
-        .build();
-    HttpSession session = new MockHttpSession();
-    session.setAttribute(SessionEnum.USER_LOGIN.getValue(), sessionUserData);
+    HttpSession adminUserLoginSession = SessionSampleObject.adminUserLoginSession;
 
     ArticleDto mockReturnDto = new ArticleDto().builder()
-        .createdUserId(sessionUserData.getUserId())
+        .createdUserId(SessionUtils.getSessionUserId(adminUserLoginSession))
         .build();
 
     //mock
@@ -268,7 +261,7 @@ class ArticleServiceImplTest {
     when(articleStatusMapper.deleteArticleStatus(any())).thenReturn(1);
 
     //when
-    boolean result = articleService.deleteArticle(testArticleId, session);
+    boolean result = articleService.deleteArticle(testArticleId, adminUserLoginSession);
 
     //then
     assertEquals(result, true);

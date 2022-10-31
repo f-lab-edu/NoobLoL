@@ -21,7 +21,7 @@ public class UserDto {
   private int userRole;
   private int level;
   private int exp;
-  private LocalDateTime createAt;
+  private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
 }

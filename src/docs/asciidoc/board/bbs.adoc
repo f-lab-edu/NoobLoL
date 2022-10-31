@@ -1,0 +1,108 @@
+= Board API Docs
+Creator : https://devjong12.tistory.com , Jong1
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ../../../../build/generated-snippets
+endif::[]
+
+
+== introduction
+
+해당 API는 게시판의 추가, 삭제, 수정, 카테고리 리스트 조회, 전체 조회에 API문서입니다.
+
+== Board API
+
+=== 등록
+
+해당 기능은 관리자 계정으로 로그인한 정보가 세션에 존재해야 사용이 가능합니다.
+
+==== Request
+
+include::{snippets}/board/bbs/add/request-headers.adoc[]
+include::{snippets}/board/bbs/add//request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/board/bbs/add/response-headers.adoc[]
+include::{snippets}/board/bbs/add/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/board/bbs/add/curl-request.adoc[]
+include::{snippets}/board/bbs/add/http-request.adoc[]
+include::{snippets}/board/bbs/add/http-response.adoc[]
+
+=== 삭제
+
+해당 기능은 관리자 계정으로 로그인한 정보가 세션에 존재해야 사용이 가능합니다.
+
+==== Request
+
+include::{snippets}/board/bbs/delete/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/board/bbs/delete/response-headers.adoc[]
+include::{snippets}/board/bbs/delete/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/board/bbs/delete/curl-request.adoc[]
+include::{snippets}/board/bbs/delete/http-request.adoc[]
+include::{snippets}/board/bbs/delete/http-response.adoc[]
+
+=== 수정
+
+해당 기능은 관리자 계정으로 로그인한 정보가 세션에 존재해야 사용이 가능합니다.
+
+==== Request
+
+include::{snippets}/board/bbs/update/request-headers.adoc[]
+include::{snippets}/board/bbs/update/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/board/bbs/update/response-headers.adoc[]
+include::{snippets}/board/bbs/update/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/board/bbs/update/curl-request.adoc[]
+include::{snippets}/board/bbs/update/http-request.adoc[]
+include::{snippets}/board/bbs/update/http-response.adoc[]
+
+=== 카테고리로 조회
+
+==== Request
+
+include::{snippets}/board/bbs/getList/request-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/board/bbs/getList/response-headers.adoc[]
+include::{snippets}/board/bbs/getList/response-fields.adoc[]
+
+==== Example
+
+include::{snippets}/board/bbs/getList/curl-request.adoc[]
+include::{snippets}/board/bbs/getList/http-request.adoc[]
+include::{snippets}/board/bbs/getList/http-response.adoc[]
+
+=== 모든 게시판 조회
+
+==== Response
+
+include::{snippets}/board/bbs/getAllList/response-headers.adoc[]
+include::{snippets}/board/bbs/getAllList/response-fields.adoc[]
+
+==== Example
+
+include::{snippets}/board/bbs/getAllList/curl-request.adoc[]
+include::{snippets}/board/bbs/getAllList/http-request.adoc[]
+include::{snippets}/board/bbs/getAllList/http-response.adoc[]

@@ -1,0 +1,129 @@
+= Category API Docs
+Creator : https://devjong12.tistory.com , Jong1
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ../../../../build/generated-snippets
+endif::[]
+
+
+== introduction
+
+해당 API는 관리자 기능에 대해서 문서화 하였습니다.
+
+모든 기능은 관리자계정으로 세션이 유지되어 있지 않다면 사용이 불가능 합니다.
+
+== Admin API
+
+=== 관리자계정
+
+==== 추가
+
+===== Request
+
+include::{snippets}/user/admin/signup/request-headers.adoc[]
+include::{snippets}/user/admin/signup/request-fields.adoc[]
+
+===== Response
+
+include::{snippets}/user/admin/signup/response-headers.adoc[]
+include::{snippets}/user/admin/signup/response-fields.adoc[]
+
+===== example
+
+include::{snippets}/user/admin/signup/curl-request.adoc[]
+include::{snippets}/user/admin/signup/http-request.adoc[]
+include::{snippets}/user/admin/signup/http-response.adoc[]
+
+==== 삭제
+
+===== Request
+
+include::{snippets}/user/admin/signOut/request-headers.adoc[]
+include::{snippets}/user/admin/signOut/request-fields.adoc[]
+
+===== Response
+
+include::{snippets}/user/admin/signOut/response-headers.adoc[]
+include::{snippets}/user/admin/signOut/response-fields.adoc[]
+
+===== example
+
+include::{snippets}/user/admin/signOut/curl-request.adoc[]
+include::{snippets}/user/admin/signOut/http-request.adoc[]
+include::{snippets}/user/admin/signOut/http-response.adoc[]
+
+=== 사용자 계정 리스트 조회
+
+==== Request
+
+include::{snippets}/user/admin/userList/request-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/user/admin/userList/response-headers.adoc[]
+include::{snippets}/user/admin/userList/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/user/admin/userList/curl-request.adoc[]
+include::{snippets}/user/admin/userList/http-request.adoc[]
+include::{snippets}/user/admin/userList/http-response.adoc[]
+
+=== 계정권한 변경
+
+==== 일반 사용자 계정 강제 삭제
+
+===== Request
+
+include::{snippets}/user/admin/forceUserDelete/path-parameters.adoc[]
+
+===== Response
+
+include::{snippets}/user/admin/forceUserDelete/response-headers.adoc[]
+include::{snippets}/user/admin/forceUserDelete/response-fields.adoc[]
+
+===== example
+
+include::{snippets}/user/admin/forceUserDelete/curl-request.adoc[]
+include::{snippets}/user/admin/forceUserDelete/http-request.adoc[]
+include::{snippets}/user/admin/forceUserDelete/http-response.adoc[]
+
+==== 사용 가능 상태로 변경
+
+===== Request
+
+include::{snippets}/user/admin/changeToAuthUser/path-parameters.adoc[]
+
+===== Response
+
+include::{snippets}/user/admin/changeToAuthUser/response-headers.adoc[]
+include::{snippets}/user/admin/changeToAuthUser/response-fields.adoc[]
+
+===== example
+
+include::{snippets}/user/admin/changeToAuthUser/curl-request.adoc[]
+include::{snippets}/user/admin/changeToAuthUser/http-request.adoc[]
+include::{snippets}/user/admin/changeToAuthUser/http-response.adoc[]
+
+==== 사용 불가 상태로 변경
+
+===== Request
+
+include::{snippets}/user/admin/changeToSuspensionUser/path-parameters.adoc[]
+
+===== Response
+
+include::{snippets}/user/admin/changeToSuspensionUser/response-headers.adoc[]
+include::{snippets}/user/admin/changeToSuspensionUser/response-fields.adoc[]
+
+===== example
+
+include::{snippets}/user/admin/changeToSuspensionUser/curl-request.adoc[]
+include::{snippets}/user/admin/changeToSuspensionUser/http-request.adoc[]
+include::{snippets}/user/admin/changeToSuspensionUser/http-response.adoc[]

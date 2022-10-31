@@ -7,6 +7,7 @@ import com.nooblol.board.mapper.ArticleReplyMapper;
 import com.nooblol.board.service.ArticleReplyService;
 import com.nooblol.board.service.ArticleService;
 import com.nooblol.global.exception.ExceptionMessage;
+import com.nooblol.global.utils.EncryptUtils;
 import com.nooblol.global.utils.SessionUtils;
 import com.nooblol.user.utils.UserRoleStatus;
 import java.util.List;
@@ -85,5 +86,4 @@ public class ArticleReplyServiceImpl implements ArticleReplyService {
             .filter(createdUserId -> createdUserId.equals(SessionUtils.getSessionUserId(session)))
             .isPresent();
   }
-
 }

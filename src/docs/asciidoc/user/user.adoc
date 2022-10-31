@@ -1,0 +1,138 @@
+= Category API Docs
+Creator : https://devjong12.tistory.com , Jong1
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ../../../../build/generated-snippets
+endif::[]
+
+
+== introduction
+
+해당 API는 일반사용자에 대한 기능에 대해서 문서화 하였습니다.
+
+== User API
+
+=== 가입
+
+==== Request
+
+include::{snippets}/user/signUp/request-headers.adoc[]
+include::{snippets}/user/signUp/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/user/signUp/response-headers.adoc[]
+include::{snippets}/user/signUp/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/user/signUp/curl-request.adoc[]
+include::{snippets}/user/signUp/http-request.adoc[]
+include::{snippets}/user/signUp/http-response.adoc[]
+
+=== 인증메일 재발송
+
+==== Request
+
+include::{snippets}/user/resendAuthMail/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/user/resendAuthMail/response-headers.adoc[]
+include::{snippets}/user/resendAuthMail/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/user/resendAuthMail/curl-request.adoc[]
+include::{snippets}/user/resendAuthMail/http-request.adoc[]
+include::{snippets}/user/resendAuthMail/http-response.adoc[]
+
+=== 계정 인증(활성화)
+
+==== Request
+
+include::{snippets}/user/auth/path-parameters.adoc[]
+
+==== Response
+
+include::{snippets}/user/auth/response-headers.adoc[]
+include::{snippets}/user/auth/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/user/auth/curl-request.adoc[]
+include::{snippets}/user/auth/http-request.adoc[]
+include::{snippets}/user/auth/http-response.adoc[]
+
+=== 탈퇴
+
+==== Request
+
+include::{snippets}/user/signOut/request-headers.adoc[]
+include::{snippets}/user/signOut/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/user/signOut/response-headers.adoc[]
+include::{snippets}/user/signOut/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/user/signOut/curl-request.adoc[]
+include::{snippets}/user/signOut/http-request.adoc[]
+include::{snippets}/user/signOut/http-response.adoc[]
+
+=== 로그인
+
+==== Request
+
+include::{snippets}/user/login/request-headers.adoc[]
+include::{snippets}/user/login/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/user/login/response-headers.adoc[]
+include::{snippets}/user/login/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/user/login/curl-request.adoc[]
+include::{snippets}/user/login/http-request.adoc[]
+include::{snippets}/user/login/http-response.adoc[]
+
+=== 로그아웃
+
+==== Response
+
+include::{snippets}/user/logout/response-headers.adoc[]
+include::{snippets}/user/logout/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/user/logout/curl-request.adoc[]
+include::{snippets}/user/logout/http-request.adoc[]
+include::{snippets}/user/logout/http-response.adoc[]
+
+=== 정보수정
+
+==== Request
+
+include::{snippets}/user/infoUpdate/request-headers.adoc[]
+include::{snippets}/user/infoUpdate/request-fields.adoc[]
+
+==== Response
+
+include::{snippets}/user/infoUpdate/response-headers.adoc[]
+include::{snippets}/user/infoUpdate/response-fields.adoc[]
+
+==== example
+
+include::{snippets}/user/infoUpdate/curl-request.adoc[]
+include::{snippets}/user/infoUpdate/http-request.adoc[]
+include::{snippets}/user/infoUpdate/http-response.adoc[]
